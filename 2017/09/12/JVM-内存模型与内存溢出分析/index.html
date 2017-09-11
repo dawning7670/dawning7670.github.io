@@ -101,13 +101,19 @@
 
 
 
-<meta property="og:type" content="website">
-<meta property="og:title" content="dawning&#39;s blog~">
-<meta property="og:url" content="http://yoursite.com/index.html">
+<meta name="description" content="JVM内存模型 堆区 堆区主要存放使用关键字new创建的对象和数组 堆区被所有线程共享 垃圾收集的主要目标 空间上只需要逻辑连续，物理上可以不连续  栈区栈区分为两个部分  本地方法栈 虚拟机栈  虚拟机方法栈 存储Java方法调用时产生的局部变量等信息，每个方法调用时都会创建一个栈帧（frame） 线程私有，每个线程都有属于自己的方法栈  本地方法栈 存储非Java方法调用产生的局部变量等信息">
+<meta property="og:type" content="article">
+<meta property="og:title" content="JVM-内存模型与内存溢出分析">
+<meta property="og:url" content="http://yoursite.com/2017/09/12/JVM-内存模型与内存溢出分析/index.html">
 <meta property="og:site_name" content="dawning&#39;s blog~">
+<meta property="og:description" content="JVM内存模型 堆区 堆区主要存放使用关键字new创建的对象和数组 堆区被所有线程共享 垃圾收集的主要目标 空间上只需要逻辑连续，物理上可以不连续  栈区栈区分为两个部分  本地方法栈 虚拟机栈  虚拟机方法栈 存储Java方法调用时产生的局部变量等信息，每个方法调用时都会创建一个栈帧（frame） 线程私有，每个线程都有属于自己的方法栈  本地方法栈 存储非Java方法调用产生的局部变量等信息">
 <meta property="og:locale" content="zh-Hans">
+<meta property="og:image" content="http://note.youdao.com/yws/api/personal/file/93C5049D50E34A529C8351683EB54588?method=download&shareKey=7162e5f27c7b61ae0d984d79a780e596">
+<meta property="og:updated_time" content="2017-09-11T23:33:04.640Z">
 <meta name="twitter:card" content="summary">
-<meta name="twitter:title" content="dawning&#39;s blog~">
+<meta name="twitter:title" content="JVM-内存模型与内存溢出分析">
+<meta name="twitter:description" content="JVM内存模型 堆区 堆区主要存放使用关键字new创建的对象和数组 堆区被所有线程共享 垃圾收集的主要目标 空间上只需要逻辑连续，物理上可以不连续  栈区栈区分为两个部分  本地方法栈 虚拟机栈  虚拟机方法栈 存储Java方法调用时产生的局部变量等信息，每个方法调用时都会创建一个栈帧（frame） 线程私有，每个线程都有属于自己的方法栈  本地方法栈 存储非Java方法调用产生的局部变量等信息">
+<meta name="twitter:image" content="http://note.youdao.com/yws/api/personal/file/93C5049D50E34A529C8351683EB54588?method=download&shareKey=7162e5f27c7b61ae0d984d79a780e596">
 
 
 
@@ -137,13 +143,13 @@
 
 
 
-  <link rel="canonical" href="http://yoursite.com/"/>
+  <link rel="canonical" href="http://yoursite.com/2017/09/12/JVM-内存模型与内存溢出分析/"/>
 
 
 
 
 
-  <title>dawning's blog~</title>
+  <title>JVM-内存模型与内存溢出分析 | dawning's blog~</title>
   
 
 
@@ -162,8 +168,7 @@
     
   
 
-  <div class="container sidebar-position-right 
-  page-home">
+  <div class="container sidebar-position-right page-post-detail">
     <div class="headband"></div>
 
     <header id="header" class="header" itemscope itemtype="http://schema.org/WPHeader">
@@ -236,9 +241,9 @@
         <div class="content-wrap">
           <div id="content" class="content">
             
-  <section id="posts" class="posts-expand">
+
+  <div id="posts" class="posts-expand">
     
-      
 
   
 
@@ -268,9 +273,7 @@
 
         
         
-          <h1 class="post-title" itemprop="name headline">
-                
-                <a class="post-title-link" href="/2017/09/12/JVM-内存模型与内存溢出分析/" itemprop="url">JVM-内存模型与内存溢出分析</a></h1>
+          <h1 class="post-title" itemprop="name headline">JVM-内存模型与内存溢出分析</h1>
         
 
         <div class="post-meta">
@@ -320,9 +323,7 @@
       
 
       
-        
-          
-            <h1 id="JVM内存模型"><a href="#JVM内存模型" class="headerlink" title="JVM内存模型"></a>JVM内存模型</h1><p><img src="http://note.youdao.com/yws/api/personal/file/93C5049D50E34A529C8351683EB54588?method=download&amp;shareKey=7162e5f27c7b61ae0d984d79a780e596" alt="JVM运行时内存布局"></p>
+        <h1 id="JVM内存模型"><a href="#JVM内存模型" class="headerlink" title="JVM内存模型"></a>JVM内存模型</h1><p><img src="http://note.youdao.com/yws/api/personal/file/93C5049D50E34A529C8351683EB54588?method=download&amp;shareKey=7162e5f27c7b61ae0d984d79a780e596" alt="JVM运行时内存布局"></p>
 <h3 id="堆区"><a href="#堆区" class="headerlink" title="堆区"></a>堆区</h3><ul>
 <li>堆区主要存放使用关键字new创建的对象和数组</li>
 <li>堆区被所有线程共享</li>
@@ -398,8 +399,6 @@
 <li>调整内存分配（JVM内存+直接内存&lt;=物理内存）</li>
 </ul>
 
-          
-        
       
     </div>
     
@@ -416,153 +415,28 @@
       
 
       
-
-      
-
       
       
-        <div class="post-eof"></div>
+
       
-    </footer>
-  </div>
-  
-  
-  
-  </article>
-
-
-    
-      
-
-  
-
-  
-  
-  
-
-  <article class="post post-type-normal" itemscope itemtype="http://schema.org/Article">
-  
-  
-  
-  <div class="post-block">
-    <link itemprop="mainEntityOfPage" href="http://yoursite.com/2017/09/07/Scala函数式编程-递归数据结构/">
-
-    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
-      <meta itemprop="name" content="dawning7670">
-      <meta itemprop="description" content="">
-      <meta itemprop="image" content="/images/avatar.gif">
-    </span>
-
-    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
-      <meta itemprop="name" content="dawning's blog~">
-    </span>
-
-    
-      <header class="post-header">
-
-        
-        
-          <h1 class="post-title" itemprop="name headline">
-                
-                <a class="post-title-link" href="/2017/09/07/Scala函数式编程-递归数据结构/" itemprop="url">Scala函数式编程-递归数据结构</a></h1>
-        
-
-        <div class="post-meta">
-          <span class="post-time">
+        <div class="post-nav">
+          <div class="post-nav-next post-nav-item">
             
-              <span class="post-meta-item-icon">
-                <i class="fa fa-calendar-o"></i>
-              </span>
-              
-                <span class="post-meta-item-text">发表于</span>
-              
-              <time title="创建于" itemprop="dateCreated datePublished" datetime="2017-09-07T21:12:47+08:00">
-                2017-09-07
-              </time>
+              <a href="/2017/09/07/Scala函数式编程-递归数据结构/" rel="next" title="Scala函数式编程-递归数据结构">
+                <i class="fa fa-chevron-left"></i> Scala函数式编程-递归数据结构
+              </a>
             
+          </div>
 
+          <span class="post-nav-divider"></span>
+
+          <div class="post-nav-prev post-nav-item">
             
-
-            
-          </span>
-
-          
-
-          
-            
-          
-
-          
-          
-
-          
-
-          
-
-          
-
+          </div>
         </div>
-      </header>
-    
-
-    
-    
-    
-    <div class="post-body" itemprop="articleBody">
-
-      
       
 
       
-        
-          
-            <h1 id="递归定义列表"><a href="#递归定义列表" class="headerlink" title="递归定义列表"></a>递归定义列表</h1><p>对于任意一个列表[1, 2, 3…]，它可以看成由头元素和剩下的列表组成</p>
-<p>在Scala标准库中的List是一种类似单向链表的结构</p>
-<p>例如：<br><figure class="highlight scala"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div></pre></td><td class="code"><pre><div class="line"><span class="type">List</span>(<span class="number">1</span>, <span class="number">2</span>, <span class="number">3</span>) = <span class="number">1</span> :: (<span class="number">2</span> :: (<span class="number">3</span> :: <span class="type">Nil</span>))</div><div class="line"><span class="type">List</span>(<span class="number">1</span>) = <span class="number">1</span> :: <span class="type">Nil</span></div></pre></td></tr></table></figure></p>
-<h1 id="常用函数递归实现"><a href="#常用函数递归实现" class="headerlink" title="常用函数递归实现"></a>常用函数递归实现</h1><h4 id="求和函数"><a href="#求和函数" class="headerlink" title="求和函数"></a>求和函数</h4><p>对于递归定义的列表，求所有元素的总和可以表达成下面的递归式：</p>
-<p>sum(lst) = head(lst) + sum(tail(lst))</p>
-<p>将上面的递归式转化成Scala中的代码<br><figure class="highlight scala"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div></pre></td><td class="code"><pre><div class="line"><span class="function"><span class="keyword">def</span> <span class="title">sum</span></span>(lst: <span class="type">List</span>[<span class="type">Int</span>]): <span class="type">Int</span> = lst <span class="keyword">match</span> &#123;</div><div class="line">  <span class="keyword">case</span> head :: tail =&gt; head + sum(tail)</div><div class="line">  <span class="keyword">case</span> _ =&gt; <span class="number">0</span></div><div class="line">&#125;</div></pre></td></tr></table></figure></p>
-<h4 id="求乘积"><a href="#求乘积" class="headerlink" title="求乘积"></a>求乘积</h4><figure class="highlight scala"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div></pre></td><td class="code"><pre><div class="line"><span class="function"><span class="keyword">def</span> <span class="title">multi</span></span>(lst: <span class="type">List</span>[<span class="type">Int</span>]): <span class="type">Int</span> = lst <span class="keyword">match</span> &#123;</div><div class="line">  <span class="keyword">case</span> head :: tail =&gt; head * sum(tail)</div><div class="line">  <span class="keyword">case</span> _ =&gt; <span class="number">1</span></div><div class="line">&#125;</div></pre></td></tr></table></figure>
-<h4 id="统计某个元素出现次数"><a href="#统计某个元素出现次数" class="headerlink" title="统计某个元素出现次数"></a>统计某个元素出现次数</h4><figure class="highlight scala"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div></pre></td><td class="code"><pre><div class="line"><span class="function"><span class="keyword">def</span> <span class="title">count</span></span>[<span class="type">A</span>](lst: <span class="type">List</span>[<span class="type">A</span>], a: <span class="type">A</span>): <span class="type">Int</span> = lst <span class="keyword">match</span> &#123;</div><div class="line">  <span class="keyword">case</span> head :: tail =&gt; <span class="keyword">if</span> (head == a) <span class="number">1</span> + count(tail, a) <span class="keyword">else</span> count(tail, a)</div><div class="line">  <span class="keyword">case</span> _ =&gt; <span class="number">0</span></div><div class="line">&#125;</div></pre></td></tr></table></figure>
-<h1 id="抽象成一般模式"><a href="#抽象成一般模式" class="headerlink" title="抽象成一般模式"></a>抽象成一般模式</h1><p>通过观察上面的几个常用函数的实现模式，我们可以发现每个函数的整体结构类似，不同之处在于</p>
-<ul>
-<li>对于空列表的返回值</li>
-<li>对每个元素的处理方式</li>
-</ul>
-<p>所以我们可以将上述模式抽象成一个更加通用的高阶函数，这个函数需要下面几个参数</p>
-<ul>
-<li>列表为空时返回的初始值</li>
-<li>将列表元素与累加器合并的函数</li>
-</ul>
-<p>下面给出这个函数的实现<br><figure class="highlight scala"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div></pre></td><td class="code"><pre><div class="line"><span class="function"><span class="keyword">def</span> <span class="title">foldRight</span></span>[<span class="type">A</span>, <span class="type">B</span>](lst: <span class="type">List</span>[<span class="type">A</span>], z: <span class="type">B</span>)(f : (<span class="type">A</span>, <span class="type">B</span>) =&gt; <span class="type">B</span>): <span class="type">B</span> = lst <span class="keyword">match</span> &#123;</div><div class="line">  <span class="keyword">case</span> x :: xs =&gt; f(x, foldRight(xs, z)(f))</div><div class="line">  <span class="keyword">case</span> _ =&gt; z</div><div class="line">&#125;</div></pre></td></tr></table></figure></p>
-<p>利用这个foldRight我们可以重构上面三个函数</p>
-<figure class="highlight scala"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div></pre></td><td class="code"><pre><div class="line"><span class="function"><span class="keyword">def</span> <span class="title">sum</span></span>(lst: <span class="type">List</span>[<span class="type">Int</span>]): <span class="type">Int</span> =</div><div class="line">  foldRight(lst, <span class="number">0</span>)((x, acc) =&gt; x + acc)</div><div class="line"></div><div class="line"><span class="comment">// _ * _ 等价于 (a, b) =&gt; (a * b)</span></div><div class="line"><span class="function"><span class="keyword">def</span> <span class="title">multi</span></span>(lst: <span class="type">List</span>[<span class="type">Int</span>]): <span class="type">Int</span> =</div><div class="line">  foldRight(lst, <span class="number">1</span>)(_ * _)</div><div class="line"></div><div class="line"><span class="function"><span class="keyword">def</span> <span class="title">count</span></span>[<span class="type">A</span>](lst: <span class="type">List</span>[<span class="type">A</span>], a: <span class="type">A</span>): <span class="type">Int</span> =</div><div class="line">  foldRight(lst, <span class="number">0</span>)((x, acc) =&gt; <span class="keyword">if</span> (x == a) <span class="number">1</span> + acc <span class="keyword">else</span> acc)</div></pre></td></tr></table></figure>
-<p>Cool！</p>
-
-          
-        
-      
-    </div>
-    
-    
-    
-
-    
-
-    
-
-    
-
-    <footer class="post-footer">
-      
-
-      
-
-      
-
-      
-      
-        <div class="post-eof"></div>
       
     </footer>
   </div>
@@ -572,10 +446,11 @@
   </article>
 
 
-    
-  </section>
 
-  
+    <div class="post-spread">
+      
+    </div>
+  </div>
 
 
           </div>
@@ -583,6 +458,10 @@
 
 
           
+  <div class="comments" id="comments">
+    
+  </div>
+
 
         </div>
         
@@ -603,8 +482,17 @@
       
 
       
+        <ul class="sidebar-nav motion-element">
+          <li class="sidebar-nav-toc sidebar-nav-active" data-target="post-toc-wrap" >
+            文章目录
+          </li>
+          <li class="sidebar-nav-overview" data-target="site-overview">
+            站点概览
+          </li>
+        </ul>
+      
 
-      <section class="site-overview sidebar-panel sidebar-panel-active">
+      <section class="site-overview sidebar-panel">
         <div class="site-author motion-element" itemprop="author" itemscope itemtype="http://schema.org/Person">
           
             <p class="site-author-name" itemprop="name">dawning7670</p>
@@ -647,6 +535,22 @@
 
       </section>
 
+      
+      <!--noindex-->
+        <section class="post-toc-wrap motion-element sidebar-panel sidebar-panel-active">
+          <div class="post-toc">
+
+            
+              
+            
+
+            
+              <div class="post-toc-content"><ol class="nav"><li class="nav-item nav-level-1"><a class="nav-link" href="#JVM内存模型"><span class="nav-number">1.</span> <span class="nav-text">JVM内存模型</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#堆区"><span class="nav-number">1.0.1.</span> <span class="nav-text">堆区</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#栈区"><span class="nav-number">1.0.2.</span> <span class="nav-text">栈区</span></a><ol class="nav-child"><li class="nav-item nav-level-5"><a class="nav-link" href="#虚拟机方法栈"><span class="nav-number">1.0.2.0.1.</span> <span class="nav-text">虚拟机方法栈</span></a></li><li class="nav-item nav-level-5"><a class="nav-link" href="#本地方法栈"><span class="nav-number">1.0.2.0.2.</span> <span class="nav-text">本地方法栈</span></a></li></ol></li></ol></li><li class="nav-item nav-level-3"><a class="nav-link" href="#方法区"><span class="nav-number">1.0.3.</span> <span class="nav-text">方法区</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#程序计数器"><span class="nav-number">1.0.4.</span> <span class="nav-text">程序计数器</span></a></li></ol></li></ol></li><li class="nav-item nav-level-1"><a class="nav-link" href="#内存溢出分析"><span class="nav-number">2.</span> <span class="nav-text">内存溢出分析</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#堆溢出"><span class="nav-number">2.0.1.</span> <span class="nav-text">堆溢出</span></a><ol class="nav-child"><li class="nav-item nav-level-5"><a class="nav-link" href="#场景"><span class="nav-number">2.0.1.0.1.</span> <span class="nav-text">场景</span></a></li><li class="nav-item nav-level-5"><a class="nav-link" href="#原因"><span class="nav-number">2.0.1.0.2.</span> <span class="nav-text">原因</span></a></li><li class="nav-item nav-level-5"><a class="nav-link" href="#解决方案"><span class="nav-number">2.0.1.0.3.</span> <span class="nav-text">解决方案</span></a></li></ol></li></ol></li><li class="nav-item nav-level-3"><a class="nav-link" href="#栈溢出"><span class="nav-number">2.0.2.</span> <span class="nav-text">栈溢出</span></a><ol class="nav-child"><li class="nav-item nav-level-5"><a class="nav-link" href="#场景-1"><span class="nav-number">2.0.2.0.1.</span> <span class="nav-text">场景</span></a></li><li class="nav-item nav-level-5"><a class="nav-link" href="#原因-1"><span class="nav-number">2.0.2.0.2.</span> <span class="nav-text">原因</span></a></li><li class="nav-item nav-level-5"><a class="nav-link" href="#解决方案-1"><span class="nav-number">2.0.2.0.3.</span> <span class="nav-text">解决方案</span></a></li></ol></li></ol></li><li class="nav-item nav-level-3"><a class="nav-link" href="#方法区溢出"><span class="nav-number">2.0.3.</span> <span class="nav-text">方法区溢出</span></a><ol class="nav-child"><li class="nav-item nav-level-5"><a class="nav-link" href="#场景-2"><span class="nav-number">2.0.3.0.1.</span> <span class="nav-text">场景</span></a></li><li class="nav-item nav-level-5"><a class="nav-link" href="#原因-2"><span class="nav-number">2.0.3.0.2.</span> <span class="nav-text">原因</span></a></li><li class="nav-item nav-level-5"><a class="nav-link" href="#解决方案-2"><span class="nav-number">2.0.3.0.3.</span> <span class="nav-text">解决方案</span></a></li></ol></li></ol></li><li class="nav-item nav-level-3"><a class="nav-link" href="#本机直接内存溢出"><span class="nav-number">2.0.4.</span> <span class="nav-text">本机直接内存溢出</span></a><ol class="nav-child"><li class="nav-item nav-level-5"><a class="nav-link" href="#场景-3"><span class="nav-number">2.0.4.0.1.</span> <span class="nav-text">场景</span></a></li><li class="nav-item nav-level-5"><a class="nav-link" href="#原因-3"><span class="nav-number">2.0.4.0.2.</span> <span class="nav-text">原因</span></a></li><li class="nav-item nav-level-5"><a class="nav-link" href="#解决方案-3"><span class="nav-number">2.0.4.0.3.</span> <span class="nav-text">解决方案</span></a></li></ol></li></ol></li></ol></li></ol></li></ol></div>
+            
+
+          </div>
+        </section>
+      <!--/noindex-->
       
 
       
@@ -768,6 +672,10 @@
 
 
   
+  <script type="text/javascript" src="/js/src/scrollspy.js?v=5.1.2"></script>
+<script type="text/javascript" src="/js/src/post-details.js?v=5.1.2"></script>
+
+
 
   
 
