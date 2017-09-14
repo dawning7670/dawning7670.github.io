@@ -85,7 +85,7 @@
 <link href="/css/main.css?v=5.1.2" rel="stylesheet" type="text/css" />
 
 
-  <meta name="keywords" content="dawning7670, hexo" />
+  <meta name="keywords" content="Java,JVM," />
 
 
 
@@ -102,6 +102,7 @@
 
 
 <meta name="description" content="JVM内存模型 堆区 堆区主要存放使用关键字new创建的对象和数组 堆区被所有线程共享 垃圾收集的主要目标 空间上只需要逻辑连续，物理上可以不连续  栈区栈区分为两个部分  本地方法栈 虚拟机栈  虚拟机方法栈 存储Java方法调用时产生的局部变量等信息，每个方法调用时都会创建一个栈帧（frame） 线程私有，每个线程都有属于自己的方法栈  本地方法栈 存储非Java方法调用产生的局部变量等信息">
+<meta name="keywords" content="Java,JVM">
 <meta property="og:type" content="article">
 <meta property="og:title" content="JVM-内存模型与内存溢出分析">
 <meta property="og:url" content="http://yoursite.com/2017/09/12/JVM-内存模型与内存溢出分析/index.html">
@@ -109,7 +110,7 @@
 <meta property="og:description" content="JVM内存模型 堆区 堆区主要存放使用关键字new创建的对象和数组 堆区被所有线程共享 垃圾收集的主要目标 空间上只需要逻辑连续，物理上可以不连续  栈区栈区分为两个部分  本地方法栈 虚拟机栈  虚拟机方法栈 存储Java方法调用时产生的局部变量等信息，每个方法调用时都会创建一个栈帧（frame） 线程私有，每个线程都有属于自己的方法栈  本地方法栈 存储非Java方法调用产生的局部变量等信息">
 <meta property="og:locale" content="zh-Hans">
 <meta property="og:image" content="http://note.youdao.com/yws/api/personal/file/93C5049D50E34A529C8351683EB54588?method=download&shareKey=7162e5f27c7b61ae0d984d79a780e596">
-<meta property="og:updated_time" content="2017-09-11T23:33:04.640Z">
+<meta property="og:updated_time" content="2017-09-14T12:25:26.744Z">
 <meta name="twitter:card" content="summary">
 <meta name="twitter:title" content="JVM-内存模型与内存溢出分析">
 <meta name="twitter:description" content="JVM内存模型 堆区 堆区主要存放使用关键字new创建的对象和数组 堆区被所有线程共享 垃圾收集的主要目标 空间上只需要逻辑连续，物理上可以不连续  栈区栈区分为两个部分  本地方法栈 虚拟机栈  虚拟机方法栈 存储Java方法调用时产生的局部变量等信息，每个方法调用时都会创建一个栈帧（frame） 线程私有，每个线程都有属于自己的方法栈  本地方法栈 存储非Java方法调用产生的局部变量等信息">
@@ -220,6 +221,16 @@
               <i class="menu-item-icon fa fa-fw fa-archive"></i> <br />
             
             归档
+          </a>
+        </li>
+      
+        
+        <li class="menu-item menu-item-tags">
+          <a href="/tags/" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-tags"></i> <br />
+            
+            标签
           </a>
         </li>
       
@@ -413,6 +424,14 @@
 
     <footer class="post-footer">
       
+        <div class="post-tags">
+          
+            <a href="/tags/Java/" rel="tag"># Java</a>
+          
+            <a href="/tags/JVM/" rel="tag"># JVM</a>
+          
+        </div>
+      
 
       
       
@@ -514,6 +533,15 @@
 
           
 
+          
+            
+            
+            <div class="site-state-item site-state-tags">
+              <a href="/tags/index.html">
+                <span class="site-state-item-count">4</span>
+                <span class="site-state-item-name">标签</span>
+              </a>
+            </div>
           
 
         </nav>
