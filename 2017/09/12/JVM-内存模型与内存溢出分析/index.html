@@ -101,19 +101,19 @@
 
 
 
-<meta name="description" content="JVM内存模型 ##堆区  堆区主要存放使用关键字new创建的对象和数组 堆区被所有线程共享 垃圾收集的主要目标 空间上只需要逻辑连续，物理上可以不连续  ##栈区 栈区分为两个部分  本地方法栈 虚拟机栈  ###虚拟机方法栈  存储Java方法调用时产生的局部变量等信息，每个方法调用时都会创建一个栈帧（frame） 线程私有，每个线程都有属于自己的方法栈  ###本地方法栈  存储非Java方">
+<meta name="description" content="JVM内存模型 堆区 堆区主要存放使用关键字new创建的对象和数组 堆区被所有线程共享 垃圾收集的主要目标 空间上只需要逻辑连续，物理上可以不连续  栈区栈区分为两个部分  本地方法栈 虚拟机栈  虚拟机方法栈 存储Java方法调用时产生的局部变量等信息，每个方法调用时都会创建一个栈帧（frame） 线程私有，每个线程都有属于自己的方法栈  本地方法栈 存储非Java方法调用产生的局部变量等信息">
 <meta name="keywords" content="Java,JVM">
 <meta property="og:type" content="article">
 <meta property="og:title" content="JVM-内存模型与内存溢出分析">
 <meta property="og:url" content="http://yoursite.com/2017/09/12/JVM-内存模型与内存溢出分析/index.html">
 <meta property="og:site_name" content="dawning&#39;s blog~">
-<meta property="og:description" content="JVM内存模型 ##堆区  堆区主要存放使用关键字new创建的对象和数组 堆区被所有线程共享 垃圾收集的主要目标 空间上只需要逻辑连续，物理上可以不连续  ##栈区 栈区分为两个部分  本地方法栈 虚拟机栈  ###虚拟机方法栈  存储Java方法调用时产生的局部变量等信息，每个方法调用时都会创建一个栈帧（frame） 线程私有，每个线程都有属于自己的方法栈  ###本地方法栈  存储非Java方">
+<meta property="og:description" content="JVM内存模型 堆区 堆区主要存放使用关键字new创建的对象和数组 堆区被所有线程共享 垃圾收集的主要目标 空间上只需要逻辑连续，物理上可以不连续  栈区栈区分为两个部分  本地方法栈 虚拟机栈  虚拟机方法栈 存储Java方法调用时产生的局部变量等信息，每个方法调用时都会创建一个栈帧（frame） 线程私有，每个线程都有属于自己的方法栈  本地方法栈 存储非Java方法调用产生的局部变量等信息">
 <meta property="og:locale" content="zh-Hans">
 <meta property="og:image" content="http://note.youdao.com/yws/api/personal/file/93C5049D50E34A529C8351683EB54588?method=download&shareKey=7162e5f27c7b61ae0d984d79a780e596">
-<meta property="og:updated_time" content="2017-09-25T23:34:27.479Z">
+<meta property="og:updated_time" content="2017-09-25T23:37:55.452Z">
 <meta name="twitter:card" content="summary">
 <meta name="twitter:title" content="JVM-内存模型与内存溢出分析">
-<meta name="twitter:description" content="JVM内存模型 ##堆区  堆区主要存放使用关键字new创建的对象和数组 堆区被所有线程共享 垃圾收集的主要目标 空间上只需要逻辑连续，物理上可以不连续  ##栈区 栈区分为两个部分  本地方法栈 虚拟机栈  ###虚拟机方法栈  存储Java方法调用时产生的局部变量等信息，每个方法调用时都会创建一个栈帧（frame） 线程私有，每个线程都有属于自己的方法栈  ###本地方法栈  存储非Java方">
+<meta name="twitter:description" content="JVM内存模型 堆区 堆区主要存放使用关键字new创建的对象和数组 堆区被所有线程共享 垃圾收集的主要目标 空间上只需要逻辑连续，物理上可以不连续  栈区栈区分为两个部分  本地方法栈 虚拟机栈  虚拟机方法栈 存储Java方法调用时产生的局部变量等信息，每个方法调用时都会创建一个栈帧（frame） 线程私有，每个线程都有属于自己的方法栈  本地方法栈 存储非Java方法调用产生的局部变量等信息">
 <meta name="twitter:image" content="http://note.youdao.com/yws/api/personal/file/93C5049D50E34A529C8351683EB54588?method=download&shareKey=7162e5f27c7b61ae0d984d79a780e596">
 
 
@@ -335,53 +335,43 @@
 
       
         <h1 id="JVM内存模型"><a href="#JVM内存模型" class="headerlink" title="JVM内存模型"></a>JVM内存模型</h1><p><img src="http://note.youdao.com/yws/api/personal/file/93C5049D50E34A529C8351683EB54588?method=download&amp;shareKey=7162e5f27c7b61ae0d984d79a780e596" alt="JVM运行时内存布局"></p>
-<p>##堆区</p>
-<ul>
+<h2 id="堆区"><a href="#堆区" class="headerlink" title="堆区"></a>堆区</h2><ul>
 <li>堆区主要存放使用关键字new创建的对象和数组</li>
 <li>堆区被所有线程共享</li>
 <li>垃圾收集的主要目标</li>
 <li>空间上只需要逻辑连续，物理上可以不连续</li>
 </ul>
-<p>##栈区</p>
-<p>栈区分为两个部分</p>
+<h2 id="栈区"><a href="#栈区" class="headerlink" title="栈区"></a>栈区</h2><p>栈区分为两个部分</p>
 <ul>
 <li>本地方法栈</li>
 <li>虚拟机栈</li>
 </ul>
-<p>###虚拟机方法栈</p>
-<ul>
+<h3 id="虚拟机方法栈"><a href="#虚拟机方法栈" class="headerlink" title="虚拟机方法栈"></a>虚拟机方法栈</h3><ul>
 <li>存储Java方法调用时产生的局部变量等信息，每个方法调用时都会创建一个栈帧（frame）</li>
 <li>线程私有，每个线程都有属于自己的方法栈</li>
 </ul>
-<p>###本地方法栈</p>
-<ul>
+<h3 id="本地方法栈"><a href="#本地方法栈" class="headerlink" title="本地方法栈"></a>本地方法栈</h3><ul>
 <li>存储非Java方法调用产生的局部变量等信息</li>
 <li>类似普通方法栈</li>
 </ul>
-<p>##方法区</p>
-<p>方法区主要分为三个部分</p>
+<h2 id="方法区"><a href="#方法区" class="headerlink" title="方法区"></a>方法区</h2><p>方法区主要分为三个部分</p>
 <ul>
 <li>类信息</li>
 <li>静态变量</li>
 <li>运行时常量</li>
 </ul>
-<p>##程序计数器</p>
-<ul>
+<h2 id="程序计数器"><a href="#程序计数器" class="headerlink" title="程序计数器"></a>程序计数器</h2><ul>
 <li>指向当前线程正在执行的字节码指令地址</li>
 <li>内存空间较小</li>
 <li>线程私有（每个线程都有自己的程序计数器）</li>
 </ul>
 <h1 id="内存溢出分析"><a href="#内存溢出分析" class="headerlink" title="内存溢出分析"></a>内存溢出分析</h1><p>在了解了JVM的内存模型之后，我们就可以根据该模型来分析各种内存溢出的可能原因。</p>
 <p>在JAVA程序中基本上很少显示操作程序计数器区域，所以该区域一般不会发生内存溢出。故JVM中可能发生内存溢出的区域主要有三个区域：堆区、栈区、方法区。</p>
-<p>##堆溢出</p>
-<p>###场景</p>
-<figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div></pre></td><td class="code"><pre><div class="line">java.lang.OutOfMemoryError: Java heap space</div><div class="line">...</div></pre></td></tr></table></figure>
-<p>###原因</p>
-<ul>
+<h2 id="堆溢出"><a href="#堆溢出" class="headerlink" title="堆溢出"></a>堆溢出</h2><h3 id="场景"><a href="#场景" class="headerlink" title="场景"></a>场景</h3><figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div></pre></td><td class="code"><pre><div class="line">java.lang.OutOfMemoryError: Java heap space</div><div class="line">...</div></pre></td></tr></table></figure>
+<h3 id="原因"><a href="#原因" class="headerlink" title="原因"></a>原因</h3><ul>
 <li>程序运行时所需对象的总大小大于堆内存的最大值</li>
 </ul>
-<p>###解决方案</p>
-<ul>
+<h3 id="解决方案"><a href="#解决方案" class="headerlink" title="解决方案"></a>解决方案</h3><ul>
 <li><p>首先需要使用一些性能分析工具来确定是内存溢出（overflow）还是内存泄漏（leak）</p>
 </li>
 <li><p>如果是内存溢出则说明程序确实需要这么大的堆内存，我们可以通过调整参数-Xms和-Xmx</p>
@@ -390,43 +380,32 @@
 <li><p>如果是内存泄漏则需要工具确定泄漏内存的代码位置从而修复内存泄漏问题</p>
 </li>
 </ul>
-<p>##栈溢出</p>
-<p>###场景</p>
-<figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div></pre></td><td class="code"><pre><div class="line">java.lang.StackOverflow</div><div class="line">...</div></pre></td></tr></table></figure>
-<p>###原因</p>
-<ul>
+<h2 id="栈溢出"><a href="#栈溢出" class="headerlink" title="栈溢出"></a>栈溢出</h2><h3 id="场景-1"><a href="#场景-1" class="headerlink" title="场景"></a>场景</h3><figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div></pre></td><td class="code"><pre><div class="line">java.lang.StackOverflow</div><div class="line">...</div></pre></td></tr></table></figure>
+<h3 id="原因-1"><a href="#原因-1" class="headerlink" title="原因"></a>原因</h3><ul>
 <li>线程栈超出虚拟机所允许的最大深度，例如递归调用</li>
 <li>线程执行方法调用时没有足够的栈空间创建新的栈帧</li>
 </ul>
-<p>###解决方案</p>
-<ul>
+<h3 id="解决方案-1"><a href="#解决方案-1" class="headerlink" title="解决方案"></a>解决方案</h3><ul>
 <li>一般根据该异常可直接定位到具体的代码位置，并且该异常绝大多数是由于不正确的递归调用导致</li>
 <li>通过参数 -Xss 来调整栈容量</li>
 </ul>
-<p>##方法区溢出</p>
-<p>###场景</p>
-<figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div></pre></td><td class="code"><pre><div class="line">java.lang.OutOfMemoryError: PermGen space</div><div class="line">...</div></pre></td></tr></table></figure>
-<p>###原因</p>
-<ul>
+<h2 id="方法区溢出"><a href="#方法区溢出" class="headerlink" title="方法区溢出"></a>方法区溢出</h2><h3 id="场景-2"><a href="#场景-2" class="headerlink" title="场景"></a>场景</h3><figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div></pre></td><td class="code"><pre><div class="line">java.lang.OutOfMemoryError: PermGen space</div><div class="line">...</div></pre></td></tr></table></figure>
+<h3 id="原因-2"><a href="#原因-2" class="headerlink" title="原因"></a>原因</h3><ul>
 <li>运行时大量生成Class，例如使用JDK动态代理和CGLib等字节码生成工具</li>
 <li>显式调用了Strin.intern()方法将常量扔进常量池</li>
 </ul>
-<p>###解决方案</p>
-<ul>
+<h3 id="解决方案-2"><a href="#解决方案-2" class="headerlink" title="解决方案"></a>解决方案</h3><ul>
 <li>根据异常定位到具体代码位置，分析代码逻辑</li>
 <li>通过-XX:PermSize=64M -XX:MaxPermSize=128M来调整方法区大小</li>
 </ul>
-<p>##本机直接内存溢出</p>
-<p>在JVM中有些特殊方法可能直接使用本机内存，例如：NIO方法</p>
+<hr>
+<h2 id="本机直接内存溢出"><a href="#本机直接内存溢出" class="headerlink" title="本机直接内存溢出"></a>本机直接内存溢出</h2><p>在JVM中有些特殊方法可能直接使用本机内存，例如：NIO方法</p>
 <p>这部分内存虽然不受JVM内存限制但受本机最大内存限制，直接内存可以通过参数-XX:MaxDirectMemorySize指定并且默认大小等于堆内存大小。由于这部分内存频繁使用，所以也可能出现内存溢出。</p>
-<p>###场景</p>
-<figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div></pre></td><td class="code"><pre><div class="line">java.lang.OutOfMemoryError</div><div class="line">...</div></pre></td></tr></table></figure>
-<p>###原因</p>
-<ul>
+<h3 id="场景-3"><a href="#场景-3" class="headerlink" title="场景"></a>场景</h3><figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div></pre></td><td class="code"><pre><div class="line">java.lang.OutOfMemoryError</div><div class="line">...</div></pre></td></tr></table></figure>
+<h3 id="原因-3"><a href="#原因-3" class="headerlink" title="原因"></a>原因</h3><ul>
 <li>使用了NIO方法并且内存设置不当（JVM内存+直接内存&gt;=物理内存）</li>
 </ul>
-<p>###解决方案</p>
-<ul>
+<h3 id="解决方案-3"><a href="#解决方案-3" class="headerlink" title="解决方案"></a>解决方案</h3><ul>
 <li>根据异常定位代码位置，分析代码逻辑</li>
 <li>调整内存分配（JVM内存+直接内存&lt;=物理内存）</li>
 </ul>
@@ -598,7 +577,7 @@
             
 
             
-              <div class="post-toc-content"><ol class="nav"><li class="nav-item nav-level-1"><a class="nav-link" href="#JVM内存模型"><span class="nav-number">1.</span> <span class="nav-text">JVM内存模型</span></a></li><li class="nav-item nav-level-1"><a class="nav-link" href="#内存溢出分析"><span class="nav-number">2.</span> <span class="nav-text">内存溢出分析</span></a></li></ol></div>
+              <div class="post-toc-content"><ol class="nav"><li class="nav-item nav-level-1"><a class="nav-link" href="#JVM内存模型"><span class="nav-number">1.</span> <span class="nav-text">JVM内存模型</span></a><ol class="nav-child"><li class="nav-item nav-level-2"><a class="nav-link" href="#堆区"><span class="nav-number">1.1.</span> <span class="nav-text">堆区</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#栈区"><span class="nav-number">1.2.</span> <span class="nav-text">栈区</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#虚拟机方法栈"><span class="nav-number">1.2.1.</span> <span class="nav-text">虚拟机方法栈</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#本地方法栈"><span class="nav-number">1.2.2.</span> <span class="nav-text">本地方法栈</span></a></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link" href="#方法区"><span class="nav-number">1.3.</span> <span class="nav-text">方法区</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#程序计数器"><span class="nav-number">1.4.</span> <span class="nav-text">程序计数器</span></a></li></ol></li><li class="nav-item nav-level-1"><a class="nav-link" href="#内存溢出分析"><span class="nav-number">2.</span> <span class="nav-text">内存溢出分析</span></a><ol class="nav-child"><li class="nav-item nav-level-2"><a class="nav-link" href="#堆溢出"><span class="nav-number">2.1.</span> <span class="nav-text">堆溢出</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#场景"><span class="nav-number">2.1.1.</span> <span class="nav-text">场景</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#原因"><span class="nav-number">2.1.2.</span> <span class="nav-text">原因</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#解决方案"><span class="nav-number">2.1.3.</span> <span class="nav-text">解决方案</span></a></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link" href="#栈溢出"><span class="nav-number">2.2.</span> <span class="nav-text">栈溢出</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#场景-1"><span class="nav-number">2.2.1.</span> <span class="nav-text">场景</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#原因-1"><span class="nav-number">2.2.2.</span> <span class="nav-text">原因</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#解决方案-1"><span class="nav-number">2.2.3.</span> <span class="nav-text">解决方案</span></a></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link" href="#方法区溢出"><span class="nav-number">2.3.</span> <span class="nav-text">方法区溢出</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#场景-2"><span class="nav-number">2.3.1.</span> <span class="nav-text">场景</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#原因-2"><span class="nav-number">2.3.2.</span> <span class="nav-text">原因</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#解决方案-2"><span class="nav-number">2.3.3.</span> <span class="nav-text">解决方案</span></a></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link" href="#本机直接内存溢出"><span class="nav-number">2.4.</span> <span class="nav-text">本机直接内存溢出</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#场景-3"><span class="nav-number">2.4.1.</span> <span class="nav-text">场景</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#原因-3"><span class="nav-number">2.4.2.</span> <span class="nav-text">原因</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#解决方案-3"><span class="nav-number">2.4.3.</span> <span class="nav-text">解决方案</span></a></li></ol></li></ol></li></ol></div>
             
 
           </div>
