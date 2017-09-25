@@ -348,20 +348,25 @@
 <p>集群节点数据同步</p>
 </li>
 </ul>
-<h1 id="原理"><a href="#原理" class="headerlink" title="原理"></a>原理</h1><h3 id="安全策略"><a href="#安全策略" class="headerlink" title="安全策略"></a>安全策略</h3><p>使用iptables的<code>forward</code>链来限制转发策略</p>
+<h1 id="原理"><a href="#原理" class="headerlink" title="原理"></a>原理</h1><p>##安全策略</p>
+<p>使用iptables的<code>forward</code>链来限制转发策略</p>
 <ol>
 <li>iptables 的<code>forward</code>链匹配10.10.42.0/16的源地址和目的地址</li>
 <li>如果匹配成功则匹配自定义规则链（自定义安全策略全都在<code>forward</code>链中）</li>
 <li>如果匹配失败则允许转发（安全策略无法限制宿主机访问容器）</li>
 </ol>
-<h3 id="跨宿主机访问"><a href="#跨宿主机访问" class="headerlink" title="跨宿主机访问"></a>跨宿主机访问</h3><p>使用IPSEC隧道模式来支持容器跨宿主机访问，所有跨主机数据包默认加密</p>
-<h5 id="IP隧道"><a href="#IP隧道" class="headerlink" title="IP隧道"></a>IP隧道</h5><p>IP隧道就是将数据封装到一个自定义的协议中，然后通过TCP或UDP传输到目标主机，目标主机再进行拆包得到真实报文并进行后续处理。理论上只需要满足IP层可达就可以使用IP隧道。</p>
-<h5 id="封包过程"><a href="#封包过程" class="headerlink" title="封包过程"></a>封包过程</h5><ol>
+<p>##跨宿主机访问</p>
+<p>使用IPSEC隧道模式来支持容器跨宿主机访问，所有跨主机数据包默认加密</p>
+<p>###IP隧道</p>
+<p>IP隧道就是将数据封装到一个自定义的协议中，然后通过TCP或UDP传输到目标主机，目标主机再进行拆包得到真实报文并进行后续处理。理论上只需要满足IP层可达就可以使用IP隧道。</p>
+<p>###封包过程</p>
+<ol>
 <li>arp代理拦截ARP请求报文并判断请求IP地址是否处于同一宿主机</li>
 <li>如果处于同一宿主机则不操作，实际的IP地址对应的MAC地址为真实地址（docker0网桥中已经连接的某个容器的MAC）</li>
 <li>如果处于其他宿主机（跨主机），则响应IP地址对应的MAC地址为IPSEC容器的MAC地址。由于网桥相当于数据链路层使用MAC地址，所以这里会把数据包转发到IPSEC容器内部，之后该容器使用IPSEC协议将数据包封装成UDP包并发送到目标宿主机的500端口</li>
 </ol>
-<h5 id="拆包过程"><a href="#拆包过程" class="headerlink" title="拆包过程"></a>拆包过程</h5><ol>
+<p>###拆包过程</p>
+<ol>
 <li>iptables的<code>prerouting</code>链匹配UDP协议并且目的端口号为500的数据包，将目的地址修改成宿主机IPSEC容器IP地址</li>
 <li>IPSEC容器拆包并将数据包转发到真实容器</li>
 </ol>
@@ -490,43 +495,53 @@
         
           
             <h1 id="JVM内存模型"><a href="#JVM内存模型" class="headerlink" title="JVM内存模型"></a>JVM内存模型</h1><p><img src="http://note.youdao.com/yws/api/personal/file/93C5049D50E34A529C8351683EB54588?method=download&amp;shareKey=7162e5f27c7b61ae0d984d79a780e596" alt="JVM运行时内存布局"></p>
-<h3 id="堆区"><a href="#堆区" class="headerlink" title="堆区"></a>堆区</h3><ul>
+<p>##堆区</p>
+<ul>
 <li>堆区主要存放使用关键字new创建的对象和数组</li>
 <li>堆区被所有线程共享</li>
 <li>垃圾收集的主要目标</li>
 <li>空间上只需要逻辑连续，物理上可以不连续</li>
 </ul>
-<h3 id="栈区"><a href="#栈区" class="headerlink" title="栈区"></a>栈区</h3><p>栈区分为两个部分</p>
+<p>##栈区</p>
+<p>栈区分为两个部分</p>
 <ul>
 <li>本地方法栈</li>
 <li>虚拟机栈</li>
 </ul>
-<h5 id="虚拟机方法栈"><a href="#虚拟机方法栈" class="headerlink" title="虚拟机方法栈"></a>虚拟机方法栈</h5><ul>
+<p>###虚拟机方法栈</p>
+<ul>
 <li>存储Java方法调用时产生的局部变量等信息，每个方法调用时都会创建一个栈帧（frame）</li>
 <li>线程私有，每个线程都有属于自己的方法栈</li>
 </ul>
-<h5 id="本地方法栈"><a href="#本地方法栈" class="headerlink" title="本地方法栈"></a>本地方法栈</h5><ul>
+<p>###本地方法栈</p>
+<ul>
 <li>存储非Java方法调用产生的局部变量等信息</li>
 <li>类似普通方法栈</li>
 </ul>
-<h3 id="方法区"><a href="#方法区" class="headerlink" title="方法区"></a>方法区</h3><p>方法区主要分为三个部分</p>
+<p>##方法区</p>
+<p>方法区主要分为三个部分</p>
 <ul>
 <li>类信息</li>
 <li>静态变量</li>
 <li>运行时常量</li>
 </ul>
-<h3 id="程序计数器"><a href="#程序计数器" class="headerlink" title="程序计数器"></a>程序计数器</h3><ul>
+<p>##程序计数器</p>
+<ul>
 <li>指向当前线程正在执行的字节码指令地址</li>
 <li>内存空间较小</li>
 <li>线程私有（每个线程都有自己的程序计数器）</li>
 </ul>
 <h1 id="内存溢出分析"><a href="#内存溢出分析" class="headerlink" title="内存溢出分析"></a>内存溢出分析</h1><p>在了解了JVM的内存模型之后，我们就可以根据该模型来分析各种内存溢出的可能原因。</p>
 <p>在JAVA程序中基本上很少显示操作程序计数器区域，所以该区域一般不会发生内存溢出。故JVM中可能发生内存溢出的区域主要有三个区域：堆区、栈区、方法区。</p>
-<h3 id="堆溢出"><a href="#堆溢出" class="headerlink" title="堆溢出"></a>堆溢出</h3><h5 id="场景"><a href="#场景" class="headerlink" title="场景"></a>场景</h5><figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div></pre></td><td class="code"><pre><div class="line">java.lang.OutOfMemoryError: Java heap space</div><div class="line">...</div></pre></td></tr></table></figure>
-<h5 id="原因"><a href="#原因" class="headerlink" title="原因"></a>原因</h5><ul>
+<p>##堆溢出</p>
+<p>###场景</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div></pre></td><td class="code"><pre><div class="line">java.lang.OutOfMemoryError: Java heap space</div><div class="line">...</div></pre></td></tr></table></figure>
+<p>###原因</p>
+<ul>
 <li>程序运行时所需对象的总大小大于堆内存的最大值</li>
 </ul>
-<h5 id="解决方案"><a href="#解决方案" class="headerlink" title="解决方案"></a>解决方案</h5><ul>
+<p>###解决方案</p>
+<ul>
 <li><p>首先需要使用一些性能分析工具来确定是内存溢出（overflow）还是内存泄漏（leak）</p>
 </li>
 <li><p>如果是内存溢出则说明程序确实需要这么大的堆内存，我们可以通过调整参数-Xms和-Xmx</p>
@@ -535,32 +550,43 @@
 <li><p>如果是内存泄漏则需要工具确定泄漏内存的代码位置从而修复内存泄漏问题</p>
 </li>
 </ul>
-<h3 id="栈溢出"><a href="#栈溢出" class="headerlink" title="栈溢出"></a>栈溢出</h3><h5 id="场景-1"><a href="#场景-1" class="headerlink" title="场景"></a>场景</h5><figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div></pre></td><td class="code"><pre><div class="line">java.lang.StackOverflow</div><div class="line">...</div></pre></td></tr></table></figure>
-<h5 id="原因-1"><a href="#原因-1" class="headerlink" title="原因"></a>原因</h5><ul>
+<p>##栈溢出</p>
+<p>###场景</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div></pre></td><td class="code"><pre><div class="line">java.lang.StackOverflow</div><div class="line">...</div></pre></td></tr></table></figure>
+<p>###原因</p>
+<ul>
 <li>线程栈超出虚拟机所允许的最大深度，例如递归调用</li>
 <li>线程执行方法调用时没有足够的栈空间创建新的栈帧</li>
 </ul>
-<h5 id="解决方案-1"><a href="#解决方案-1" class="headerlink" title="解决方案"></a>解决方案</h5><ul>
+<p>###解决方案</p>
+<ul>
 <li>一般根据该异常可直接定位到具体的代码位置，并且该异常绝大多数是由于不正确的递归调用导致</li>
 <li>通过参数 -Xss 来调整栈容量</li>
 </ul>
-<h3 id="方法区溢出"><a href="#方法区溢出" class="headerlink" title="方法区溢出"></a>方法区溢出</h3><h5 id="场景-2"><a href="#场景-2" class="headerlink" title="场景"></a>场景</h5><figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div></pre></td><td class="code"><pre><div class="line">java.lang.OutOfMemoryError: PermGen space</div><div class="line">...</div></pre></td></tr></table></figure>
-<h5 id="原因-2"><a href="#原因-2" class="headerlink" title="原因"></a>原因</h5><ul>
+<p>##方法区溢出</p>
+<p>###场景</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div></pre></td><td class="code"><pre><div class="line">java.lang.OutOfMemoryError: PermGen space</div><div class="line">...</div></pre></td></tr></table></figure>
+<p>###原因</p>
+<ul>
 <li>运行时大量生成Class，例如使用JDK动态代理和CGLib等字节码生成工具</li>
 <li>显式调用了Strin.intern()方法将常量扔进常量池</li>
 </ul>
-<h5 id="解决方案-2"><a href="#解决方案-2" class="headerlink" title="解决方案"></a>解决方案</h5><ul>
+<p>###解决方案</p>
+<ul>
 <li>根据异常定位到具体代码位置，分析代码逻辑</li>
 <li>通过-XX:PermSize=64M -XX:MaxPermSize=128M来调整方法区大小</li>
 </ul>
-<hr>
-<h3 id="本机直接内存溢出"><a href="#本机直接内存溢出" class="headerlink" title="本机直接内存溢出"></a>本机直接内存溢出</h3><p>在JVM中有些特殊方法可能直接使用本机内存，例如：NIO方法</p>
+<p>##本机直接内存溢出</p>
+<p>在JVM中有些特殊方法可能直接使用本机内存，例如：NIO方法</p>
 <p>这部分内存虽然不受JVM内存限制但受本机最大内存限制，直接内存可以通过参数-XX:MaxDirectMemorySize指定并且默认大小等于堆内存大小。由于这部分内存频繁使用，所以也可能出现内存溢出。</p>
-<h5 id="场景-3"><a href="#场景-3" class="headerlink" title="场景"></a>场景</h5><figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div></pre></td><td class="code"><pre><div class="line">java.lang.OutOfMemoryError</div><div class="line">...</div></pre></td></tr></table></figure>
-<h5 id="原因-3"><a href="#原因-3" class="headerlink" title="原因"></a>原因</h5><ul>
+<p>###场景</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div></pre></td><td class="code"><pre><div class="line">java.lang.OutOfMemoryError</div><div class="line">...</div></pre></td></tr></table></figure>
+<p>###原因</p>
+<ul>
 <li>使用了NIO方法并且内存设置不当（JVM内存+直接内存&gt;=物理内存）</li>
 </ul>
-<h5 id="解决方案-3"><a href="#解决方案-3" class="headerlink" title="解决方案"></a>解决方案</h5><ul>
+<p>###解决方案</p>
+<ul>
 <li>根据异常定位代码位置，分析代码逻辑</li>
 <li>调整内存分配（JVM内存+直接内存&lt;=物理内存）</li>
 </ul>
@@ -686,11 +712,14 @@
             <h1 id="递归定义列表"><a href="#递归定义列表" class="headerlink" title="递归定义列表"></a>递归定义列表</h1><p>对于任意一个列表[1, 2, 3…]，它可以看成由头元素和剩下的列表组成</p>
 <p>在Scala标准库中的List是一种类似单向链表的结构</p>
 <p>例如：<br><figure class="highlight scala"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div></pre></td><td class="code"><pre><div class="line"><span class="type">List</span>(<span class="number">1</span>, <span class="number">2</span>, <span class="number">3</span>) = <span class="number">1</span> :: (<span class="number">2</span> :: (<span class="number">3</span> :: <span class="type">Nil</span>))</div><div class="line"><span class="type">List</span>(<span class="number">1</span>) = <span class="number">1</span> :: <span class="type">Nil</span></div></pre></td></tr></table></figure></p>
-<h1 id="常用函数递归实现"><a href="#常用函数递归实现" class="headerlink" title="常用函数递归实现"></a>常用函数递归实现</h1><h4 id="求和函数"><a href="#求和函数" class="headerlink" title="求和函数"></a>求和函数</h4><p>对于递归定义的列表，求所有元素的总和可以表达成下面的递归式：</p>
+<h1 id="常用函数递归实现"><a href="#常用函数递归实现" class="headerlink" title="常用函数递归实现"></a>常用函数递归实现</h1><p>##求和函数</p>
+<p>对于递归定义的列表，求所有元素的总和可以表达成下面的递归式：</p>
 <p>sum(lst) = head(lst) + sum(tail(lst))</p>
 <p>将上面的递归式转化成Scala中的代码<br><figure class="highlight scala"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div></pre></td><td class="code"><pre><div class="line"><span class="function"><span class="keyword">def</span> <span class="title">sum</span></span>(lst: <span class="type">List</span>[<span class="type">Int</span>]): <span class="type">Int</span> = lst <span class="keyword">match</span> &#123;</div><div class="line">  <span class="keyword">case</span> head :: tail =&gt; head + sum(tail)</div><div class="line">  <span class="keyword">case</span> _ =&gt; <span class="number">0</span></div><div class="line">&#125;</div></pre></td></tr></table></figure></p>
-<h4 id="求乘积"><a href="#求乘积" class="headerlink" title="求乘积"></a>求乘积</h4><figure class="highlight scala"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div></pre></td><td class="code"><pre><div class="line"><span class="function"><span class="keyword">def</span> <span class="title">multi</span></span>(lst: <span class="type">List</span>[<span class="type">Int</span>]): <span class="type">Int</span> = lst <span class="keyword">match</span> &#123;</div><div class="line">  <span class="keyword">case</span> head :: tail =&gt; head * sum(tail)</div><div class="line">  <span class="keyword">case</span> _ =&gt; <span class="number">1</span></div><div class="line">&#125;</div></pre></td></tr></table></figure>
-<h4 id="统计某个元素出现次数"><a href="#统计某个元素出现次数" class="headerlink" title="统计某个元素出现次数"></a>统计某个元素出现次数</h4><figure class="highlight scala"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div></pre></td><td class="code"><pre><div class="line"><span class="function"><span class="keyword">def</span> <span class="title">count</span></span>[<span class="type">A</span>](lst: <span class="type">List</span>[<span class="type">A</span>], a: <span class="type">A</span>): <span class="type">Int</span> = lst <span class="keyword">match</span> &#123;</div><div class="line">  <span class="keyword">case</span> head :: tail =&gt; <span class="keyword">if</span> (head == a) <span class="number">1</span> + count(tail, a) <span class="keyword">else</span> count(tail, a)</div><div class="line">  <span class="keyword">case</span> _ =&gt; <span class="number">0</span></div><div class="line">&#125;</div></pre></td></tr></table></figure>
+<p>##求乘积</p>
+<figure class="highlight scala"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div></pre></td><td class="code"><pre><div class="line"><span class="function"><span class="keyword">def</span> <span class="title">multi</span></span>(lst: <span class="type">List</span>[<span class="type">Int</span>]): <span class="type">Int</span> = lst <span class="keyword">match</span> &#123;</div><div class="line">  <span class="keyword">case</span> head :: tail =&gt; head * sum(tail)</div><div class="line">  <span class="keyword">case</span> _ =&gt; <span class="number">1</span></div><div class="line">&#125;</div></pre></td></tr></table></figure>
+<p>##统计某个元素出现次数</p>
+<figure class="highlight scala"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div></pre></td><td class="code"><pre><div class="line"><span class="function"><span class="keyword">def</span> <span class="title">count</span></span>[<span class="type">A</span>](lst: <span class="type">List</span>[<span class="type">A</span>], a: <span class="type">A</span>): <span class="type">Int</span> = lst <span class="keyword">match</span> &#123;</div><div class="line">  <span class="keyword">case</span> head :: tail =&gt; <span class="keyword">if</span> (head == a) <span class="number">1</span> + count(tail, a) <span class="keyword">else</span> count(tail, a)</div><div class="line">  <span class="keyword">case</span> _ =&gt; <span class="number">0</span></div><div class="line">&#125;</div></pre></td></tr></table></figure>
 <h1 id="抽象成一般模式"><a href="#抽象成一般模式" class="headerlink" title="抽象成一般模式"></a>抽象成一般模式</h1><p>通过观察上面的几个常用函数的实现模式，我们可以发现每个函数的整体结构类似，不同之处在于</p>
 <ul>
 <li>对于空列表的返回值</li>

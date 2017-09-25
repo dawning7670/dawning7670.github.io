@@ -101,18 +101,18 @@
 
 
 
-<meta name="description" content="递归定义列表对于任意一个列表[1, 2, 3…]，它可以看成由头元素和剩下的列表组成 在Scala标准库中的List是一种类似单向链表的结构 例如：12List(1, 2, 3) = 1 :: (2 :: (3 :: Nil))List(1) = 1 :: Nil 常用函数递归实现求和函数对于递归定义的列表，求所有元素的总和可以表达成下面的递归式： sum(lst) = head(lst) + s">
+<meta name="description" content="递归定义列表对于任意一个列表[1, 2, 3…]，它可以看成由头元素和剩下的列表组成 在Scala标准库中的List是一种类似单向链表的结构 例如：12List(1, 2, 3) = 1 :: (2 :: (3 :: Nil))List(1) = 1 :: Nil 常用函数递归实现##求和函数 对于递归定义的列表，求所有元素的总和可以表达成下面的递归式： sum(lst) = head(lst)">
 <meta name="keywords" content="Scala,FP">
 <meta property="og:type" content="article">
 <meta property="og:title" content="Scala函数式编程-递归数据结构">
 <meta property="og:url" content="http://yoursite.com/2017/09/07/Scala函数式编程-递归数据结构/index.html">
 <meta property="og:site_name" content="dawning&#39;s blog~">
-<meta property="og:description" content="递归定义列表对于任意一个列表[1, 2, 3…]，它可以看成由头元素和剩下的列表组成 在Scala标准库中的List是一种类似单向链表的结构 例如：12List(1, 2, 3) = 1 :: (2 :: (3 :: Nil))List(1) = 1 :: Nil 常用函数递归实现求和函数对于递归定义的列表，求所有元素的总和可以表达成下面的递归式： sum(lst) = head(lst) + s">
+<meta property="og:description" content="递归定义列表对于任意一个列表[1, 2, 3…]，它可以看成由头元素和剩下的列表组成 在Scala标准库中的List是一种类似单向链表的结构 例如：12List(1, 2, 3) = 1 :: (2 :: (3 :: Nil))List(1) = 1 :: Nil 常用函数递归实现##求和函数 对于递归定义的列表，求所有元素的总和可以表达成下面的递归式： sum(lst) = head(lst)">
 <meta property="og:locale" content="zh-Hans">
-<meta property="og:updated_time" content="2017-09-14T12:19:48.039Z">
+<meta property="og:updated_time" content="2017-09-25T23:35:14.556Z">
 <meta name="twitter:card" content="summary">
 <meta name="twitter:title" content="Scala函数式编程-递归数据结构">
-<meta name="twitter:description" content="递归定义列表对于任意一个列表[1, 2, 3…]，它可以看成由头元素和剩下的列表组成 在Scala标准库中的List是一种类似单向链表的结构 例如：12List(1, 2, 3) = 1 :: (2 :: (3 :: Nil))List(1) = 1 :: Nil 常用函数递归实现求和函数对于递归定义的列表，求所有元素的总和可以表达成下面的递归式： sum(lst) = head(lst) + s">
+<meta name="twitter:description" content="递归定义列表对于任意一个列表[1, 2, 3…]，它可以看成由头元素和剩下的列表组成 在Scala标准库中的List是一种类似单向链表的结构 例如：12List(1, 2, 3) = 1 :: (2 :: (3 :: Nil))List(1) = 1 :: Nil 常用函数递归实现##求和函数 对于递归定义的列表，求所有元素的总和可以表达成下面的递归式： sum(lst) = head(lst)">
 
 
 
@@ -335,11 +335,14 @@
         <h1 id="递归定义列表"><a href="#递归定义列表" class="headerlink" title="递归定义列表"></a>递归定义列表</h1><p>对于任意一个列表[1, 2, 3…]，它可以看成由头元素和剩下的列表组成</p>
 <p>在Scala标准库中的List是一种类似单向链表的结构</p>
 <p>例如：<br><figure class="highlight scala"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div></pre></td><td class="code"><pre><div class="line"><span class="type">List</span>(<span class="number">1</span>, <span class="number">2</span>, <span class="number">3</span>) = <span class="number">1</span> :: (<span class="number">2</span> :: (<span class="number">3</span> :: <span class="type">Nil</span>))</div><div class="line"><span class="type">List</span>(<span class="number">1</span>) = <span class="number">1</span> :: <span class="type">Nil</span></div></pre></td></tr></table></figure></p>
-<h1 id="常用函数递归实现"><a href="#常用函数递归实现" class="headerlink" title="常用函数递归实现"></a>常用函数递归实现</h1><h4 id="求和函数"><a href="#求和函数" class="headerlink" title="求和函数"></a>求和函数</h4><p>对于递归定义的列表，求所有元素的总和可以表达成下面的递归式：</p>
+<h1 id="常用函数递归实现"><a href="#常用函数递归实现" class="headerlink" title="常用函数递归实现"></a>常用函数递归实现</h1><p>##求和函数</p>
+<p>对于递归定义的列表，求所有元素的总和可以表达成下面的递归式：</p>
 <p>sum(lst) = head(lst) + sum(tail(lst))</p>
 <p>将上面的递归式转化成Scala中的代码<br><figure class="highlight scala"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div></pre></td><td class="code"><pre><div class="line"><span class="function"><span class="keyword">def</span> <span class="title">sum</span></span>(lst: <span class="type">List</span>[<span class="type">Int</span>]): <span class="type">Int</span> = lst <span class="keyword">match</span> &#123;</div><div class="line">  <span class="keyword">case</span> head :: tail =&gt; head + sum(tail)</div><div class="line">  <span class="keyword">case</span> _ =&gt; <span class="number">0</span></div><div class="line">&#125;</div></pre></td></tr></table></figure></p>
-<h4 id="求乘积"><a href="#求乘积" class="headerlink" title="求乘积"></a>求乘积</h4><figure class="highlight scala"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div></pre></td><td class="code"><pre><div class="line"><span class="function"><span class="keyword">def</span> <span class="title">multi</span></span>(lst: <span class="type">List</span>[<span class="type">Int</span>]): <span class="type">Int</span> = lst <span class="keyword">match</span> &#123;</div><div class="line">  <span class="keyword">case</span> head :: tail =&gt; head * sum(tail)</div><div class="line">  <span class="keyword">case</span> _ =&gt; <span class="number">1</span></div><div class="line">&#125;</div></pre></td></tr></table></figure>
-<h4 id="统计某个元素出现次数"><a href="#统计某个元素出现次数" class="headerlink" title="统计某个元素出现次数"></a>统计某个元素出现次数</h4><figure class="highlight scala"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div></pre></td><td class="code"><pre><div class="line"><span class="function"><span class="keyword">def</span> <span class="title">count</span></span>[<span class="type">A</span>](lst: <span class="type">List</span>[<span class="type">A</span>], a: <span class="type">A</span>): <span class="type">Int</span> = lst <span class="keyword">match</span> &#123;</div><div class="line">  <span class="keyword">case</span> head :: tail =&gt; <span class="keyword">if</span> (head == a) <span class="number">1</span> + count(tail, a) <span class="keyword">else</span> count(tail, a)</div><div class="line">  <span class="keyword">case</span> _ =&gt; <span class="number">0</span></div><div class="line">&#125;</div></pre></td></tr></table></figure>
+<p>##求乘积</p>
+<figure class="highlight scala"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div></pre></td><td class="code"><pre><div class="line"><span class="function"><span class="keyword">def</span> <span class="title">multi</span></span>(lst: <span class="type">List</span>[<span class="type">Int</span>]): <span class="type">Int</span> = lst <span class="keyword">match</span> &#123;</div><div class="line">  <span class="keyword">case</span> head :: tail =&gt; head * sum(tail)</div><div class="line">  <span class="keyword">case</span> _ =&gt; <span class="number">1</span></div><div class="line">&#125;</div></pre></td></tr></table></figure>
+<p>##统计某个元素出现次数</p>
+<figure class="highlight scala"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div></pre></td><td class="code"><pre><div class="line"><span class="function"><span class="keyword">def</span> <span class="title">count</span></span>[<span class="type">A</span>](lst: <span class="type">List</span>[<span class="type">A</span>], a: <span class="type">A</span>): <span class="type">Int</span> = lst <span class="keyword">match</span> &#123;</div><div class="line">  <span class="keyword">case</span> head :: tail =&gt; <span class="keyword">if</span> (head == a) <span class="number">1</span> + count(tail, a) <span class="keyword">else</span> count(tail, a)</div><div class="line">  <span class="keyword">case</span> _ =&gt; <span class="number">0</span></div><div class="line">&#125;</div></pre></td></tr></table></figure>
 <h1 id="抽象成一般模式"><a href="#抽象成一般模式" class="headerlink" title="抽象成一般模式"></a>抽象成一般模式</h1><p>通过观察上面的几个常用函数的实现模式，我们可以发现每个函数的整体结构类似，不同之处在于</p>
 <ul>
 <li>对于空列表的返回值</li>
@@ -518,7 +521,7 @@
             
 
             
-              <div class="post-toc-content"><ol class="nav"><li class="nav-item nav-level-1"><a class="nav-link" href="#递归定义列表"><span class="nav-number">1.</span> <span class="nav-text">递归定义列表</span></a></li><li class="nav-item nav-level-1"><a class="nav-link" href="#常用函数递归实现"><span class="nav-number">2.</span> <span class="nav-text">常用函数递归实现</span></a><ol class="nav-child"><li class="nav-item nav-level-4"><a class="nav-link" href="#求和函数"><span class="nav-number">2.0.0.1.</span> <span class="nav-text">求和函数</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#求乘积"><span class="nav-number">2.0.0.2.</span> <span class="nav-text">求乘积</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#统计某个元素出现次数"><span class="nav-number">2.0.0.3.</span> <span class="nav-text">统计某个元素出现次数</span></a></li></ol></li></ol></li></ol></li><li class="nav-item nav-level-1"><a class="nav-link" href="#抽象成一般模式"><span class="nav-number">3.</span> <span class="nav-text">抽象成一般模式</span></a></li></ol></div>
+              <div class="post-toc-content"><ol class="nav"><li class="nav-item nav-level-1"><a class="nav-link" href="#递归定义列表"><span class="nav-number">1.</span> <span class="nav-text">递归定义列表</span></a></li><li class="nav-item nav-level-1"><a class="nav-link" href="#常用函数递归实现"><span class="nav-number">2.</span> <span class="nav-text">常用函数递归实现</span></a></li><li class="nav-item nav-level-1"><a class="nav-link" href="#抽象成一般模式"><span class="nav-number">3.</span> <span class="nav-text">抽象成一般模式</span></a></li></ol></div>
             
 
           </div>
