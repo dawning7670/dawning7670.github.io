@@ -1,0 +1,730 @@
+<!DOCTYPE html>
+
+
+
+  
+
+
+<html class="theme-next gemini use-motion" lang="zh-Hans">
+<head>
+  <meta charset="UTF-8"/>
+<meta http-equiv="X-UA-Compatible" content="IE=edge" />
+<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1"/>
+<meta name="theme-color" content="#222">
+
+
+
+
+
+
+
+
+
+<meta http-equiv="Cache-Control" content="no-transform" />
+<meta http-equiv="Cache-Control" content="no-siteapp" />
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+  
+  
+  <link href="/lib/fancybox/source/jquery.fancybox.css?v=2.1.5" rel="stylesheet" type="text/css" />
+
+
+
+
+  
+  
+  
+  
+
+  
+    
+    
+  
+
+  
+
+  
+
+  
+
+  
+    
+      
+    
+
+    
+  
+
+  
+    
+    
+    <link href="//fonts.googleapis.com/css?family=Lato:300,300italic,400,400italic,700,700italic|consolas:300,300italic,400,400italic,700,700italic&subset=latin,latin-ext" rel="stylesheet" type="text/css">
+  
+
+
+
+
+
+
+<link href="/lib/font-awesome/css/font-awesome.min.css?v=4.6.2" rel="stylesheet" type="text/css" />
+
+<link href="/css/main.css?v=5.1.2" rel="stylesheet" type="text/css" />
+
+
+  <meta name="keywords" content="Scala,FP,Option," />
+
+
+
+
+
+
+
+
+  <link rel="shortcut icon" type="image/x-icon" href="/favicon.ico?v=5.1.2" />
+
+
+
+
+
+
+<meta name="description" content="为什么不使用异常处理错误 破坏引用透明 函数式编程的特点之一就是引用透明，所有表达式都能本地推导（locally），不依赖上下文；而throw表达式则需要依赖try代码块等上下文，不满足引用透明。  对高阶函数不友好 函数式编程的核心之一就是函数的组合，但是在高阶函数中我们无法根据一个函数的签名来预知该函数可能产生哪些异常。例如 1def map[A, B](as: List[A])(f: A =">
+<meta name="keywords" content="Scala,FP,Option">
+<meta property="og:type" content="article">
+<meta property="og:title" content="Scala函数式编程-错误处理">
+<meta property="og:url" content="http://yoursite.com/2017/09/26/Scala函数式编程-错误处理/index.html">
+<meta property="og:site_name" content="dawning&#39;s blog~">
+<meta property="og:description" content="为什么不使用异常处理错误 破坏引用透明 函数式编程的特点之一就是引用透明，所有表达式都能本地推导（locally），不依赖上下文；而throw表达式则需要依赖try代码块等上下文，不满足引用透明。  对高阶函数不友好 函数式编程的核心之一就是函数的组合，但是在高阶函数中我们无法根据一个函数的签名来预知该函数可能产生哪些异常。例如 1def map[A, B](as: List[A])(f: A =">
+<meta property="og:locale" content="zh-Hans">
+<meta property="og:updated_time" content="2017-09-26T15:04:01.772Z">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:title" content="Scala函数式编程-错误处理">
+<meta name="twitter:description" content="为什么不使用异常处理错误 破坏引用透明 函数式编程的特点之一就是引用透明，所有表达式都能本地推导（locally），不依赖上下文；而throw表达式则需要依赖try代码块等上下文，不满足引用透明。  对高阶函数不友好 函数式编程的核心之一就是函数的组合，但是在高阶函数中我们无法根据一个函数的签名来预知该函数可能产生哪些异常。例如 1def map[A, B](as: List[A])(f: A =">
+
+
+
+<script type="text/javascript" id="hexo.configurations">
+  var NexT = window.NexT || {};
+  var CONFIG = {
+    root: '/',
+    scheme: 'Gemini',
+    version: '5.1.2',
+    sidebar: {"position":"right","display":"post","offset":12,"offset_float":12,"b2t":false,"scrollpercent":false,"onmobile":false},
+    fancybox: true,
+    tabs: true,
+    motion: {"enable":true,"async":false,"transition":{"post_block":"fadeIn","post_header":"slideDownIn","post_body":"slideDownIn","coll_header":"slideLeftIn"}},
+    duoshuo: {
+      userId: '0',
+      author: '博主'
+    },
+    algolia: {
+      applicationID: '',
+      apiKey: '',
+      indexName: '',
+      hits: {"per_page":10},
+      labels: {"input_placeholder":"Search for Posts","hits_empty":"We didn't find any results for the search: ${query}","hits_stats":"${hits} results found in ${time} ms"}
+    }
+  };
+</script>
+
+
+
+  <link rel="canonical" href="http://yoursite.com/2017/09/26/Scala函数式编程-错误处理/"/>
+
+
+
+
+
+  <title>Scala函数式编程-错误处理 | dawning's blog~</title>
+  
+
+
+
+
+
+
+
+
+</head>
+
+<body itemscope itemtype="http://schema.org/WebPage" lang="zh-Hans">
+
+  
+  
+    
+  
+
+  <div class="container sidebar-position-right page-post-detail">
+    <div class="headband"></div>
+
+    <header id="header" class="header" itemscope itemtype="http://schema.org/WPHeader">
+      <div class="header-inner"><div class="site-brand-wrapper">
+  <div class="site-meta ">
+    
+
+    <div class="custom-logo-site-title">
+      <a href="/"  class="brand" rel="start">
+        <span class="logo-line-before"><i></i></span>
+        <span class="site-title">dawning's blog~</span>
+        <span class="logo-line-after"><i></i></span>
+      </a>
+    </div>
+      
+        <p class="site-subtitle">庸人自扰之</p>
+      
+  </div>
+
+  <div class="site-nav-toggle">
+    <button>
+      <span class="btn-bar"></span>
+      <span class="btn-bar"></span>
+      <span class="btn-bar"></span>
+    </button>
+  </div>
+</div>
+
+<nav class="site-nav">
+  
+
+  
+    <ul id="menu" class="menu">
+      
+        
+        <li class="menu-item menu-item-home">
+          <a href="/" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-home"></i> <br />
+            
+            首页
+          </a>
+        </li>
+      
+        
+        <li class="menu-item menu-item-archives">
+          <a href="/archives/" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-archive"></i> <br />
+            
+            归档
+          </a>
+        </li>
+      
+        
+        <li class="menu-item menu-item-tags">
+          <a href="/tags/" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-tags"></i> <br />
+            
+            标签
+          </a>
+        </li>
+      
+
+      
+    </ul>
+  
+
+  
+</nav>
+
+
+
+ </div>
+    </header>
+
+    <main id="main" class="main">
+      <div class="main-inner">
+        <div class="content-wrap">
+          <div id="content" class="content">
+            
+
+  <div id="posts" class="posts-expand">
+    
+
+  
+
+  
+  
+  
+
+  <article class="post post-type-normal" itemscope itemtype="http://schema.org/Article">
+  
+  
+  
+  <div class="post-block">
+    <link itemprop="mainEntityOfPage" href="http://yoursite.com/2017/09/26/Scala函数式编程-错误处理/">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="name" content="dawning7670">
+      <meta itemprop="description" content="">
+      <meta itemprop="image" content="/images/avatar.gif">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="dawning's blog~">
+    </span>
+
+    
+      <header class="post-header">
+
+        
+        
+          <h1 class="post-title" itemprop="name headline">Scala函数式编程-错误处理</h1>
+        
+
+        <div class="post-meta">
+          <span class="post-time">
+            
+              <span class="post-meta-item-icon">
+                <i class="fa fa-calendar-o"></i>
+              </span>
+              
+                <span class="post-meta-item-text">发表于</span>
+              
+              <time title="创建于" itemprop="dateCreated datePublished" datetime="2017-09-26T23:02:44+08:00">
+                2017-09-26
+              </time>
+            
+
+            
+
+            
+          </span>
+
+          
+
+          
+            
+          
+
+          
+          
+
+          
+
+          
+
+          
+
+        </div>
+      </header>
+    
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody">
+
+      
+      
+
+      
+        <h1 id="为什么不使用异常处理错误"><a href="#为什么不使用异常处理错误" class="headerlink" title="为什么不使用异常处理错误"></a>为什么不使用异常处理错误</h1><ul>
+<li><p>破坏引用透明</p>
+<p>函数式编程的特点之一就是引用透明，所有表达式都能本地推导（locally），不依赖上下文；而<code>throw</code>表达式则需要依赖<code>try</code>代码块等上下文，不满足引用透明。</p>
+</li>
+<li><p>对高阶函数不友好</p>
+<p>函数式编程的核心之一就是函数的组合，但是在高阶函数中我们无法根据一个函数的签名来预知该函数可能产生哪些异常。例如</p>
+<figure class="highlight scala"><table><tr><td class="gutter"><pre><div class="line">1</div></pre></td><td class="code"><pre><div class="line"><span class="function"><span class="keyword">def</span> <span class="title">map</span></span>[<span class="type">A</span>, <span class="type">B</span>](as: <span class="type">List</span>[<span class="type">A</span>])(f: <span class="type">A</span> =&gt; <span class="type">B</span>): <span class="type">List</span>[<span class="type">B</span>]</div></pre></td></tr></table></figure>
+<p>我们无法根据<code>f: A =&gt; B</code>来预知它会产生什么异常从而无法优雅的使用<code>map</code>等高阶函数</p>
+</li>
+</ul>
+<h1 id="Option类型"><a href="#Option类型" class="headerlink" title="Option类型"></a>Option类型</h1><p>函数式编程使用类型来解决错误处理，将数据包裹在一个容器里面，这个容器可能有数据也可能没有，使用子类代表有和没有的情况，所以我们引入一种新的类型<code>Option</code>，他的定义看起来应该是这样的</p>
+<figure class="highlight scala"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div></pre></td><td class="code"><pre><div class="line"><span class="class"><span class="keyword">trait</span> <span class="title">Option</span>[+<span class="type">A</span>]</span></div><div class="line"><span class="class"><span class="title">case</span> <span class="title">class</span> <span class="title">Some</span>[<span class="type">A</span>](<span class="params">value: <span class="type">A</span></span>) <span class="keyword">extends</span> <span class="title">Option</span>[<span class="type">A</span>]</span></div><div class="line"><span class="class"><span class="title">case</span> <span class="title">object</span> <span class="title">None</span> <span class="keyword">extends</span> <span class="title">Option</span>[<span class="type">Nothing</span>]</span></div></pre></td></tr></table></figure>
+<figure class="highlight scala"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div></pre></td><td class="code"><pre><div class="line"><span class="comment">// 异常版本</span></div><div class="line"><span class="function"><span class="keyword">def</span> <span class="title">mean</span></span>(l: <span class="type">Seq</span>[<span class="type">Double</span>]): <span class="type">Double</span> =</div><div class="line">  <span class="keyword">if</span> (l.isEmpty) <span class="keyword">throw</span> <span class="keyword">new</span> <span class="type">Error</span>(<span class="string">"sum empty list"</span>) <span class="keyword">else</span> l.sum / l.length</div><div class="line"></div><div class="line"><span class="comment">// 使用我们的新类型Option</span></div><div class="line"><span class="function"><span class="keyword">def</span> <span class="title">mean</span></span>(l: <span class="type">Seq</span>[<span class="type">Double</span>]): <span class="type">Option</span>[<span class="type">Double</span>] =</div><div class="line">  <span class="keyword">if</span> (l.isEmpty) <span class="type">None</span> <span class="keyword">else</span> <span class="type">Some</span>(l.sum / l.length)</div></pre></td></tr></table></figure>
+<p>所以我们可以使用一个<code>Option</code>类型来把结果包装进去，使得我们的函数满足引用透明并且不失去组合型</p>
+<h2 id="直观的使用方式"><a href="#直观的使用方式" class="headerlink" title="直观的使用方式"></a>直观的使用方式</h2><p>虽然我们引入了一个新的类型，但是我们尝试使用这个类型作为返回值的时候发现了一个问题</p>
+<figure class="highlight scala"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div><div class="line">11</div><div class="line">12</div><div class="line">13</div><div class="line">14</div><div class="line">15</div><div class="line">16</div><div class="line">17</div><div class="line">18</div></pre></td><td class="code"><pre><div class="line"><span class="function"><span class="keyword">def</span> <span class="title">parseInt</span></span>(s: <span class="type">String</span>): <span class="type">Option</span>[<span class="type">Int</span>]</div><div class="line"><span class="function"><span class="keyword">def</span> <span class="title">addOne</span></span>(s: <span class="type">String</span>): <span class="type">Option</span>[<span class="type">String</span>] = &#123;</div><div class="line">    parseInt(s) <span class="keyword">match</span> &#123;</div><div class="line">      <span class="keyword">case</span> <span class="type">Some</span>(x) =&gt; <span class="type">Some</span>((x + <span class="number">1</span>).toString())</div><div class="line">      <span class="keyword">case</span> <span class="type">None</span> =&gt; <span class="type">None</span></div><div class="line">    &#125;</div><div class="line">&#125;</div><div class="line"><span class="function"><span class="keyword">def</span> <span class="title">add</span></span>(s1: <span class="type">String</span>, s2: <span class="type">String</span>): <span class="type">Option</span>[<span class="type">Int</span>] = &#123;</div><div class="line">  <span class="keyword">val</span> int1 = parseInt(s1)</div><div class="line">  <span class="keyword">val</span> int2 = parseInt(s2)</div><div class="line">  int1 <span class="keyword">match</span> &#123;</div><div class="line">      <span class="keyword">case</span> <span class="type">Some</span>(x) =&gt; int2 <span class="keyword">match</span> &#123;</div><div class="line">        <span class="keyword">case</span> <span class="type">Some</span>(y) =&gt; <span class="type">Some</span>(x + y)</div><div class="line">        <span class="keyword">case</span> <span class="type">None</span> =&gt; <span class="type">None</span></div><div class="line">      &#125;</div><div class="line">      <span class="keyword">case</span> <span class="type">None</span> =&gt; <span class="type">None</span></div><div class="line">  &#125;</div><div class="line">&#125;</div></pre></td></tr></table></figure>
+<p><strong>这里我们还只有两层嵌套，如果有多层嵌套那不是要写无数个<code>match</code>表达式？？？</strong></p>
+<p>一般到了这一步我们就应该思考如何将这种直观的使用方式抽象成高阶函数</p>
+<h2 id="抽象成一般模式"><a href="#抽象成一般模式" class="headerlink" title="抽象成一般模式"></a>抽象成一般模式</h2><p>这里我们可以模仿<code>List</code>类抽象出<code>map</code>和<code>flatMap</code>两个高阶函数来描述上面两个函数的模式。</p>
+<h3 id="map"><a href="#map" class="headerlink" title="map"></a>map</h3><p><code>addOne</code>函数是将一个<code>String</code>对象转化成<code>Int</code>并且执行加法操作后在转化成<code>String</code>对象，这里我们可以描述成一个一般过程</p>
+<ul>
+<li>首先判断该容器是否为<code>None</code></li>
+<li>如果是直接返回<code>None</code>，否则将该数据取出并且执行某个转化操作之后将数据重新放入<code>Option</code>中</li>
+</ul>
+<p>所以我们得到了<code>map</code>函数的定义</p>
+<figure class="highlight scala"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div></pre></td><td class="code"><pre><div class="line"><span class="class"><span class="keyword">trait</span> <span class="title">Option</span>[<span class="type">A</span>] </span>&#123;</div><div class="line">  <span class="function"><span class="keyword">def</span> <span class="title">map</span></span>[<span class="type">B</span>](f: <span class="type">A</span> =&gt; <span class="type">B</span>): <span class="type">Option</span>[<span class="type">B</span>]</div><div class="line">&#125;</div></pre></td></tr></table></figure>
+<h3 id="flatMap"><a href="#flatMap" class="headerlink" title="flatMap"></a>flatMap</h3><p><code>add</code>函数是将两个<code>String</code>表示的整数相加并且将结果包装到<code>Option</code>类型中，这里我们可以将这个步骤泛化成一般步骤</p>
+<ul>
+<li>首先判断该容器是否为<code>None</code></li>
+<li>如果是直接返回<code>None</code>，否则将该数据取出并且执行某个转化操作将其转化成另外一个容器</li>
+</ul>
+<p>所以我们得到了<code>flatMap</code>函数的定义</p>
+<figure class="highlight scala"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div></pre></td><td class="code"><pre><div class="line"><span class="class"><span class="keyword">trait</span> <span class="title">Option</span>[<span class="type">A</span>] </span>&#123;</div><div class="line">  <span class="function"><span class="keyword">def</span> <span class="title">flatMap</span></span>[<span class="type">B</span>](f: <span class="type">A</span> =&gt; <span class="type">Option</span>[<span class="type">B</span>]): <span class="type">Option</span>[<span class="type">B</span>]</div><div class="line">&#125;</div></pre></td></tr></table></figure>
+<h2 id="使用一般模式重构"><a href="#使用一般模式重构" class="headerlink" title="使用一般模式重构"></a>使用一般模式重构</h2><p>现在我们有了两个高阶函数<code>map</code>和<code>flatMap</code>，接下来我们可以使用这两个高阶函数来表达我们之前的<code>addOne</code>和<code>add</code>函数</p>
+<figure class="highlight scala"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div></pre></td><td class="code"><pre><div class="line"><span class="function"><span class="keyword">def</span> <span class="title">addOne</span></span>(s: <span class="type">String</span>): <span class="type">Option</span>[<span class="type">String</span>] = parseInt(s).map((_ + <span class="number">1</span>).toString())</div><div class="line"><span class="function"><span class="keyword">def</span> <span class="title">add</span></span>(s1: <span class="type">String</span>, s2: <span class="type">String</span>): <span class="type">Option</span>[<span class="type">Int</span>] = parseInt(s1).flatMap &#123;x =&gt;</div><div class="line">  parseInt(s2).map(y =&gt; x + y)</div><div class="line">&#125;</div></pre></td></tr></table></figure>
+<p>这个<code>add</code>函数好像看起来仍然很复杂，不过没关系，我们可以使用scala给我们提供的一种语法糖来更加清晰的表达这个过程</p>
+<figure class="highlight scala"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div></pre></td><td class="code"><pre><div class="line"><span class="function"><span class="keyword">def</span> <span class="title">add</span></span>(s1: <span class="type">String</span>, s2: <span class="type">String</span>): <span class="type">Option</span>[<span class="type">Int</span>] = <span class="keyword">for</span> &#123;</div><div class="line">    x &lt;- parseInt(s1)</div><div class="line">    y &lt;- parseInt(s2)</div><div class="line">&#125; <span class="keyword">yield</span> x + y</div></pre></td></tr></table></figure>
+<p>现在重构过的<code>addOne</code>和<code>add</code>函数结构清晰并且可读性大大提高，这才是我们最终的目的</p>
+<h1 id="Either类型"><a href="#Either类型" class="headerlink" title="Either类型"></a>Either类型</h1><p>在我们需要包含错误的具体信息的时候，<code>Option</code>类型就不能满足我们的需求，很明显它在错误时不能提供具体的错误信息，所以我们需要一个更加通用的类型来满足这个使用场景</p>
+<figure class="highlight scala"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div></pre></td><td class="code"><pre><div class="line"><span class="class"><span class="keyword">trait</span> <span class="title">Either</span>[+<span class="type">E</span>, +<span class="type">A</span>]</span></div><div class="line"><span class="class"><span class="title">case</span> <span class="title">class</span> <span class="title">Left</span>[<span class="type">E</span>](<span class="params">value: <span class="type">E</span></span>) <span class="keyword">extends</span> <span class="title">Either</span>[<span class="type">E</span>, <span class="type">Nothing</span>]</span></div><div class="line"><span class="class"><span class="title">case</span> <span class="title">class</span> <span class="title">Right</span>[<span class="type">A</span>](<span class="params">value: <span class="type">A</span></span>) <span class="keyword">extends</span> <span class="title">Either</span>[<span class="type">Nothing</span>, <span class="type">A</span>]</span></div></pre></td></tr></table></figure>
+<p> 这个类型个<code>Option</code>类似，只不过将<code>None</code>替换成了一个包含具体信息的类型<code>Left</code>，同理也可以为它定义<code>map</code>和<code>flatMap</code>等高阶函数来操作它，这里我们不做赘述</p>
+<h1 id="总结"><a href="#总结" class="headerlink" title="总结"></a>总结</h1><p>函数式编程的错误处理是使用一个<strong>新的数据类型</strong>代替异常机制，并且针对该类型的日常使用方式<strong>抽象出通用的高阶函数</strong>来操作这个新的数据类型，最终目的是为了<strong>满足函数式编程的特性</strong></p>
+
+      
+    </div>
+    
+    
+    
+
+    
+
+    
+
+    
+
+    <footer class="post-footer">
+      
+        <div class="post-tags">
+          
+            <a href="/tags/Scala/" rel="tag"># Scala</a>
+          
+            <a href="/tags/FP/" rel="tag"># FP</a>
+          
+            <a href="/tags/Option/" rel="tag"># Option</a>
+          
+        </div>
+      
+
+      
+      
+      
+
+      
+        <div class="post-nav">
+          <div class="post-nav-next post-nav-item">
+            
+              <a href="/2017/09/20/Rancher网络浅析/" rel="next" title="Rancher网络浅析">
+                <i class="fa fa-chevron-left"></i> Rancher网络浅析
+              </a>
+            
+          </div>
+
+          <span class="post-nav-divider"></span>
+
+          <div class="post-nav-prev post-nav-item">
+            
+          </div>
+        </div>
+      
+
+      
+      
+    </footer>
+  </div>
+  
+  
+  
+  </article>
+
+
+
+    <div class="post-spread">
+      
+    </div>
+  </div>
+
+
+          </div>
+          
+
+
+          
+  <div class="comments" id="comments">
+    
+  </div>
+
+
+        </div>
+        
+          
+  
+  <div class="sidebar-toggle">
+    <div class="sidebar-toggle-line-wrap">
+      <span class="sidebar-toggle-line sidebar-toggle-line-first"></span>
+      <span class="sidebar-toggle-line sidebar-toggle-line-middle"></span>
+      <span class="sidebar-toggle-line sidebar-toggle-line-last"></span>
+    </div>
+  </div>
+
+  <aside id="sidebar" class="sidebar">
+    
+    <div class="sidebar-inner">
+
+      
+
+      
+        <ul class="sidebar-nav motion-element">
+          <li class="sidebar-nav-toc sidebar-nav-active" data-target="post-toc-wrap" >
+            文章目录
+          </li>
+          <li class="sidebar-nav-overview" data-target="site-overview">
+            站点概览
+          </li>
+        </ul>
+      
+
+      <section class="site-overview sidebar-panel">
+        <div class="site-author motion-element" itemprop="author" itemscope itemtype="http://schema.org/Person">
+          
+            <p class="site-author-name" itemprop="name">dawning7670</p>
+            <p class="site-description motion-element" itemprop="description"></p>
+        </div>
+
+        <nav class="site-state motion-element">
+
+          
+            <div class="site-state-item site-state-posts">
+            
+              <a href="/archives/">
+            
+                <span class="site-state-item-count">4</span>
+                <span class="site-state-item-name">日志</span>
+              </a>
+            </div>
+          
+
+          
+
+          
+            
+            
+            <div class="site-state-item site-state-tags">
+              <a href="/tags/index.html">
+                <span class="site-state-item-count">9</span>
+                <span class="site-state-item-name">标签</span>
+              </a>
+            </div>
+          
+
+        </nav>
+
+        
+
+        <div class="links-of-author motion-element">
+          
+        </div>
+
+        
+        
+
+        
+        
+
+        
+
+
+      </section>
+
+      
+      <!--noindex-->
+        <section class="post-toc-wrap motion-element sidebar-panel sidebar-panel-active">
+          <div class="post-toc">
+
+            
+              
+            
+
+            
+              <div class="post-toc-content"><ol class="nav"><li class="nav-item nav-level-1"><a class="nav-link" href="#为什么不使用异常处理错误"><span class="nav-number">1.</span> <span class="nav-text">为什么不使用异常处理错误</span></a></li><li class="nav-item nav-level-1"><a class="nav-link" href="#Option类型"><span class="nav-number">2.</span> <span class="nav-text">Option类型</span></a><ol class="nav-child"><li class="nav-item nav-level-2"><a class="nav-link" href="#直观的使用方式"><span class="nav-number">2.1.</span> <span class="nav-text">直观的使用方式</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#抽象成一般模式"><span class="nav-number">2.2.</span> <span class="nav-text">抽象成一般模式</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#map"><span class="nav-number">2.2.1.</span> <span class="nav-text">map</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#flatMap"><span class="nav-number">2.2.2.</span> <span class="nav-text">flatMap</span></a></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link" href="#使用一般模式重构"><span class="nav-number">2.3.</span> <span class="nav-text">使用一般模式重构</span></a></li></ol></li><li class="nav-item nav-level-1"><a class="nav-link" href="#Either类型"><span class="nav-number">3.</span> <span class="nav-text">Either类型</span></a></li><li class="nav-item nav-level-1"><a class="nav-link" href="#总结"><span class="nav-number">4.</span> <span class="nav-text">总结</span></a></li></ol></div>
+            
+
+          </div>
+        </section>
+      <!--/noindex-->
+      
+
+      
+
+    </div>
+  </aside>
+
+
+        
+      </div>
+    </main>
+
+    <footer id="footer" class="footer">
+      <div class="footer-inner">
+        <div class="copyright" >
+  
+  &copy; 
+  <span itemprop="copyrightYear">2017</span>
+  <span class="with-love">
+    <i class="fa fa-tint"></i>
+  </span>
+  <span class="author" itemprop="copyrightHolder">dawning7670</span>
+
+  
+</div>
+
+
+
+        
+
+
+
+
+
+
+
+        
+      </div>
+    </footer>
+
+    
+      <div class="back-to-top">
+        <i class="fa fa-arrow-up"></i>
+        
+      </div>
+    
+
+  </div>
+
+  
+
+<script type="text/javascript">
+  if (Object.prototype.toString.call(window.Promise) !== '[object Function]') {
+    window.Promise = null;
+  }
+</script>
+
+
+
+
+
+
+
+
+
+  
+
+
+
+
+
+
+
+
+
+
+
+
+  
+  <script type="text/javascript" src="/lib/jquery/index.js?v=2.1.3"></script>
+
+  
+  <script type="text/javascript" src="/lib/fastclick/lib/fastclick.min.js?v=1.0.6"></script>
+
+  
+  <script type="text/javascript" src="/lib/jquery_lazyload/jquery.lazyload.js?v=1.9.7"></script>
+
+  
+  <script type="text/javascript" src="/lib/velocity/velocity.min.js?v=1.2.1"></script>
+
+  
+  <script type="text/javascript" src="/lib/velocity/velocity.ui.min.js?v=1.2.1"></script>
+
+  
+  <script type="text/javascript" src="/lib/fancybox/source/jquery.fancybox.pack.js?v=2.1.5"></script>
+
+
+  
+
+
+  <script type="text/javascript" src="/js/src/utils.js?v=5.1.2"></script>
+
+  <script type="text/javascript" src="/js/src/motion.js?v=5.1.2"></script>
+
+
+
+  
+  
+
+
+  <script type="text/javascript" src="/js/src/affix.js?v=5.1.2"></script>
+
+  <script type="text/javascript" src="/js/src/schemes/pisces.js?v=5.1.2"></script>
+
+
+
+  <script type="text/javascript" src="/js/src/scrollspy.js?v=5.1.2"></script>
+<script type="text/javascript" src="/js/src/post-details.js?v=5.1.2"></script>
+
+
+  
+  <script type="text/javascript" src="/js/src/scrollspy.js?v=5.1.2"></script>
+<script type="text/javascript" src="/js/src/post-details.js?v=5.1.2"></script>
+
+
+
+  
+
+
+  <script type="text/javascript" src="/js/src/bootstrap.js?v=5.1.2"></script>
+
+
+
+  
+
+
+  
+
+
+
+
+	
+
+
+
+
+
+  
+
+
+
+
+
+  
+
+
+
+
+
+
+
+
+  
+
+
+
+
+
+  
+
+  
+
+  
+
+  
+
+  
+
+  
+
+</body>
+</html>
