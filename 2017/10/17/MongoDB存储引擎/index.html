@@ -85,7 +85,7 @@
 <link href="/css/main.css?v=5.1.2" rel="stylesheet" type="text/css" />
 
 
-  <meta name="keywords" content="Rancher,iptables,IP隧道," />
+  <meta name="keywords" content="MongoDB,WiredTiger," />
 
 
 
@@ -101,18 +101,18 @@
 
 
 
-<meta name="description" content="前言Rancher是一个容器管理平台，默认提供了一个覆盖网络（overlay）来支持一容器一IP，并且使用IPSEC隧道来支持跨宿主机访问容器。还可以对容器进行分组隔离、标签隔离等各种粒度的隔离控制，由于工作需要就去了解了一下它具体是如何实现这些功能的。 组件说明Rancher默认的网络主要有这四个容器，他们的作用如下：  rancher/net:holder IPSEC隧道封包拆包  ranch">
-<meta name="keywords" content="Rancher,iptables,IP隧道">
+<meta name="description" content="前言MongoDB 3.2版本之后都默认使用该存储引擎 特点文档级并行 写操作加锁的粒度是文档级别，可以极大提高插入性能 仍然存在一些操作需要锁库锁集合，例如删除集合操作等  MVCC和Checkpoints WiredTiger存储引擎使用MVCC（多版本并发控制）达到类似读写分离的效果并且针对读多写少的场景能极大提高并发性能 WiredTiger将所有内中中的快照写入到磁盘作为检查点，默认每隔">
+<meta name="keywords" content="MongoDB,WiredTiger">
 <meta property="og:type" content="article">
-<meta property="og:title" content="Rancher网络浅析">
-<meta property="og:url" content="http://yoursite.com/2017/09/20/Rancher网络浅析/index.html">
+<meta property="og:title" content="MongoDB-WiredTiger存储引擎">
+<meta property="og:url" content="http://yoursite.com/2017/10/17/MongoDB存储引擎/index.html">
 <meta property="og:site_name" content="dawning&#39;s blog~">
-<meta property="og:description" content="前言Rancher是一个容器管理平台，默认提供了一个覆盖网络（overlay）来支持一容器一IP，并且使用IPSEC隧道来支持跨宿主机访问容器。还可以对容器进行分组隔离、标签隔离等各种粒度的隔离控制，由于工作需要就去了解了一下它具体是如何实现这些功能的。 组件说明Rancher默认的网络主要有这四个容器，他们的作用如下：  rancher/net:holder IPSEC隧道封包拆包  ranch">
+<meta property="og:description" content="前言MongoDB 3.2版本之后都默认使用该存储引擎 特点文档级并行 写操作加锁的粒度是文档级别，可以极大提高插入性能 仍然存在一些操作需要锁库锁集合，例如删除集合操作等  MVCC和Checkpoints WiredTiger存储引擎使用MVCC（多版本并发控制）达到类似读写分离的效果并且针对读多写少的场景能极大提高并发性能 WiredTiger将所有内中中的快照写入到磁盘作为检查点，默认每隔">
 <meta property="og:locale" content="zh-Hans">
-<meta property="og:updated_time" content="2017-09-25T23:38:14.263Z">
+<meta property="og:updated_time" content="2017-10-17T13:59:16.616Z">
 <meta name="twitter:card" content="summary">
-<meta name="twitter:title" content="Rancher网络浅析">
-<meta name="twitter:description" content="前言Rancher是一个容器管理平台，默认提供了一个覆盖网络（overlay）来支持一容器一IP，并且使用IPSEC隧道来支持跨宿主机访问容器。还可以对容器进行分组隔离、标签隔离等各种粒度的隔离控制，由于工作需要就去了解了一下它具体是如何实现这些功能的。 组件说明Rancher默认的网络主要有这四个容器，他们的作用如下：  rancher/net:holder IPSEC隧道封包拆包  ranch">
+<meta name="twitter:title" content="MongoDB-WiredTiger存储引擎">
+<meta name="twitter:description" content="前言MongoDB 3.2版本之后都默认使用该存储引擎 特点文档级并行 写操作加锁的粒度是文档级别，可以极大提高插入性能 仍然存在一些操作需要锁库锁集合，例如删除集合操作等  MVCC和Checkpoints WiredTiger存储引擎使用MVCC（多版本并发控制）达到类似读写分离的效果并且针对读多写少的场景能极大提高并发性能 WiredTiger将所有内中中的快照写入到磁盘作为检查点，默认每隔">
 
 
 
@@ -142,13 +142,13 @@
 
 
 
-  <link rel="canonical" href="http://yoursite.com/2017/09/20/Rancher网络浅析/"/>
+  <link rel="canonical" href="http://yoursite.com/2017/10/17/MongoDB存储引擎/"/>
 
 
 
 
 
-  <title>Rancher网络浅析 | dawning's blog~</title>
+  <title>MongoDB-WiredTiger存储引擎 | dawning's blog~</title>
   
 
 
@@ -265,7 +265,7 @@
   
   
   <div class="post-block">
-    <link itemprop="mainEntityOfPage" href="http://yoursite.com/2017/09/20/Rancher网络浅析/">
+    <link itemprop="mainEntityOfPage" href="http://yoursite.com/2017/10/17/MongoDB存储引擎/">
 
     <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
       <meta itemprop="name" content="dawning7670">
@@ -282,7 +282,7 @@
 
         
         
-          <h1 class="post-title" itemprop="name headline">Rancher网络浅析</h1>
+          <h1 class="post-title" itemprop="name headline">MongoDB-WiredTiger存储引擎</h1>
         
 
         <div class="post-meta">
@@ -294,8 +294,8 @@
               
                 <span class="post-meta-item-text">发表于</span>
               
-              <time title="创建于" itemprop="dateCreated datePublished" datetime="2017-09-20T22:03:04+08:00">
-                2017-09-20
+              <time title="创建于" itemprop="dateCreated datePublished" datetime="2017-10-17T21:59:23+08:00">
+                2017-10-17
               </time>
             
 
@@ -332,43 +332,37 @@
       
 
       
-        <h1 id="前言"><a href="#前言" class="headerlink" title="前言"></a>前言</h1><p>Rancher是一个容器管理平台，默认提供了一个覆盖网络（overlay）来支持一容器一IP，并且使用IPSEC隧道来支持跨宿主机访问容器。还可以对容器进行分组隔离、标签隔离等各种粒度的隔离控制，由于工作需要就去了解了一下它具体是如何实现这些功能的。</p>
-<h1 id="组件说明"><a href="#组件说明" class="headerlink" title="组件说明"></a>组件说明</h1><p>Rancher默认的网络主要有这四个容器，他们的作用如下：</p>
-<ul>
-<li><p>rancher/net:holder</p>
-<p>IPSEC隧道封包拆包</p>
-</li>
-<li><p>rancher/net</p>
-<p>IPSEC隧道CNI驱动和隧道路由</p>
-</li>
-<li><p>rancher/network-policy-manager</p>
-<p>管理iptables</p>
-</li>
-<li><p>rancher/network-manager</p>
-<p>集群节点数据同步</p>
-</li>
+        <h1 id="前言"><a href="#前言" class="headerlink" title="前言"></a>前言</h1><p>MongoDB 3.2版本之后都默认使用该存储引擎</p>
+<h1 id="特点"><a href="#特点" class="headerlink" title="特点"></a>特点</h1><h2 id="文档级并行"><a href="#文档级并行" class="headerlink" title="文档级并行"></a>文档级并行</h2><ul>
+<li>写操作加锁的粒度是文档级别，可以极大提高插入性能</li>
+<li>仍然存在一些操作需要锁库锁集合，例如删除集合操作等</li>
 </ul>
-<h1 id="原理"><a href="#原理" class="headerlink" title="原理"></a>原理</h1><h2 id="安全策略"><a href="#安全策略" class="headerlink" title="安全策略"></a>安全策略</h2><p>使用iptables的<code>forward</code>链来限制转发策略</p>
-<ol>
-<li>iptables 的<code>forward</code>链匹配10.10.42.0/16的源地址和目的地址</li>
-<li>如果匹配成功则匹配自定义规则链（自定义安全策略全都在<code>forward</code>链中）</li>
-<li>如果匹配失败则允许转发（安全策略无法限制宿主机访问容器）</li>
-</ol>
-<h2 id="跨宿主机访问"><a href="#跨宿主机访问" class="headerlink" title="跨宿主机访问"></a>跨宿主机访问</h2><p>使用IPSEC隧道模式来支持容器跨宿主机访问，所有跨主机数据包默认加密</p>
-<h3 id="IP隧道"><a href="#IP隧道" class="headerlink" title="IP隧道"></a>IP隧道</h3><p>IP隧道就是将数据封装到一个自定义的协议中，然后通过TCP或UDP传输到目标主机，目标主机再进行拆包得到真实报文并进行后续处理。理论上只需要满足IP层可达就可以使用IP隧道。</p>
-<h3 id="封包过程"><a href="#封包过程" class="headerlink" title="封包过程"></a>封包过程</h3><ol>
-<li>arp代理拦截ARP请求报文并判断请求IP地址是否处于同一宿主机</li>
-<li>如果处于同一宿主机则不操作，实际的IP地址对应的MAC地址为真实地址（docker0网桥中已经连接的某个容器的MAC）</li>
-<li>如果处于其他宿主机（跨主机），则响应IP地址对应的MAC地址为IPSEC容器的MAC地址。由于网桥相当于数据链路层使用MAC地址，所以这里会把数据包转发到IPSEC容器内部，之后该容器使用IPSEC协议将数据包封装成UDP包并发送到目标宿主机的500端口</li>
-</ol>
-<h3 id="拆包过程"><a href="#拆包过程" class="headerlink" title="拆包过程"></a>拆包过程</h3><ol>
-<li>iptables的<code>prerouting</code>链匹配UDP协议并且目的端口号为500的数据包，将目的地址修改成宿主机IPSEC容器IP地址</li>
-<li>IPSEC容器拆包并将数据包转发到真实容器</li>
-</ol>
-<h1 id="总结"><a href="#总结" class="headerlink" title="总结"></a>总结</h1><ul>
-<li>对于吞吐量敏感的场景应该关闭加密数据包以便获得更大的吞吐量</li>
-<li>不在rancher网络体系下的机器不受安全策略影响</li>
-<li>理论上只要IP可达就能支持跨宿主机通信</li>
+<h2 id="MVCC和Checkpoints"><a href="#MVCC和Checkpoints" class="headerlink" title="MVCC和Checkpoints"></a>MVCC和Checkpoints</h2><ul>
+<li>WiredTiger存储引擎使用MVCC（多版本并发控制）达到类似读写分离的效果并且针对读多写少的场景能极大提高并发性能</li>
+<li>WiredTiger将所有内中中的快照写入到磁盘作为检查点，默认每隔60秒或操作日志达到2GB时将创建一个新的检查点（存档点）以便于发生意外情况时能迅速利用检查点和日志进行数据恢复</li>
+<li>新的检查点创建完成之后旧的检查点不会被立即清除，直到新的检查点可访问并已经持久化完毕（完全创建完成）</li>
+</ul>
+<h2 id="WAL"><a href="#WAL" class="headerlink" title="WAL"></a>WAL</h2><ul>
+<li>将两个检查点之间的所有操作记录到WAL中</li>
+<li>默认使用snappy压缩日志文件，压缩的最小粒度是128字节，小于128字节的日志不会被压缩</li>
+<li>默认50ms将内存缓冲区中的WAL刷到磁盘中，可以在写请求中指定参数使该请求强制刷到磁盘中</li>
+<li>日志文件粒度是100MB，如果大于100M则会被分成多个日志文件</li>
+</ul>
+<h2 id="数据压缩"><a href="#数据压缩" class="headerlink" title="数据压缩"></a>数据压缩</h2><ul>
+<li>WiredTiger会压缩所有的集合和索引数据</li>
+<li>默认使用snappy压缩集合数据，前缀压缩索引数据</li>
+<li>对于大多数使用场景，使用默认的数据压缩选项即可</li>
+</ul>
+<h2 id="内存使用"><a href="#内存使用" class="headerlink" title="内存使用"></a>内存使用</h2><ul>
+<li>内存下限是 256MB</li>
+<li>内存上限是 [RAM]/2 - 1G</li>
+</ul>
+<h1 id="操作系统参数"><a href="#操作系统参数" class="headerlink" title="操作系统参数"></a>操作系统参数</h1><ul>
+<li>禁用NUMA</li>
+<li>使用xfs文件系统较于ext4性能更好并且可以避免出现性能问题</li>
+<li>关闭THP</li>
+<li>禁用SELinux</li>
+<li>将readahead设为0</li>
 </ul>
 
       
@@ -387,11 +381,9 @@
       
         <div class="post-tags">
           
-            <a href="/tags/Rancher/" rel="tag"># Rancher</a>
+            <a href="/tags/MongoDB/" rel="tag"># MongoDB</a>
           
-            <a href="/tags/iptables/" rel="tag"># iptables</a>
-          
-            <a href="/tags/IP隧道/" rel="tag"># IP隧道</a>
+            <a href="/tags/WiredTiger/" rel="tag"># WiredTiger</a>
           
         </div>
       
@@ -404,8 +396,8 @@
         <div class="post-nav">
           <div class="post-nav-next post-nav-item">
             
-              <a href="/2017/09/12/JVM-内存模型与内存溢出分析/" rel="next" title="JVM-内存模型与内存溢出分析">
-                <i class="fa fa-chevron-left"></i> JVM-内存模型与内存溢出分析
+              <a href="/2017/10/15/Git正确使用姿势/" rel="next" title="git正确使用姿势">
+                <i class="fa fa-chevron-left"></i> git正确使用姿势
               </a>
             
           </div>
@@ -413,10 +405,6 @@
           <span class="post-nav-divider"></span>
 
           <div class="post-nav-prev post-nav-item">
-            
-              <a href="/2017/09/26/Scala函数式编程-错误处理/" rel="prev" title="Scala函数式编程-错误处理">
-                Scala函数式编程-错误处理 <i class="fa fa-chevron-right"></i>
-              </a>
             
           </div>
         </div>
@@ -540,7 +528,7 @@
             
 
             
-              <div class="post-toc-content"><ol class="nav"><li class="nav-item nav-level-1"><a class="nav-link" href="#前言"><span class="nav-number">1.</span> <span class="nav-text">前言</span></a></li><li class="nav-item nav-level-1"><a class="nav-link" href="#组件说明"><span class="nav-number">2.</span> <span class="nav-text">组件说明</span></a></li><li class="nav-item nav-level-1"><a class="nav-link" href="#原理"><span class="nav-number">3.</span> <span class="nav-text">原理</span></a><ol class="nav-child"><li class="nav-item nav-level-2"><a class="nav-link" href="#安全策略"><span class="nav-number">3.1.</span> <span class="nav-text">安全策略</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#跨宿主机访问"><span class="nav-number">3.2.</span> <span class="nav-text">跨宿主机访问</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#IP隧道"><span class="nav-number">3.2.1.</span> <span class="nav-text">IP隧道</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#封包过程"><span class="nav-number">3.2.2.</span> <span class="nav-text">封包过程</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#拆包过程"><span class="nav-number">3.2.3.</span> <span class="nav-text">拆包过程</span></a></li></ol></li></ol></li><li class="nav-item nav-level-1"><a class="nav-link" href="#总结"><span class="nav-number">4.</span> <span class="nav-text">总结</span></a></li></ol></div>
+              <div class="post-toc-content"><ol class="nav"><li class="nav-item nav-level-1"><a class="nav-link" href="#前言"><span class="nav-number">1.</span> <span class="nav-text">前言</span></a></li><li class="nav-item nav-level-1"><a class="nav-link" href="#特点"><span class="nav-number">2.</span> <span class="nav-text">特点</span></a><ol class="nav-child"><li class="nav-item nav-level-2"><a class="nav-link" href="#文档级并行"><span class="nav-number">2.1.</span> <span class="nav-text">文档级并行</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#MVCC和Checkpoints"><span class="nav-number">2.2.</span> <span class="nav-text">MVCC和Checkpoints</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#WAL"><span class="nav-number">2.3.</span> <span class="nav-text">WAL</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#数据压缩"><span class="nav-number">2.4.</span> <span class="nav-text">数据压缩</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#内存使用"><span class="nav-number">2.5.</span> <span class="nav-text">内存使用</span></a></li></ol></li><li class="nav-item nav-level-1"><a class="nav-link" href="#操作系统参数"><span class="nav-number">3.</span> <span class="nav-text">操作系统参数</span></a></li></ol></div>
             
 
           </div>
