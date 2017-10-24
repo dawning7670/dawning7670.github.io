@@ -101,18 +101,18 @@
 
 
 
-<meta name="description" content="为什么需要规范Git的使用 大大降低项目维护成本 方便做代码review 提高测试人员的测试效率  分支master主分支，所有直接面向用户的版本都在这个分支上发布 dev日常开发使用的分支 临时分支 功能（feature-*） 增加新功能而使用的分支，从dev分支分出，最后合并到dev分支  预发布（release-*） 发布正式版本之前的测试版本，结束后需要合并进dev和master分支  修">
+<meta name="description" content="为什么需要规范Git的使用 大大降低项目维护成本 方便做代码review 提高测试人员的测试效率  分支master 主分支，所有直接面向用户的版本都在这个分支上发布 dev 日常开发使用的分支 临时分支 功能（feature-*） 增加新功能而使用的分支，从dev分支分出，最后合并到dev分支  预发布（release-*） 发布正式版本之前的测试版本，结束后需要合并进dev和master分支">
 <meta name="keywords" content="git">
 <meta property="og:type" content="article">
 <meta property="og:title" content="git正确使用姿势">
 <meta property="og:url" content="http://yoursite.com/2017/10/15/Git正确使用姿势/index.html">
 <meta property="og:site_name" content="dawning&#39;s blog~">
-<meta property="og:description" content="为什么需要规范Git的使用 大大降低项目维护成本 方便做代码review 提高测试人员的测试效率  分支master主分支，所有直接面向用户的版本都在这个分支上发布 dev日常开发使用的分支 临时分支 功能（feature-*） 增加新功能而使用的分支，从dev分支分出，最后合并到dev分支  预发布（release-*） 发布正式版本之前的测试版本，结束后需要合并进dev和master分支  修">
+<meta property="og:description" content="为什么需要规范Git的使用 大大降低项目维护成本 方便做代码review 提高测试人员的测试效率  分支master 主分支，所有直接面向用户的版本都在这个分支上发布 dev 日常开发使用的分支 临时分支 功能（feature-*） 增加新功能而使用的分支，从dev分支分出，最后合并到dev分支  预发布（release-*） 发布正式版本之前的测试版本，结束后需要合并进dev和master分支">
 <meta property="og:locale" content="zh-Hans">
-<meta property="og:updated_time" content="2017-10-17T14:03:50.346Z">
+<meta property="og:updated_time" content="2017-10-24T13:17:39.933Z">
 <meta name="twitter:card" content="summary">
 <meta name="twitter:title" content="git正确使用姿势">
-<meta name="twitter:description" content="为什么需要规范Git的使用 大大降低项目维护成本 方便做代码review 提高测试人员的测试效率  分支master主分支，所有直接面向用户的版本都在这个分支上发布 dev日常开发使用的分支 临时分支 功能（feature-*） 增加新功能而使用的分支，从dev分支分出，最后合并到dev分支  预发布（release-*） 发布正式版本之前的测试版本，结束后需要合并进dev和master分支  修">
+<meta name="twitter:description" content="为什么需要规范Git的使用 大大降低项目维护成本 方便做代码review 提高测试人员的测试效率  分支master 主分支，所有直接面向用户的版本都在这个分支上发布 dev 日常开发使用的分支 临时分支 功能（feature-*） 增加新功能而使用的分支，从dev分支分出，最后合并到dev分支  预发布（release-*） 发布正式版本之前的测试版本，结束后需要合并进dev和master分支">
 
 
 
@@ -337,9 +337,11 @@
 <li>方便做代码review</li>
 <li>提高测试人员的测试效率</li>
 </ul>
-<h1 id="分支"><a href="#分支" class="headerlink" title="分支"></a>分支</h1><h3 id="master"><a href="#master" class="headerlink" title="master"></a>master</h3><p>主分支，所有直接面向用户的版本都在这个分支上发布</p>
-<h3 id="dev"><a href="#dev" class="headerlink" title="dev"></a>dev</h3><p>日常开发使用的分支</p>
-<h3 id="临时分支"><a href="#临时分支" class="headerlink" title="临时分支"></a>临时分支</h3><ul>
+<h1 id="分支"><a href="#分支" class="headerlink" title="分支"></a>分支</h1><p><strong>master</strong></p>
+<p>主分支，所有直接面向用户的版本都在这个分支上发布</p>
+<p><strong>dev</strong></p>
+<p>日常开发使用的分支</p>
+<h2 id="临时分支"><a href="#临时分支" class="headerlink" title="临时分支"></a>临时分支</h2><ul>
 <li><p>功能（<strong>feature</strong>-*）</p>
 <p>增加新功能而使用的分支，从dev分支分出，最后合并到dev分支</p>
 </li>
@@ -560,7 +562,7 @@
             
 
             
-              <div class="post-toc-content"><ol class="nav"><li class="nav-item nav-level-1"><a class="nav-link" href="#为什么需要规范Git的使用"><span class="nav-number">1.</span> <span class="nav-text">为什么需要规范Git的使用</span></a></li><li class="nav-item nav-level-1"><a class="nav-link" href="#分支"><span class="nav-number">2.</span> <span class="nav-text">分支</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#master"><span class="nav-number">2.0.1.</span> <span class="nav-text">master</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#dev"><span class="nav-number">2.0.2.</span> <span class="nav-text">dev</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#临时分支"><span class="nav-number">2.0.3.</span> <span class="nav-text">临时分支</span></a></li></ol></li></ol></li><li class="nav-item nav-level-1"><a class="nav-link" href="#流程"><span class="nav-number">3.</span> <span class="nav-text">流程</span></a></li><li class="nav-item nav-level-1"><a class="nav-link" href="#提交信息"><span class="nav-number">4.</span> <span class="nav-text">提交信息</span></a><ol class="nav-child"><li class="nav-item nav-level-2"><a class="nav-link" href="#主题"><span class="nav-number">4.1.</span> <span class="nav-text">主题</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#详细描述（选填）"><span class="nav-number">4.2.</span> <span class="nav-text">详细描述（选填）</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#影响（选填）"><span class="nav-number">4.3.</span> <span class="nav-text">影响（选填）</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#测试建议"><span class="nav-number">4.4.</span> <span class="nav-text">测试建议</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#具体格式"><span class="nav-number">4.5.</span> <span class="nav-text">具体格式</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#示例"><span class="nav-number">4.6.</span> <span class="nav-text">示例</span></a></li></ol></li><li class="nav-item nav-level-1"><a class="nav-link" href="#参考资料"><span class="nav-number">5.</span> <span class="nav-text">参考资料</span></a></li></ol></div>
+              <div class="post-toc-content"><ol class="nav"><li class="nav-item nav-level-1"><a class="nav-link" href="#为什么需要规范Git的使用"><span class="nav-number">1.</span> <span class="nav-text">为什么需要规范Git的使用</span></a></li><li class="nav-item nav-level-1"><a class="nav-link" href="#分支"><span class="nav-number">2.</span> <span class="nav-text">分支</span></a><ol class="nav-child"><li class="nav-item nav-level-2"><a class="nav-link" href="#临时分支"><span class="nav-number">2.1.</span> <span class="nav-text">临时分支</span></a></li></ol></li><li class="nav-item nav-level-1"><a class="nav-link" href="#流程"><span class="nav-number">3.</span> <span class="nav-text">流程</span></a></li><li class="nav-item nav-level-1"><a class="nav-link" href="#提交信息"><span class="nav-number">4.</span> <span class="nav-text">提交信息</span></a><ol class="nav-child"><li class="nav-item nav-level-2"><a class="nav-link" href="#主题"><span class="nav-number">4.1.</span> <span class="nav-text">主题</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#详细描述（选填）"><span class="nav-number">4.2.</span> <span class="nav-text">详细描述（选填）</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#影响（选填）"><span class="nav-number">4.3.</span> <span class="nav-text">影响（选填）</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#测试建议"><span class="nav-number">4.4.</span> <span class="nav-text">测试建议</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#具体格式"><span class="nav-number">4.5.</span> <span class="nav-text">具体格式</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#示例"><span class="nav-number">4.6.</span> <span class="nav-text">示例</span></a></li></ol></li><li class="nav-item nav-level-1"><a class="nav-link" href="#参考资料"><span class="nav-number">5.</span> <span class="nav-text">参考资料</span></a></li></ol></div>
             
 
           </div>
