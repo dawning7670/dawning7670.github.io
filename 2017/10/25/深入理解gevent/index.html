@@ -1,0 +1,757 @@
+<!DOCTYPE html>
+
+
+
+  
+
+
+<html class="theme-next gemini use-motion" lang="zh-Hans">
+<head>
+  <meta charset="UTF-8"/>
+<meta http-equiv="X-UA-Compatible" content="IE=edge" />
+<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1"/>
+<meta name="theme-color" content="#222">
+
+
+
+
+
+
+
+
+
+<meta http-equiv="Cache-Control" content="no-transform" />
+<meta http-equiv="Cache-Control" content="no-siteapp" />
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+  
+  
+  <link href="/lib/fancybox/source/jquery.fancybox.css?v=2.1.5" rel="stylesheet" type="text/css" />
+
+
+
+
+  
+  
+  
+  
+
+  
+    
+    
+  
+
+  
+
+  
+
+  
+
+  
+    
+      
+    
+
+    
+  
+
+  
+    
+    
+    <link href="//fonts.googleapis.com/css?family=Lato:300,300italic,400,400italic,700,700italic|consolas:300,300italic,400,400italic,700,700italic&subset=latin,latin-ext" rel="stylesheet" type="text/css">
+  
+
+
+
+
+
+
+<link href="/lib/font-awesome/css/font-awesome.min.css?v=4.6.2" rel="stylesheet" type="text/css" />
+
+<link href="/css/main.css?v=5.1.2" rel="stylesheet" type="text/css" />
+
+
+  <meta name="keywords" content="gevent,协程,python," />
+
+
+
+
+
+
+
+
+  <link rel="shortcut icon" type="image/x-icon" href="/favicon.ico?v=5.1.2" />
+
+
+
+
+
+
+<meta name="description" content="问题引入 核心调度器究竟是如何实现的？ 适用场景是什么？  调度模型gevent调度器使用事件驱动，主协程运行事件循环不断将准备就绪的事件取出并进行上下文切换  整个运行过程的步骤如下  调度器初始化，事件列表包含两个等待调度的协程1和协程2 调度器运行协程1，当运行到阻塞操作时，切换回调度器并将阻塞事件注册到调度器 调度器运行协程2，当运行到阻塞操作时，切换回调度器并将阻塞事件注册到调度器 调度">
+<meta name="keywords" content="gevent,协程,python">
+<meta property="og:type" content="article">
+<meta property="og:title" content="深入理解gevent">
+<meta property="og:url" content="http://yoursite.com/2017/10/25/深入理解gevent/index.html">
+<meta property="og:site_name" content="dawning&#39;s blog~">
+<meta property="og:description" content="问题引入 核心调度器究竟是如何实现的？ 适用场景是什么？  调度模型gevent调度器使用事件驱动，主协程运行事件循环不断将准备就绪的事件取出并进行上下文切换  整个运行过程的步骤如下  调度器初始化，事件列表包含两个等待调度的协程1和协程2 调度器运行协程1，当运行到阻塞操作时，切换回调度器并将阻塞事件注册到调度器 调度器运行协程2，当运行到阻塞操作时，切换回调度器并将阻塞事件注册到调度器 调度">
+<meta property="og:locale" content="zh-Hans">
+<meta property="og:image" content="http://note.youdao.com/yws/api/personal/file/B5013DCBCBA94BF087D4AE6D032183F0?method=download&shareKey=7162e5f27c7b61ae0d984d79a780e596">
+<meta property="og:updated_time" content="2017-10-31T00:22:36.083Z">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:title" content="深入理解gevent">
+<meta name="twitter:description" content="问题引入 核心调度器究竟是如何实现的？ 适用场景是什么？  调度模型gevent调度器使用事件驱动，主协程运行事件循环不断将准备就绪的事件取出并进行上下文切换  整个运行过程的步骤如下  调度器初始化，事件列表包含两个等待调度的协程1和协程2 调度器运行协程1，当运行到阻塞操作时，切换回调度器并将阻塞事件注册到调度器 调度器运行协程2，当运行到阻塞操作时，切换回调度器并将阻塞事件注册到调度器 调度">
+<meta name="twitter:image" content="http://note.youdao.com/yws/api/personal/file/B5013DCBCBA94BF087D4AE6D032183F0?method=download&shareKey=7162e5f27c7b61ae0d984d79a780e596">
+
+
+
+<script type="text/javascript" id="hexo.configurations">
+  var NexT = window.NexT || {};
+  var CONFIG = {
+    root: '/',
+    scheme: 'Gemini',
+    version: '5.1.2',
+    sidebar: {"position":"right","display":"post","offset":12,"offset_float":12,"b2t":false,"scrollpercent":false,"onmobile":false},
+    fancybox: true,
+    tabs: true,
+    motion: {"enable":true,"async":false,"transition":{"post_block":"fadeIn","post_header":"slideDownIn","post_body":"slideDownIn","coll_header":"slideLeftIn"}},
+    duoshuo: {
+      userId: '0',
+      author: '博主'
+    },
+    algolia: {
+      applicationID: '',
+      apiKey: '',
+      indexName: '',
+      hits: {"per_page":10},
+      labels: {"input_placeholder":"Search for Posts","hits_empty":"We didn't find any results for the search: ${query}","hits_stats":"${hits} results found in ${time} ms"}
+    }
+  };
+</script>
+
+
+
+  <link rel="canonical" href="http://yoursite.com/2017/10/25/深入理解gevent/"/>
+
+
+
+
+
+  <title>深入理解gevent | dawning's blog~</title>
+  
+
+
+
+
+
+
+
+
+</head>
+
+<body itemscope itemtype="http://schema.org/WebPage" lang="zh-Hans">
+
+  
+  
+    
+  
+
+  <div class="container sidebar-position-right page-post-detail">
+    <div class="headband"></div>
+
+    <header id="header" class="header" itemscope itemtype="http://schema.org/WPHeader">
+      <div class="header-inner"><div class="site-brand-wrapper">
+  <div class="site-meta ">
+    
+
+    <div class="custom-logo-site-title">
+      <a href="/"  class="brand" rel="start">
+        <span class="logo-line-before"><i></i></span>
+        <span class="site-title">dawning's blog~</span>
+        <span class="logo-line-after"><i></i></span>
+      </a>
+    </div>
+      
+        <p class="site-subtitle">庸人自扰之</p>
+      
+  </div>
+
+  <div class="site-nav-toggle">
+    <button>
+      <span class="btn-bar"></span>
+      <span class="btn-bar"></span>
+      <span class="btn-bar"></span>
+    </button>
+  </div>
+</div>
+
+<nav class="site-nav">
+  
+
+  
+    <ul id="menu" class="menu">
+      
+        
+        <li class="menu-item menu-item-home">
+          <a href="/" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-home"></i> <br />
+            
+            首页
+          </a>
+        </li>
+      
+        
+        <li class="menu-item menu-item-archives">
+          <a href="/archives/" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-archive"></i> <br />
+            
+            归档
+          </a>
+        </li>
+      
+        
+        <li class="menu-item menu-item-tags">
+          <a href="/tags/" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-tags"></i> <br />
+            
+            标签
+          </a>
+        </li>
+      
+
+      
+    </ul>
+  
+
+  
+</nav>
+
+
+
+ </div>
+    </header>
+
+    <main id="main" class="main">
+      <div class="main-inner">
+        <div class="content-wrap">
+          <div id="content" class="content">
+            
+
+  <div id="posts" class="posts-expand">
+    
+
+  
+
+  
+  
+  
+
+  <article class="post post-type-normal" itemscope itemtype="http://schema.org/Article">
+  
+  
+  
+  <div class="post-block">
+    <link itemprop="mainEntityOfPage" href="http://yoursite.com/2017/10/25/深入理解gevent/">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="name" content="dawning7670">
+      <meta itemprop="description" content="">
+      <meta itemprop="image" content="/images/avatar.gif">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="dawning's blog~">
+    </span>
+
+    
+      <header class="post-header">
+
+        
+        
+          <h1 class="post-title" itemprop="name headline">深入理解gevent</h1>
+        
+
+        <div class="post-meta">
+          <span class="post-time">
+            
+              <span class="post-meta-item-icon">
+                <i class="fa fa-calendar-o"></i>
+              </span>
+              
+                <span class="post-meta-item-text">发表于</span>
+              
+              <time title="创建于" itemprop="dateCreated datePublished" datetime="2017-10-25T00:00:00+08:00">
+                2017-10-25
+              </time>
+            
+
+            
+
+            
+          </span>
+
+          
+
+          
+            
+          
+
+          
+          
+
+          
+
+          
+
+          
+
+        </div>
+      </header>
+    
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody">
+
+      
+      
+
+      
+        <h1 id="问题引入"><a href="#问题引入" class="headerlink" title="问题引入"></a>问题引入</h1><ul>
+<li>核心调度器究竟是如何实现的？</li>
+<li>适用场景是什么？</li>
+</ul>
+<h1 id="调度模型"><a href="#调度模型" class="headerlink" title="调度模型"></a>调度模型</h1><p>gevent调度器使用事件驱动，主协程运行事件循环不断将准备就绪的事件取出并进行上下文切换</p>
+<p><img src="http://note.youdao.com/yws/api/personal/file/B5013DCBCBA94BF087D4AE6D032183F0?method=download&amp;shareKey=7162e5f27c7b61ae0d984d79a780e596" alt=""></p>
+<p>整个运行过程的步骤如下</p>
+<ol>
+<li>调度器初始化，事件列表包含两个等待调度的<code>协程1</code>和<code>协程2</code></li>
+<li>调度器运行<code>协程1</code>，当运行到阻塞操作时，切换回调度器并将阻塞事件注册到调度器</li>
+<li>调度器运行<code>协程2</code>，当运行到阻塞操作时，切换回调度器并将阻塞事件注册到调度器</li>
+<li>调度器等待事件列表中的事件就绪</li>
+<li>调度器发现事件列表中<code>事件1</code>已就绪，立即切换到<code>协程1</code>运行，<code>协程1</code>运行完成后切换回调度器</li>
+<li>调度器发现事件列表中<code>事件2</code>已就绪，立即切换到<code>协程2</code>运行，<code>协程2</code>运行完成后切换会调度器</li>
+<li>调度器发现事件列表为空，溜了</li>
+</ol>
+<h1 id="调度器实现"><a href="#调度器实现" class="headerlink" title="调度器实现"></a>调度器实现</h1><p>在说明调度器的实现时，要先介绍两个相关的库</p>
+<ul>
+<li><p>greenlet</p>
+<p>greenlet实现了协程的创建和切换等操作，<code>gevent</code>使用的协程正是基于greenlet</p>
+</li>
+<li><p>libev</p>
+<p>使用C语言写的一个事件驱动框架，<code>gevent</code>使用的事件循环正是基于libev</p>
+</li>
+</ul>
+<p>先从一段简单的代码入手</p>
+<figure class="highlight python"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div><div class="line">11</div><div class="line">12</div><div class="line">13</div><div class="line">14</div></pre></td><td class="code"><pre><div class="line"><span class="function"><span class="keyword">def</span> <span class="title">f1</span><span class="params">()</span>:</span></div><div class="line">    print(<span class="string">"f1 before sleep"</span>)</div><div class="line">    gevent.sleep(<span class="number">1</span>)</div><div class="line">    print(<span class="string">"f1 after sleep"</span>)</div><div class="line"></div><div class="line"></div><div class="line"><span class="function"><span class="keyword">def</span> <span class="title">f2</span><span class="params">()</span>:</span></div><div class="line">    print(<span class="string">"f2 before sleep"</span>)</div><div class="line">    gevent.sleep(<span class="number">1</span>)</div><div class="line">    print(<span class="string">"f2 after sleep"</span>)</div><div class="line"></div><div class="line">gevent.spawn(f1)</div><div class="line">gevent.spawn(f2)</div><div class="line">gevent.wait()</div></pre></td></tr></table></figure>
+<p>运行这段代码，控制台输出</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div></pre></td><td class="code"><pre><div class="line">f1 before sleep</div><div class="line">f2 before sleep</div><div class="line">f1 after sleep</div><div class="line">f2 after sleep</div></pre></td></tr></table></figure>
+<p>那么<code>gevent.sleep</code>函数到底做了什么，使得<code>f1</code>运行到sleep函数时自动切换到<code>f2</code>运行？</p>
+<hr>
+<p>下面是<code>gevent.sleep</code>函数的实现源码</p>
+<figure class="highlight python"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div></pre></td><td class="code"><pre><div class="line"><span class="comment"># gevent.sleep</span></div><div class="line"><span class="function"><span class="keyword">def</span> <span class="title">sleep</span><span class="params">(seconds=<span class="number">0</span>, ref=True)</span>:</span></div><div class="line">    hub = get_hub() <span class="comment"># 获取hub对象，每个线程只有一个hub对象</span></div><div class="line">    loop = hub.loop</div><div class="line">    <span class="keyword">if</span> seconds &lt;= <span class="number">0</span>:</div><div class="line">        waiter = Waiter()</div><div class="line">        loop.run_callback(waiter.switch)</div><div class="line">        waiter.get()</div><div class="line">    <span class="keyword">else</span>:</div><div class="line">        hub.wait(loop.timer(seconds, ref=ref)) <span class="comment"># 核心代码 执行切换</span></div></pre></td></tr></table></figure>
+<p>从源码中我们发现核心函数是<code>Hub.wait</code>，继续查看</p>
+<figure class="highlight python"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div><div class="line">11</div></pre></td><td class="code"><pre><div class="line"><span class="comment"># Hub.get</span></div><div class="line"><span class="function"><span class="keyword">def</span> <span class="title">wait</span><span class="params">(self, watcher)</span>:</span></div><div class="line">        waiter = Waiter()</div><div class="line">        unique = object()</div><div class="line">        watcher.start(waiter.switch, unique) <span class="comment"># 这个watcher是libev库里面的watcher start方法是将某个事件以及对应的回调函数注册到事件循环中 这里显然是将定时器事件和对应的waiter.switch方法注册到事件列表中 一旦定时器超时则马上执行该回调函数</span></div><div class="line">        <span class="keyword">try</span>:</div><div class="line">            result = waiter.get()</div><div class="line">            <span class="keyword">if</span> result <span class="keyword">is</span> <span class="keyword">not</span> unique:</div><div class="line">                <span class="keyword">raise</span> InvalidSwitchError(<span class="string">'Invalid switch into %s: %r (expected %r)'</span> % (getcurrent(), result, unique))</div><div class="line">        <span class="keyword">finally</span>:</div><div class="line">            watcher.stop()</div></pre></td></tr></table></figure>
+<p>一开始看到这里肯定会肯困惑，不过没关系</p>
+<p>我们继续查看<code>Waiter.switch</code>和<code>Waiter.get</code></p>
+<figure class="highlight python"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div><div class="line">11</div><div class="line">12</div><div class="line">13</div><div class="line">14</div><div class="line">15</div><div class="line">16</div><div class="line">17</div><div class="line">18</div><div class="line">19</div><div class="line">20</div><div class="line">21</div><div class="line">22</div><div class="line">23</div><div class="line">24</div><div class="line">25</div><div class="line">26</div><div class="line">27</div><div class="line">28</div></pre></td><td class="code"><pre><div class="line"><span class="comment"># Waiter.get</span></div><div class="line"><span class="function"><span class="keyword">def</span> <span class="title">get</span><span class="params">(self)</span>:</span></div><div class="line">        <span class="keyword">if</span> self._exception <span class="keyword">is</span> <span class="keyword">not</span> _NONE: <span class="comment"># 判断该waiter是否执行完成</span></div><div class="line">            <span class="keyword">if</span> self._exception <span class="keyword">is</span> <span class="keyword">None</span>:</div><div class="line">                <span class="keyword">return</span> self.value</div><div class="line">            <span class="keyword">else</span>:</div><div class="line">                getcurrent().throw(*self._exception)</div><div class="line">        <span class="keyword">else</span>:</div><div class="line">            <span class="keyword">if</span> self.greenlet <span class="keyword">is</span> <span class="keyword">not</span> <span class="keyword">None</span>:</div><div class="line">                <span class="keyword">raise</span> ConcurrentObjectUseError(<span class="string">'This Waiter is already used by %r'</span> % (self.greenlet, ))</div><div class="line">            self.greenlet = getcurrent() <span class="comment"># getcurrent函数是greenlet自带的函数 获取当前代码所在的协程</span></div><div class="line">            <span class="keyword">try</span>:</div><div class="line">                <span class="keyword">return</span> self.hub.switch() <span class="comment"># 切换到hub协程中</span></div><div class="line">            <span class="keyword">finally</span>:</div><div class="line">                self.greenlet = <span class="keyword">None</span></div><div class="line"><span class="comment"># Waiter.switch</span></div><div class="line"><span class="function"><span class="keyword">def</span> <span class="title">switch</span><span class="params">(self, value=None)</span>:</span></div><div class="line">        greenlet = self.greenlet</div><div class="line">        <span class="keyword">if</span> greenlet <span class="keyword">is</span> <span class="keyword">None</span>: <span class="comment"># 显然greenlet不为None 因为在get函数中该变量等于运行get函数的协程对象</span></div><div class="line">            self.value = value</div><div class="line">            self._exception = <span class="keyword">None</span></div><div class="line">        <span class="keyword">else</span>:</div><div class="line">            <span class="keyword">assert</span> getcurrent() <span class="keyword">is</span> self.hub, <span class="string">"Can only use Waiter.switch method from the Hub greenlet"</span></div><div class="line">            switch = greenlet.switch</div><div class="line">            <span class="keyword">try</span>:</div><div class="line">                switch(value) <span class="comment"># 切换回协程</span></div><div class="line">            <span class="keyword">except</span>: <span class="comment"># pylint:disable=bare-except</span></div><div class="line">                self.hub.handle_error(switch, *sys.exc_info())</div></pre></td></tr></table></figure>
+<p>这里很明显<code>hub</code>就是<code>gevent</code>的核心调度器，也就是运行事件循环的地方。为了证明我们的想法，我们可以继续查看<code>Hub.run</code>的源码</p>
+<figure class="highlight python"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div></pre></td><td class="code"><pre><div class="line"><span class="comment"># Hub.run</span></div><div class="line"><span class="function"><span class="keyword">def</span> <span class="params">(self)</span>:</span></div><div class="line">    <span class="keyword">while</span> <span class="keyword">True</span>:</div><div class="line">      loop = self.loop</div><div class="line">      loop.error_handler = self</div><div class="line">      <span class="keyword">try</span>:</div><div class="line">        loop.run() <span class="comment"># 运行事件循环 libev库中的ev_loop</span></div><div class="line">      <span class="keyword">finally</span>:</div><div class="line">        loop.error_handler = <span class="keyword">None</span>  <span class="comment"># break the refcount cycle</span></div><div class="line">        self.parent.throw(LoopExit(<span class="string">'This operation would block forever'</span>, self))</div></pre></td></tr></table></figure>
+<p>然后我们再看看<code>gevent.spawn</code>函数</p>
+<figure class="highlight python"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div></pre></td><td class="code"><pre><div class="line"><span class="comment"># gevent.spawn</span></div><div class="line"><span class="function"><span class="keyword">def</span> <span class="title">spawn</span><span class="params">(cls, *args, **kwargs)</span>:</span></div><div class="line">    g = cls(*args, **kwargs) <span class="comment"># 创建Greenlet对象</span></div><div class="line">    g.start() <span class="comment"># 启动Greenlet对象</span></div><div class="line">    <span class="keyword">return</span> g</div><div class="line"><span class="comment"># Greenlet.start</span></div><div class="line"><span class="function"><span class="keyword">def</span> <span class="title">start</span><span class="params">(self)</span>:</span></div><div class="line">    <span class="keyword">if</span> self._start_event <span class="keyword">is</span> <span class="keyword">None</span>:</div><div class="line">      self._start_event = self.parent.loop.run_callback(self.switch) <span class="comment"># 将该协程加入本次事件循环的就绪事件列表中</span></div></pre></td></tr></table></figure>
+<hr>
+<p>现在我们来总结一下<code>gevent</code>的几个核心类</p>
+<ul>
+<li><p>Hub</p>
+<p>核心调度器类，线程单例</p>
+<p>负责运行事件循环并切换到各个协程中</p>
+</li>
+<li><p>Waiter</p>
+<p>协程切换入口，每个协程切换的时候都需要创建一个该对象而不是显式调用<code>switch</code>方法</p>
+<p>每个协程切换前都需要执行下面三个步骤</p>
+<ul>
+<li>创建<code>Waiter</code>对象<code>waiter</code></li>
+<li>将<code>waiter.switch</code>与事件对应的回调函数绑定</li>
+<li>执行<code>waiter.get</code>函数完成切换（切换到<code>hub</code>中）</li>
+</ul>
+</li>
+<li><p>Watcher</p>
+<p>对应<code>libev</code>中的<code>watcher</code></p>
+<p>封装所有事件，每类事件都用对应的<code>Watcher</code>对象，<code>Watcher.start</code>方法将事件以及对应的回调函数注册到事件循环中</p>
+</li>
+</ul>
+<h1 id="socket示例"><a href="#socket示例" class="headerlink" title="socket示例"></a>socket示例</h1><p>我们知道<code>gevent</code>是把所有可能阻塞的操作都替换成自己写的函数，从而能在修改少量代码的基础上无缝切换</p>
+<p>下面我们来看下<code>gevent</code>库提供的<code>socket.recv</code>函数</p>
+<figure class="highlight python"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div><div class="line">11</div><div class="line">12</div><div class="line">13</div><div class="line">14</div><div class="line">15</div><div class="line">16</div><div class="line">17</div><div class="line">18</div><div class="line">19</div><div class="line">20</div><div class="line">21</div><div class="line">22</div><div class="line">23</div></pre></td><td class="code"><pre><div class="line"><span class="comment"># socket.recv</span></div><div class="line"><span class="function"><span class="keyword">def</span> <span class="title">recv</span><span class="params">(self, *args)</span>:</span></div><div class="line">  <span class="keyword">while</span> <span class="keyword">True</span>:</div><div class="line">    <span class="keyword">try</span>:</div><div class="line">      <span class="keyword">return</span> _socket.socket.recv(self._sock, *args) <span class="comment"># 运行原生的socket.recv函数 此时的socket运行在非阻塞模式</span></div><div class="line">    <span class="keyword">except</span> error <span class="keyword">as</span> ex: <span class="comment"># 处理非阻塞异常</span></div><div class="line">      <span class="keyword">if</span> ex.args[<span class="number">0</span>] != EWOULDBLOCK <span class="keyword">or</span> self.timeout == <span class="number">0.0</span>:</div><div class="line">        <span class="keyword">raise</span></div><div class="line">    self._wait(self._read_event) <span class="comment"># 这里又是一个_wait方法，执行协程切换</span></div><div class="line"></div><div class="line"><span class="comment"># socket._wait</span></div><div class="line"><span class="function"><span class="keyword">def</span> <span class="title">_wait</span><span class="params">(self, watcher, timeout_exc=timeout<span class="params">(<span class="string">'timed out'</span>)</span>)</span>:</span></div><div class="line">    <span class="keyword">if</span> watcher.callback <span class="keyword">is</span> <span class="keyword">not</span> <span class="keyword">None</span>:</div><div class="line">        <span class="keyword">raise</span> _socketcommon.ConcurrentObjectUseError(<span class="string">'This socket is already used by another greenlet: %r'</span> % (watcher.callback, ))</div><div class="line">    <span class="keyword">if</span> self.timeout <span class="keyword">is</span> <span class="keyword">not</span> <span class="keyword">None</span>:</div><div class="line">        timeout = Timeout.start_new(self.timeout, timeout_exc, ref=<span class="keyword">False</span>)</div><div class="line">    <span class="keyword">else</span>:</div><div class="line">        timeout = <span class="keyword">None</span></div><div class="line">    <span class="keyword">try</span>:</div><div class="line">        self.hub.wait(watcher) <span class="comment"># 调用wait方法将事件和回调函数注册到事件循环中并切换到hub中 这个watcher就是上面传进来的self._read_event（socket可读事件）</span></div><div class="line">    <span class="keyword">finally</span>:</div><div class="line">        <span class="keyword">if</span> timeout <span class="keyword">is</span> <span class="keyword">not</span> <span class="keyword">None</span>:</div><div class="line">            timeout.cancel()</div></pre></td></tr></table></figure>
+<h1 id="适用场景"><a href="#适用场景" class="headerlink" title="适用场景"></a>适用场景</h1><p>通过分析<code>gevent</code>的实现，我们可以总结出它非常<strong>适用于I/O密集型的高并发应用</strong>，例如<code>WEB</code>服务器和处理大量连接的<code>TCP</code>服务端；<strong>不适用于CPU密集型应用</strong>（协程切换开销）</p>
+
+      
+    </div>
+    
+    
+    
+
+    
+
+    
+
+    
+
+    <footer class="post-footer">
+      
+        <div class="post-tags">
+          
+            <a href="/tags/gevent/" rel="tag"># gevent</a>
+          
+            <a href="/tags/协程/" rel="tag"># 协程</a>
+          
+            <a href="/tags/python/" rel="tag"># python</a>
+          
+        </div>
+      
+
+      
+      
+      
+
+      
+        <div class="post-nav">
+          <div class="post-nav-next post-nav-item">
+            
+              <a href="/2017/10/17/MongoDB存储引擎/" rel="next" title="MongoDB-WiredTiger存储引擎">
+                <i class="fa fa-chevron-left"></i> MongoDB-WiredTiger存储引擎
+              </a>
+            
+          </div>
+
+          <span class="post-nav-divider"></span>
+
+          <div class="post-nav-prev post-nav-item">
+            
+          </div>
+        </div>
+      
+
+      
+      
+    </footer>
+  </div>
+  
+  
+  
+  </article>
+
+
+
+    <div class="post-spread">
+      
+    </div>
+  </div>
+
+
+          </div>
+          
+
+
+          
+  <div class="comments" id="comments">
+    
+  </div>
+
+
+        </div>
+        
+          
+  
+  <div class="sidebar-toggle">
+    <div class="sidebar-toggle-line-wrap">
+      <span class="sidebar-toggle-line sidebar-toggle-line-first"></span>
+      <span class="sidebar-toggle-line sidebar-toggle-line-middle"></span>
+      <span class="sidebar-toggle-line sidebar-toggle-line-last"></span>
+    </div>
+  </div>
+
+  <aside id="sidebar" class="sidebar">
+    
+    <div class="sidebar-inner">
+
+      
+
+      
+        <ul class="sidebar-nav motion-element">
+          <li class="sidebar-nav-toc sidebar-nav-active" data-target="post-toc-wrap" >
+            文章目录
+          </li>
+          <li class="sidebar-nav-overview" data-target="site-overview">
+            站点概览
+          </li>
+        </ul>
+      
+
+      <section class="site-overview sidebar-panel">
+        <div class="site-author motion-element" itemprop="author" itemscope itemtype="http://schema.org/Person">
+          
+            <p class="site-author-name" itemprop="name">dawning7670</p>
+            <p class="site-description motion-element" itemprop="description"></p>
+        </div>
+
+        <nav class="site-state motion-element">
+
+          
+            <div class="site-state-item site-state-posts">
+            
+              <a href="/archives/">
+            
+                <span class="site-state-item-count">9</span>
+                <span class="site-state-item-name">日志</span>
+              </a>
+            </div>
+          
+
+          
+
+          
+            
+            
+            <div class="site-state-item site-state-tags">
+              <a href="/tags/index.html">
+                <span class="site-state-item-count">17</span>
+                <span class="site-state-item-name">标签</span>
+              </a>
+            </div>
+          
+
+        </nav>
+
+        
+
+        <div class="links-of-author motion-element">
+          
+        </div>
+
+        
+        
+
+        
+        
+
+        
+
+
+      </section>
+
+      
+      <!--noindex-->
+        <section class="post-toc-wrap motion-element sidebar-panel sidebar-panel-active">
+          <div class="post-toc">
+
+            
+              
+            
+
+            
+              <div class="post-toc-content"><ol class="nav"><li class="nav-item nav-level-1"><a class="nav-link" href="#问题引入"><span class="nav-number">1.</span> <span class="nav-text">问题引入</span></a></li><li class="nav-item nav-level-1"><a class="nav-link" href="#调度模型"><span class="nav-number">2.</span> <span class="nav-text">调度模型</span></a></li><li class="nav-item nav-level-1"><a class="nav-link" href="#调度器实现"><span class="nav-number">3.</span> <span class="nav-text">调度器实现</span></a></li><li class="nav-item nav-level-1"><a class="nav-link" href="#socket示例"><span class="nav-number">4.</span> <span class="nav-text">socket示例</span></a></li><li class="nav-item nav-level-1"><a class="nav-link" href="#适用场景"><span class="nav-number">5.</span> <span class="nav-text">适用场景</span></a></li></ol></div>
+            
+
+          </div>
+        </section>
+      <!--/noindex-->
+      
+
+      
+
+    </div>
+  </aside>
+
+
+        
+      </div>
+    </main>
+
+    <footer id="footer" class="footer">
+      <div class="footer-inner">
+        <div class="copyright" >
+  
+  &copy; 
+  <span itemprop="copyrightYear">2017</span>
+  <span class="with-love">
+    <i class="fa fa-tint"></i>
+  </span>
+  <span class="author" itemprop="copyrightHolder">dawning7670</span>
+
+  
+</div>
+
+
+
+        
+
+
+
+
+
+
+
+        
+      </div>
+    </footer>
+
+    
+      <div class="back-to-top">
+        <i class="fa fa-arrow-up"></i>
+        
+      </div>
+    
+
+  </div>
+
+  
+
+<script type="text/javascript">
+  if (Object.prototype.toString.call(window.Promise) !== '[object Function]') {
+    window.Promise = null;
+  }
+</script>
+
+
+
+
+
+
+
+
+
+  
+
+
+
+
+
+
+
+
+
+
+
+
+  
+  <script type="text/javascript" src="/lib/jquery/index.js?v=2.1.3"></script>
+
+  
+  <script type="text/javascript" src="/lib/fastclick/lib/fastclick.min.js?v=1.0.6"></script>
+
+  
+  <script type="text/javascript" src="/lib/jquery_lazyload/jquery.lazyload.js?v=1.9.7"></script>
+
+  
+  <script type="text/javascript" src="/lib/velocity/velocity.min.js?v=1.2.1"></script>
+
+  
+  <script type="text/javascript" src="/lib/velocity/velocity.ui.min.js?v=1.2.1"></script>
+
+  
+  <script type="text/javascript" src="/lib/fancybox/source/jquery.fancybox.pack.js?v=2.1.5"></script>
+
+
+  
+
+
+  <script type="text/javascript" src="/js/src/utils.js?v=5.1.2"></script>
+
+  <script type="text/javascript" src="/js/src/motion.js?v=5.1.2"></script>
+
+
+
+  
+  
+
+
+  <script type="text/javascript" src="/js/src/affix.js?v=5.1.2"></script>
+
+  <script type="text/javascript" src="/js/src/schemes/pisces.js?v=5.1.2"></script>
+
+
+
+  <script type="text/javascript" src="/js/src/scrollspy.js?v=5.1.2"></script>
+<script type="text/javascript" src="/js/src/post-details.js?v=5.1.2"></script>
+
+
+  
+  <script type="text/javascript" src="/js/src/scrollspy.js?v=5.1.2"></script>
+<script type="text/javascript" src="/js/src/post-details.js?v=5.1.2"></script>
+
+
+
+  
+
+
+  <script type="text/javascript" src="/js/src/bootstrap.js?v=5.1.2"></script>
+
+
+
+  
+
+
+  
+
+
+
+
+	
+
+
+
+
+
+  
+
+
+
+
+
+  
+
+
+
+
+
+
+
+
+  
+
+
+
+
+
+  
+
+  
+
+  
+
+  
+
+  
+
+  
+
+</body>
+</html>
