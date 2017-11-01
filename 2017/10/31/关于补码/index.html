@@ -85,7 +85,7 @@
 <link href="/css/main.css?v=5.1.2" rel="stylesheet" type="text/css" />
 
 
-  <meta name="keywords" content="git," />
+  <meta name="keywords" content="补码,计算机体系结构," />
 
 
 
@@ -101,18 +101,18 @@
 
 
 
-<meta name="description" content="为什么需要规范Git的使用 大大降低项目维护成本 方便做代码review 提高测试人员的测试效率  分支master 主分支，所有直接面向用户的版本都在这个分支上发布 dev 日常开发使用的分支 临时分支 功能（feature-*） 增加新功能而使用的分支，从dev分支分出，最后合并到dev分支  预发布（release-*） 发布正式版本之前的测试版本，结束后需要合并进dev和master分支">
-<meta name="keywords" content="git">
+<meta name="description" content="前言在学习计算机体系结构的时候我们知道，计算机会将负整数表示成补码形式，目的当然是为了把减法运算表示成加法运算，这样就可以复用加法运算电路了。但是在上课的时候没有深入了解一下补码运算的本质，直到最近又重新看了一遍《深入理解计算机系统》，然后对于补码以及它的运算有了更深的认识。 补码规则我们知道计算机是不能直接计算减法的，它会将负数表示成补码形式，然后执行加法运算得到最终结果。 补码的计算规则用文字">
+<meta name="keywords" content="补码,计算机体系结构">
 <meta property="og:type" content="article">
-<meta property="og:title" content="git正确使用姿势">
-<meta property="og:url" content="http://yoursite.com/2017/10/15/Git正确使用姿势/index.html">
+<meta property="og:title" content="关于补码">
+<meta property="og:url" content="http://yoursite.com/2017/10/31/关于补码/index.html">
 <meta property="og:site_name" content="dawning&#39;s blog~">
-<meta property="og:description" content="为什么需要规范Git的使用 大大降低项目维护成本 方便做代码review 提高测试人员的测试效率  分支master 主分支，所有直接面向用户的版本都在这个分支上发布 dev 日常开发使用的分支 临时分支 功能（feature-*） 增加新功能而使用的分支，从dev分支分出，最后合并到dev分支  预发布（release-*） 发布正式版本之前的测试版本，结束后需要合并进dev和master分支">
+<meta property="og:description" content="前言在学习计算机体系结构的时候我们知道，计算机会将负整数表示成补码形式，目的当然是为了把减法运算表示成加法运算，这样就可以复用加法运算电路了。但是在上课的时候没有深入了解一下补码运算的本质，直到最近又重新看了一遍《深入理解计算机系统》，然后对于补码以及它的运算有了更深的认识。 补码规则我们知道计算机是不能直接计算减法的，它会将负数表示成补码形式，然后执行加法运算得到最终结果。 补码的计算规则用文字">
 <meta property="og:locale" content="zh-Hans">
-<meta property="og:updated_time" content="2017-10-24T13:17:39.933Z">
+<meta property="og:updated_time" content="2017-11-01T12:17:33.850Z">
 <meta name="twitter:card" content="summary">
-<meta name="twitter:title" content="git正确使用姿势">
-<meta name="twitter:description" content="为什么需要规范Git的使用 大大降低项目维护成本 方便做代码review 提高测试人员的测试效率  分支master 主分支，所有直接面向用户的版本都在这个分支上发布 dev 日常开发使用的分支 临时分支 功能（feature-*） 增加新功能而使用的分支，从dev分支分出，最后合并到dev分支  预发布（release-*） 发布正式版本之前的测试版本，结束后需要合并进dev和master分支">
+<meta name="twitter:title" content="关于补码">
+<meta name="twitter:description" content="前言在学习计算机体系结构的时候我们知道，计算机会将负整数表示成补码形式，目的当然是为了把减法运算表示成加法运算，这样就可以复用加法运算电路了。但是在上课的时候没有深入了解一下补码运算的本质，直到最近又重新看了一遍《深入理解计算机系统》，然后对于补码以及它的运算有了更深的认识。 补码规则我们知道计算机是不能直接计算减法的，它会将负数表示成补码形式，然后执行加法运算得到最终结果。 补码的计算规则用文字">
 
 
 
@@ -142,13 +142,13 @@
 
 
 
-  <link rel="canonical" href="http://yoursite.com/2017/10/15/Git正确使用姿势/"/>
+  <link rel="canonical" href="http://yoursite.com/2017/10/31/关于补码/"/>
 
 
 
 
 
-  <title>git正确使用姿势 | dawning's blog~</title><!-- hexo-inject:begin --><!-- hexo-inject:end -->
+  <title>关于补码 | dawning's blog~</title><!-- hexo-inject:begin --><!-- hexo-inject:end -->
   
 
 
@@ -265,7 +265,7 @@
   
   
   <div class="post-block">
-    <link itemprop="mainEntityOfPage" href="http://yoursite.com/2017/10/15/Git正确使用姿势/">
+    <link itemprop="mainEntityOfPage" href="http://yoursite.com/2017/10/31/关于补码/">
 
     <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
       <meta itemprop="name" content="dawning7670">
@@ -282,7 +282,7 @@
 
         
         
-          <h1 class="post-title" itemprop="name headline">git正确使用姿势</h1>
+          <h1 class="post-title" itemprop="name headline">关于补码</h1>
         
 
         <div class="post-meta">
@@ -294,8 +294,8 @@
               
                 <span class="post-meta-item-text">发表于</span>
               
-              <time title="创建于" itemprop="dateCreated datePublished" datetime="2017-10-15T19:33:22+08:00">
-                2017-10-15
+              <time title="创建于" itemprop="dateCreated datePublished" datetime="2017-10-31T00:00:00+08:00">
+                2017-10-31
               </time>
             
 
@@ -332,70 +332,63 @@
       
 
       
-        <h1 id="为什么需要规范Git的使用"><a href="#为什么需要规范Git的使用" class="headerlink" title="为什么需要规范Git的使用"></a>为什么需要规范Git的使用</h1><ul>
-<li>大大降低项目维护成本</li>
-<li>方便做代码review</li>
-<li>提高测试人员的测试效率</li>
-</ul>
-<h1 id="分支"><a href="#分支" class="headerlink" title="分支"></a>分支</h1><p><strong>master</strong></p>
-<p>主分支，所有直接面向用户的版本都在这个分支上发布</p>
-<p><strong>dev</strong></p>
-<p>日常开发使用的分支</p>
-<h2 id="临时分支"><a href="#临时分支" class="headerlink" title="临时分支"></a>临时分支</h2><ul>
-<li><p>功能（<strong>feature</strong>-*）</p>
-<p>增加新功能而使用的分支，从dev分支分出，最后合并到dev分支</p>
-</li>
-<li><p>预发布（<strong>release</strong>-*）</p>
-<p>发布正式版本之前的测试版本，结束后需要合并进dev和master分支</p>
-</li>
-<li><p>修复bug（<strong>fixbug</strong>-*）</p>
-<p>从master分支上分出，修复完成后需要合并到master分支</p>
-</li>
-</ul>
-<p>上述三种临时分支使用完成后都需要删除以便确保仓库内始终只有master和dev两个分支</p>
-<h1 id="流程"><a href="#流程" class="headerlink" title="流程"></a>流程</h1><ol>
-<li>新建分支</li>
-<li>在分支上做开发</li>
-<li>提交修改</li>
-<li>新分支同步master分支(pull from master)</li>
-<li>合并commit(rebase)</li>
-<li>推送到远程仓库(push)</li>
-<li>合并新分支到master(pull request)</li>
-<li>删除新创建的分支</li>
-</ol>
-<h1 id="提交信息"><a href="#提交信息" class="headerlink" title="提交信息"></a>提交信息</h1><h2 id="主题"><a href="#主题" class="headerlink" title="主题"></a>主题</h2><ul>
-<li>A：添加</li>
-<li>U：更新</li>
-<li>D：删除</li>
-<li>F：修复已知错误</li>
-<li>B：BUG修复，需要带上BUGID</li>
-<li>R：重构</li>
-</ul>
-<h2 id="详细描述（选填）"><a href="#详细描述（选填）" class="headerlink" title="详细描述（选填）"></a>详细描述（选填）</h2><p>当你修改的内容无法用一句话描述时，就可以加上详细描述。详细描述主要说明以下两点</p>
+        <h1 id="前言"><a href="#前言" class="headerlink" title="前言"></a>前言</h1><p>在学习计算机体系结构的时候我们知道，计算机会将负整数表示成<code>补码</code>形式，目的当然是为了把减法运算表示成加法运算，这样就可以复用加法运算电路了。但是在上课的时候没有深入了解一下补码运算的本质，直到最近又重新看了一遍《深入理解计算机系统》，然后对于补码以及它的运算有了更深的认识。</p>
+<h1 id="补码规则"><a href="#补码规则" class="headerlink" title="补码规则"></a>补码规则</h1><p>我们知道计算机是不能直接计算减法的，它会将负数表示成<code>补码</code>形式，然后执行加法运算得到最终结果。</p>
+<p>补码的计算规则用文字表示成</p>
+<script type="math/tex; mode=display">
+\begin{equation}
+x_补=\left\{
+\begin{aligned}
+不变  & & {x >= 0}\\
+符号位不变，其余各位按位求反后加一  & & {x < 0}\\
+\end{aligned}
+\right.
+\end{equation}</script><p>我们来实践一下上面的规则（环境为8位二进制）</p>
 <ul>
-<li>为什么需要修改</li>
-<li>如何解决问题</li>
+<li><p><code>-1</code>的补码 </p>
+<p><code>-1</code>的二进制表示<code>1000 0001</code></p>
+<p>按位求反得到<code>1111 1110</code></p>
+<p>加一后得到补码<code>1111 1111</code></p>
+</li>
+<li><p><code>-3</code>的补码</p>
+<p><code>-3</code>的二进制表示<code>1000 0011</code></p>
+<p>按位求反后得到<code>1111 1100</code></p>
+<p>加一后得到补码<code>1111 1101</code></p>
+</li>
 </ul>
-<h2 id="影响（选填）"><a href="#影响（选填）" class="headerlink" title="影响（选填）"></a>影响（选填）</h2><ul>
-<li>此次修改引发的副作用</li>
-<li>可能影响到的模块</li>
+<p>根据上面的实践我们得出按位求反加一运算的本质</p>
+<script type="math/tex; mode=display">
+x_反 = 10000000 + (1111111 + x)\\
+x_补 = x_反 + 1 = 100000000  + x = 2^8 + x</script><p>将上面的公式写成一个通式</p>
+<script type="math/tex; mode=display">
+\begin{equation}
+x_补=\left\{
+\begin{aligned}
+x  & & {x >= 0}\\
+2^w + x  & & {x < 0}\\
+\end{aligned}
+\right.
+\end{equation}\\
+其中w表示二进制位数</script><h1 id="补码运算的正确性"><a href="#补码运算的正确性" class="headerlink" title="补码运算的正确性"></a>补码运算的正确性</h1><p>这里我们只分析补码的加法，乘法的分析过程和加法类似</p>
+<p>首先来看补码加法公式</p>
+<script type="math/tex; mode=display">
+(x + y)_补 = x_补 + y_补</script><p>我们需要根据两个数的符号分情况讨论</p>
+<h2 id="均为正数"><a href="#均为正数" class="headerlink" title="均为正数"></a>均为正数</h2><p>两个数都为正数的情况下没什么好说的，因为正数的补码是它本身，所以上面的等式一定成立</p>
+<h2 id="一正一负"><a href="#一正一负" class="headerlink" title="一正一负"></a>一正一负</h2><p>根据补码加法公式我们可以得到</p>
+<script type="math/tex; mode=display">
+(x + y)_补 = 2^w + (x + y)\\
+x_补 + y_补 = 2^w + x + y = (x + y)_补</script><ul>
+<li>当$x + y &gt;= 0$时，由于<strong>计算机的字长限制</strong>导致$2^w$被截断了，所以尾数部分的结果就是$x + y$，然后因为$x + y &gt; 0$，所以公式正确</li>
+<li>当$x + y &lt; 0$时，刚好满足负数的补码规则，所以也成立</li>
 </ul>
-<h2 id="测试建议"><a href="#测试建议" class="headerlink" title="测试建议"></a>测试建议</h2><ul>
-<li>此次的改动该如何测试</li>
-<li>测试需要注意的地方</li>
-</ul>
-<h2 id="具体格式"><a href="#具体格式" class="headerlink" title="具体格式"></a>具体格式</h2><figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div></pre></td><td class="code"><pre><div class="line">主题</div><div class="line"></div><div class="line">[详细描述]</div><div class="line"></div><div class="line">* 影响1</div><div class="line">* 影响2</div><div class="line"></div><div class="line"></div><div class="line">[测试建议]</div></pre></td></tr></table></figure>
-<p><em>注意</em></p>
-<ul>
-<li>每个类别之间空一行</li>
-<li>测试建议前面空两行</li>
-</ul>
-<h2 id="示例"><a href="#示例" class="headerlink" title="示例"></a>示例</h2><figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div></pre></td><td class="code"><pre><div class="line">[A]添加JSON校验模块</div><div class="line"></div><div class="line">对每个请求的JSON进行字段校验来保证数据正确性</div><div class="line"></div><div class="line">* 校验失败后不会继续处理请求直接返回错误信息</div><div class="line"></div><div class="line"></div><div class="line">1.发送正确请求数据，服务器能正常返回</div><div class="line">2.发送错误请求数据（JSON格式错误），服务器返回JSON格式校验失败，并携带错误的具体信息</div></pre></td></tr></table></figure>
-<hr>
-<figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div></pre></td><td class="code"><pre><div class="line">[B]修复用户无法注册问题 #1122</div><div class="line"></div><div class="line">由于数据库连接配置错误导致无法连接数据库</div><div class="line">从而导致用户注册功能失效</div><div class="line"></div><div class="line"></div><div class="line">1.正常注册用户，服务器返回成功</div><div class="line">2.使用新注册的用户能成功登陆系统</div></pre></td></tr></table></figure>
-<h1 id="参考资料"><a href="#参考资料" class="headerlink" title="参考资料"></a>参考资料</h1><p><a href="http://www.ruanyifeng.com/blog/2015/08/git-use-process.html" target="_blank" rel="external">Git 使用规范流程</a></p>
-<p><a href="http://www.ruanyifeng.com/blog/2012/07/git.html" target="_blank" rel="external">Git 分支管理策略</a></p>
-<p><a href="https://ruby-china.org/topics/15737" target="_blank" rel="external">Git 写出好的 commit message</a></p>
+<h2 id="均为负数"><a href="#均为负数" class="headerlink" title="均为负数"></a>均为负数</h2><p>根据补码加法公式我们可以得到</p>
+<script type="math/tex; mode=display">
+(x + y)_补 = 2^w + (x + y)\\
+x_补 + y_补 = 2^w + x + 2^w + y = 2^w + (2^w + x + y)</script><p> $x + y &lt; 0 =&gt; 2^w + x + y &lt; 2^w$ 所以$ (2^w + x + y) $不会被截断<br>由于<strong>计算机的字长限制</strong>导致高位被截断，所以 $2^w + (2^w + x + y)  = (2^w + x + y) $<br>故原式成立</p>
+<h1 id="总结"><a href="#总结" class="headerlink" title="总结"></a>总结</h1><p>保证补码运算结果正确性的根本原因就是<strong>计算机的字长限制导致高位被舍弃</strong>，其实这里可以用《深入理解计算机系统》中的一句话概括</p>
+<blockquote>
+<p>计算机执行的“整数”运算实际上是一种模运算形式</p>
+</blockquote>
 
       
     </div>
@@ -413,7 +406,9 @@
       
         <div class="post-tags">
           
-            <a href="/tags/git/" rel="tag"># git</a>
+            <a href="/tags/补码/" rel="tag"># 补码</a>
+          
+            <a href="/tags/计算机体系结构/" rel="tag"># 计算机体系结构</a>
           
         </div>
       
@@ -426,8 +421,8 @@
         <div class="post-nav">
           <div class="post-nav-next post-nav-item">
             
-              <a href="/2017/10/13/MongoDB索引/" rel="next" title="MongoDB-索引">
-                <i class="fa fa-chevron-left"></i> MongoDB-索引
+              <a href="/2017/10/25/深入理解gevent/" rel="next" title="深入理解gevent">
+                <i class="fa fa-chevron-left"></i> 深入理解gevent
               </a>
             
           </div>
@@ -435,10 +430,6 @@
           <span class="post-nav-divider"></span>
 
           <div class="post-nav-prev post-nav-item">
-            
-              <a href="/2017/10/17/MongoDB存储引擎/" rel="prev" title="MongoDB-WiredTiger存储引擎">
-                MongoDB-WiredTiger存储引擎 <i class="fa fa-chevron-right"></i>
-              </a>
             
           </div>
         </div>
@@ -562,7 +553,7 @@
             
 
             
-              <div class="post-toc-content"><ol class="nav"><li class="nav-item nav-level-1"><a class="nav-link" href="#为什么需要规范Git的使用"><span class="nav-number">1.</span> <span class="nav-text">为什么需要规范Git的使用</span></a></li><li class="nav-item nav-level-1"><a class="nav-link" href="#分支"><span class="nav-number">2.</span> <span class="nav-text">分支</span></a><ol class="nav-child"><li class="nav-item nav-level-2"><a class="nav-link" href="#临时分支"><span class="nav-number">2.1.</span> <span class="nav-text">临时分支</span></a></li></ol></li><li class="nav-item nav-level-1"><a class="nav-link" href="#流程"><span class="nav-number">3.</span> <span class="nav-text">流程</span></a></li><li class="nav-item nav-level-1"><a class="nav-link" href="#提交信息"><span class="nav-number">4.</span> <span class="nav-text">提交信息</span></a><ol class="nav-child"><li class="nav-item nav-level-2"><a class="nav-link" href="#主题"><span class="nav-number">4.1.</span> <span class="nav-text">主题</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#详细描述（选填）"><span class="nav-number">4.2.</span> <span class="nav-text">详细描述（选填）</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#影响（选填）"><span class="nav-number">4.3.</span> <span class="nav-text">影响（选填）</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#测试建议"><span class="nav-number">4.4.</span> <span class="nav-text">测试建议</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#具体格式"><span class="nav-number">4.5.</span> <span class="nav-text">具体格式</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#示例"><span class="nav-number">4.6.</span> <span class="nav-text">示例</span></a></li></ol></li><li class="nav-item nav-level-1"><a class="nav-link" href="#参考资料"><span class="nav-number">5.</span> <span class="nav-text">参考资料</span></a></li></ol></div>
+              <div class="post-toc-content"><ol class="nav"><li class="nav-item nav-level-1"><a class="nav-link" href="#前言"><span class="nav-number">1.</span> <span class="nav-text">前言</span></a></li><li class="nav-item nav-level-1"><a class="nav-link" href="#补码规则"><span class="nav-number">2.</span> <span class="nav-text">补码规则</span></a></li><li class="nav-item nav-level-1"><a class="nav-link" href="#补码运算的正确性"><span class="nav-number">3.</span> <span class="nav-text">补码运算的正确性</span></a><ol class="nav-child"><li class="nav-item nav-level-2"><a class="nav-link" href="#均为正数"><span class="nav-number">3.1.</span> <span class="nav-text">均为正数</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#一正一负"><span class="nav-number">3.2.</span> <span class="nav-text">一正一负</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#均为负数"><span class="nav-number">3.3.</span> <span class="nav-text">均为负数</span></a></li></ol></li><li class="nav-item nav-level-1"><a class="nav-link" href="#总结"><span class="nav-number">4.</span> <span class="nav-text">总结</span></a></li></ol></div>
             
 
           </div>

@@ -7,7 +7,7 @@
 
 <html class="theme-next gemini use-motion" lang="zh-Hans">
 <head>
-  <meta charset="UTF-8"/>
+  <!-- hexo-inject:begin --><!-- hexo-inject:end --><meta charset="UTF-8"/>
 <meta http-equiv="X-UA-Compatible" content="IE=edge" />
 <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1"/>
 <meta name="theme-color" content="#222">
@@ -143,7 +143,7 @@
 
 
 
-  <title>dawning's blog~</title>
+  <title>dawning's blog~</title><!-- hexo-inject:begin --><!-- hexo-inject:end -->
   
 
 
@@ -162,7 +162,7 @@
     
   
 
-  <div class="container sidebar-position-right 
+  <!-- hexo-inject:begin --><!-- hexo-inject:end --><div class="container sidebar-position-right 
   page-home">
     <div class="headband"></div>
 
@@ -261,6 +261,182 @@
   
   
   <div class="post-block">
+    <link itemprop="mainEntityOfPage" href="http://yoursite.com/2017/10/31/关于补码/">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="name" content="dawning7670">
+      <meta itemprop="description" content="">
+      <meta itemprop="image" content="/images/avatar.gif">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="dawning's blog~">
+    </span>
+
+    
+      <header class="post-header">
+
+        
+        
+          <h1 class="post-title" itemprop="name headline">
+                
+                <a class="post-title-link" href="/2017/10/31/关于补码/" itemprop="url">关于补码</a></h1>
+        
+
+        <div class="post-meta">
+          <span class="post-time">
+            
+              <span class="post-meta-item-icon">
+                <i class="fa fa-calendar-o"></i>
+              </span>
+              
+                <span class="post-meta-item-text">发表于</span>
+              
+              <time title="创建于" itemprop="dateCreated datePublished" datetime="2017-10-31T00:00:00+08:00">
+                2017-10-31
+              </time>
+            
+
+            
+
+            
+          </span>
+
+          
+
+          
+            
+          
+
+          
+          
+
+          
+
+          
+
+          
+
+        </div>
+      </header>
+    
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody">
+
+      
+      
+
+      
+        
+          
+            <h1 id="前言"><a href="#前言" class="headerlink" title="前言"></a>前言</h1><p>在学习计算机体系结构的时候我们知道，计算机会将负整数表示成<code>补码</code>形式，目的当然是为了把减法运算表示成加法运算，这样就可以复用加法运算电路了。但是在上课的时候没有深入了解一下补码运算的本质，直到最近又重新看了一遍《深入理解计算机系统》，然后对于补码以及它的运算有了更深的认识。</p>
+<h1 id="补码规则"><a href="#补码规则" class="headerlink" title="补码规则"></a>补码规则</h1><p>我们知道计算机是不能直接计算减法的，它会将负数表示成<code>补码</code>形式，然后执行加法运算得到最终结果。</p>
+<p>补码的计算规则用文字表示成</p>
+<script type="math/tex; mode=display">
+\begin{equation}
+x_补=\left\{
+\begin{aligned}
+不变  & & {x >= 0}\\
+符号位不变，其余各位按位求反后加一  & & {x < 0}\\
+\end{aligned}
+\right.
+\end{equation}</script><p>我们来实践一下上面的规则（环境为8位二进制）</p>
+<ul>
+<li><p><code>-1</code>的补码 </p>
+<p><code>-1</code>的二进制表示<code>1000 0001</code></p>
+<p>按位求反得到<code>1111 1110</code></p>
+<p>加一后得到补码<code>1111 1111</code></p>
+</li>
+<li><p><code>-3</code>的补码</p>
+<p><code>-3</code>的二进制表示<code>1000 0011</code></p>
+<p>按位求反后得到<code>1111 1100</code></p>
+<p>加一后得到补码<code>1111 1101</code></p>
+</li>
+</ul>
+<p>根据上面的实践我们得出按位求反加一运算的本质</p>
+<script type="math/tex; mode=display">
+x_反 = 10000000 + (1111111 + x)\\
+x_补 = x_反 + 1 = 100000000  + x = 2^8 + x</script><p>将上面的公式写成一个通式</p>
+<script type="math/tex; mode=display">
+\begin{equation}
+x_补=\left\{
+\begin{aligned}
+x  & & {x >= 0}\\
+2^w + x  & & {x < 0}\\
+\end{aligned}
+\right.
+\end{equation}\\
+其中w表示二进制位数</script><h1 id="补码运算的正确性"><a href="#补码运算的正确性" class="headerlink" title="补码运算的正确性"></a>补码运算的正确性</h1><p>这里我们只分析补码的加法，乘法的分析过程和加法类似</p>
+<p>首先来看补码加法公式</p>
+<script type="math/tex; mode=display">
+(x + y)_补 = x_补 + y_补</script><p>我们需要根据两个数的符号分情况讨论</p>
+<h2 id="均为正数"><a href="#均为正数" class="headerlink" title="均为正数"></a>均为正数</h2><p>两个数都为正数的情况下没什么好说的，因为正数的补码是它本身，所以上面的等式一定成立</p>
+<h2 id="一正一负"><a href="#一正一负" class="headerlink" title="一正一负"></a>一正一负</h2><p>根据补码加法公式我们可以得到</p>
+<script type="math/tex; mode=display">
+(x + y)_补 = 2^w + (x + y)\\
+x_补 + y_补 = 2^w + x + y = (x + y)_补</script><ul>
+<li>当$x + y &gt;= 0$时，由于<strong>计算机的字长限制</strong>导致$2^w$被截断了，所以尾数部分的结果就是$x + y$，然后因为$x + y &gt; 0$，所以公式正确</li>
+<li>当$x + y &lt; 0$时，刚好满足负数的补码规则，所以也成立</li>
+</ul>
+<h2 id="均为负数"><a href="#均为负数" class="headerlink" title="均为负数"></a>均为负数</h2><p>根据补码加法公式我们可以得到</p>
+<script type="math/tex; mode=display">
+(x + y)_补 = 2^w + (x + y)\\
+x_补 + y_补 = 2^w + x + 2^w + y = 2^w + (2^w + x + y)</script><p> $x + y &lt; 0 =&gt; 2^w + x + y &lt; 2^w$ 所以$ (2^w + x + y) $不会被截断<br>由于<strong>计算机的字长限制</strong>导致高位被截断，所以 $2^w + (2^w + x + y)  = (2^w + x + y) $<br>故原式成立</p>
+<h1 id="总结"><a href="#总结" class="headerlink" title="总结"></a>总结</h1><p>保证补码运算结果正确性的根本原因就是<strong>计算机的字长限制导致高位被舍弃</strong>，其实这里可以用《深入理解计算机系统》中的一句话概括</p>
+<blockquote>
+<p>计算机执行的“整数”运算实际上是一种模运算形式</p>
+</blockquote>
+
+          
+        
+      
+    </div>
+    
+    
+    
+
+    
+
+    
+
+    
+
+    <footer class="post-footer">
+      
+
+      
+
+      
+
+      
+      
+        <div class="post-eof"></div>
+      
+    </footer>
+  </div>
+  
+  
+  
+  </article>
+
+
+    
+      
+
+  
+
+  
+  
+  
+
+  <article class="post post-type-normal" itemscope itemtype="http://schema.org/Article">
+  
+  
+  
+  <div class="post-block">
     <link itemprop="mainEntityOfPage" href="http://yoursite.com/2017/10/25/深入理解gevent/">
 
     <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
@@ -332,7 +508,8 @@
       
         
           
-            <h1 id="问题引入"><a href="#问题引入" class="headerlink" title="问题引入"></a>问题引入</h1><ul>
+            <h1 id="问题引入"><a href="#问题引入" class="headerlink" title="问题引入"></a>问题引入</h1><p>在使用gevent的时候发现用起来很舒服，舒服过后脑海中就产生了下面两个问题</p>
+<ul>
 <li>核心调度器究竟是如何实现的？</li>
 <li>适用场景是什么？</li>
 </ul>
@@ -1795,7 +1972,7 @@
             
               <a href="/archives/">
             
-                <span class="site-state-item-count">9</span>
+                <span class="site-state-item-count">10</span>
                 <span class="site-state-item-name">日志</span>
               </a>
             </div>
@@ -1808,7 +1985,7 @@
             
             <div class="site-state-item site-state-tags">
               <a href="/tags/index.html">
-                <span class="site-state-item-count">17</span>
+                <span class="site-state-item-count">19</span>
                 <span class="site-state-item-name">标签</span>
               </a>
             </div>
@@ -2004,6 +2181,28 @@
   
 
   
+  
+    <script type="text/x-mathjax-config">
+      MathJax.Hub.Config({
+        tex2jax: {
+          inlineMath: [ ['$','$'], ["\\(","\\)"]  ],
+          processEscapes: true,
+          skipTags: ['script', 'noscript', 'style', 'textarea', 'pre', 'code']
+        }
+      });
+    </script>
+
+    <script type="text/x-mathjax-config">
+      MathJax.Hub.Queue(function() {
+        var all = MathJax.Hub.getAllJax(), i;
+        for (i=0; i < all.length; i += 1) {
+          all[i].SourceElement().parentNode.className += ' has-jax';
+        }
+      });
+    </script>
+    <script type="text/javascript" src="//cdn.bootcss.com/mathjax/2.7.1/latest.js?config=TeX-AMS-MML_HTMLorMML"></script><!-- hexo-inject:begin --><!-- hexo-inject:end -->
+  
+
 
   
 

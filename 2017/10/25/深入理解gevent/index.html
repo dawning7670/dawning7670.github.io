@@ -7,7 +7,7 @@
 
 <html class="theme-next gemini use-motion" lang="zh-Hans">
 <head>
-  <meta charset="UTF-8"/>
+  <!-- hexo-inject:begin --><!-- hexo-inject:end --><meta charset="UTF-8"/>
 <meta http-equiv="X-UA-Compatible" content="IE=edge" />
 <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1"/>
 <meta name="theme-color" content="#222">
@@ -101,19 +101,19 @@
 
 
 
-<meta name="description" content="问题引入 核心调度器究竟是如何实现的？ 适用场景是什么？  调度模型gevent调度器使用事件驱动，主协程运行事件循环不断将准备就绪的事件取出并进行上下文切换  整个运行过程的步骤如下  调度器初始化，事件列表包含两个等待调度的协程1和协程2 调度器运行协程1，当运行到阻塞操作时，切换回调度器并将阻塞事件注册到调度器 调度器运行协程2，当运行到阻塞操作时，切换回调度器并将阻塞事件注册到调度器 调度">
+<meta name="description" content="问题引入在使用gevent的时候发现用起来很舒服，舒服过后脑海中就产生了下面两个问题  核心调度器究竟是如何实现的？ 适用场景是什么？  调度模型gevent调度器使用事件驱动，主协程运行事件循环不断将准备就绪的事件取出并进行上下文切换  整个运行过程的步骤如下  调度器初始化，事件列表包含两个等待调度的协程1和协程2 调度器运行协程1，当运行到阻塞操作时，切换回调度器并将阻塞事件注册到调度器 调">
 <meta name="keywords" content="gevent,协程,python">
 <meta property="og:type" content="article">
 <meta property="og:title" content="深入理解gevent">
 <meta property="og:url" content="http://yoursite.com/2017/10/25/深入理解gevent/index.html">
 <meta property="og:site_name" content="dawning&#39;s blog~">
-<meta property="og:description" content="问题引入 核心调度器究竟是如何实现的？ 适用场景是什么？  调度模型gevent调度器使用事件驱动，主协程运行事件循环不断将准备就绪的事件取出并进行上下文切换  整个运行过程的步骤如下  调度器初始化，事件列表包含两个等待调度的协程1和协程2 调度器运行协程1，当运行到阻塞操作时，切换回调度器并将阻塞事件注册到调度器 调度器运行协程2，当运行到阻塞操作时，切换回调度器并将阻塞事件注册到调度器 调度">
+<meta property="og:description" content="问题引入在使用gevent的时候发现用起来很舒服，舒服过后脑海中就产生了下面两个问题  核心调度器究竟是如何实现的？ 适用场景是什么？  调度模型gevent调度器使用事件驱动，主协程运行事件循环不断将准备就绪的事件取出并进行上下文切换  整个运行过程的步骤如下  调度器初始化，事件列表包含两个等待调度的协程1和协程2 调度器运行协程1，当运行到阻塞操作时，切换回调度器并将阻塞事件注册到调度器 调">
 <meta property="og:locale" content="zh-Hans">
 <meta property="og:image" content="http://note.youdao.com/yws/api/personal/file/B5013DCBCBA94BF087D4AE6D032183F0?method=download&shareKey=7162e5f27c7b61ae0d984d79a780e596">
-<meta property="og:updated_time" content="2017-10-31T00:22:36.083Z">
+<meta property="og:updated_time" content="2017-11-01T11:50:20.493Z">
 <meta name="twitter:card" content="summary">
 <meta name="twitter:title" content="深入理解gevent">
-<meta name="twitter:description" content="问题引入 核心调度器究竟是如何实现的？ 适用场景是什么？  调度模型gevent调度器使用事件驱动，主协程运行事件循环不断将准备就绪的事件取出并进行上下文切换  整个运行过程的步骤如下  调度器初始化，事件列表包含两个等待调度的协程1和协程2 调度器运行协程1，当运行到阻塞操作时，切换回调度器并将阻塞事件注册到调度器 调度器运行协程2，当运行到阻塞操作时，切换回调度器并将阻塞事件注册到调度器 调度">
+<meta name="twitter:description" content="问题引入在使用gevent的时候发现用起来很舒服，舒服过后脑海中就产生了下面两个问题  核心调度器究竟是如何实现的？ 适用场景是什么？  调度模型gevent调度器使用事件驱动，主协程运行事件循环不断将准备就绪的事件取出并进行上下文切换  整个运行过程的步骤如下  调度器初始化，事件列表包含两个等待调度的协程1和协程2 调度器运行协程1，当运行到阻塞操作时，切换回调度器并将阻塞事件注册到调度器 调">
 <meta name="twitter:image" content="http://note.youdao.com/yws/api/personal/file/B5013DCBCBA94BF087D4AE6D032183F0?method=download&shareKey=7162e5f27c7b61ae0d984d79a780e596">
 
 
@@ -150,7 +150,7 @@
 
 
 
-  <title>深入理解gevent | dawning's blog~</title>
+  <title>深入理解gevent | dawning's blog~</title><!-- hexo-inject:begin --><!-- hexo-inject:end -->
   
 
 
@@ -169,7 +169,7 @@
     
   
 
-  <div class="container sidebar-position-right page-post-detail">
+  <!-- hexo-inject:begin --><!-- hexo-inject:end --><div class="container sidebar-position-right page-post-detail">
     <div class="headband"></div>
 
     <header id="header" class="header" itemscope itemtype="http://schema.org/WPHeader">
@@ -334,7 +334,8 @@
       
 
       
-        <h1 id="问题引入"><a href="#问题引入" class="headerlink" title="问题引入"></a>问题引入</h1><ul>
+        <h1 id="问题引入"><a href="#问题引入" class="headerlink" title="问题引入"></a>问题引入</h1><p>在使用gevent的时候发现用起来很舒服，舒服过后脑海中就产生了下面两个问题</p>
+<ul>
 <li>核心调度器究竟是如何实现的？</li>
 <li>适用场景是什么？</li>
 </ul>
@@ -445,6 +446,10 @@
 
           <div class="post-nav-prev post-nav-item">
             
+              <a href="/2017/10/31/关于补码/" rel="prev" title="关于补码">
+                关于补码 <i class="fa fa-chevron-right"></i>
+              </a>
+            
           </div>
         </div>
       
@@ -519,7 +524,7 @@
             
               <a href="/archives/">
             
-                <span class="site-state-item-count">9</span>
+                <span class="site-state-item-count">10</span>
                 <span class="site-state-item-name">日志</span>
               </a>
             </div>
@@ -532,7 +537,7 @@
             
             <div class="site-state-item site-state-tags">
               <a href="/tags/index.html">
-                <span class="site-state-item-count">17</span>
+                <span class="site-state-item-count">19</span>
                 <span class="site-state-item-name">标签</span>
               </a>
             </div>
@@ -748,6 +753,28 @@
   
 
   
+  
+    <script type="text/x-mathjax-config">
+      MathJax.Hub.Config({
+        tex2jax: {
+          inlineMath: [ ['$','$'], ["\\(","\\)"]  ],
+          processEscapes: true,
+          skipTags: ['script', 'noscript', 'style', 'textarea', 'pre', 'code']
+        }
+      });
+    </script>
+
+    <script type="text/x-mathjax-config">
+      MathJax.Hub.Queue(function() {
+        var all = MathJax.Hub.getAllJax(), i;
+        for (i=0; i < all.length; i += 1) {
+          all[i].SourceElement().parentNode.className += ' has-jax';
+        }
+      });
+    </script>
+    <script type="text/javascript" src="//cdn.bootcss.com/mathjax/2.7.1/latest.js?config=TeX-AMS-MML_HTMLorMML"></script><!-- hexo-inject:begin --><!-- hexo-inject:end -->
+  
+
 
   
 
