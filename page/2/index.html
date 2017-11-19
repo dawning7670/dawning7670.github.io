@@ -85,7 +85,7 @@
 <link href="/css/main.css?v=5.1.2" rel="stylesheet" type="text/css" />
 
 
-  <meta name="keywords" content="MongoDB,WiredTiger," />
+  <meta name="keywords" content="dawning7670, hexo" />
 
 
 
@@ -101,18 +101,13 @@
 
 
 
-<meta name="description" content="前言MongoDB 3.2版本之后都默认使用该存储引擎 特点文档级并行 写操作加锁的粒度是文档级别，可以极大提高插入性能 仍然存在一些操作需要锁库锁集合，例如删除集合操作等  MVCC和Checkpoints WiredTiger存储引擎使用MVCC（多版本并发控制）达到类似读写分离的效果并且针对读多写少的场景能极大提高并发性能 WiredTiger将所有内中中的快照写入到磁盘作为检查点，默认每隔">
-<meta name="keywords" content="MongoDB,WiredTiger">
-<meta property="og:type" content="article">
-<meta property="og:title" content="MongoDB-WiredTiger存储引擎">
-<meta property="og:url" content="http://yoursite.com/2017/10/17/MongoDB存储引擎/index.html">
+<meta property="og:type" content="website">
+<meta property="og:title" content="dawning&#39;s blog~">
+<meta property="og:url" content="http://yoursite.com/page/2/index.html">
 <meta property="og:site_name" content="dawning&#39;s blog~">
-<meta property="og:description" content="前言MongoDB 3.2版本之后都默认使用该存储引擎 特点文档级并行 写操作加锁的粒度是文档级别，可以极大提高插入性能 仍然存在一些操作需要锁库锁集合，例如删除集合操作等  MVCC和Checkpoints WiredTiger存储引擎使用MVCC（多版本并发控制）达到类似读写分离的效果并且针对读多写少的场景能极大提高并发性能 WiredTiger将所有内中中的快照写入到磁盘作为检查点，默认每隔">
 <meta property="og:locale" content="zh-Hans">
-<meta property="og:updated_time" content="2017-10-17T13:59:16.616Z">
 <meta name="twitter:card" content="summary">
-<meta name="twitter:title" content="MongoDB-WiredTiger存储引擎">
-<meta name="twitter:description" content="前言MongoDB 3.2版本之后都默认使用该存储引擎 特点文档级并行 写操作加锁的粒度是文档级别，可以极大提高插入性能 仍然存在一些操作需要锁库锁集合，例如删除集合操作等  MVCC和Checkpoints WiredTiger存储引擎使用MVCC（多版本并发控制）达到类似读写分离的效果并且针对读多写少的场景能极大提高并发性能 WiredTiger将所有内中中的快照写入到磁盘作为检查点，默认每隔">
+<meta name="twitter:title" content="dawning&#39;s blog~">
 
 
 
@@ -142,13 +137,13 @@
 
 
 
-  <link rel="canonical" href="http://yoursite.com/2017/10/17/MongoDB存储引擎/"/>
+  <link rel="canonical" href="http://yoursite.com/page/2/"/>
 
 
 
 
 
-  <title>MongoDB-WiredTiger存储引擎 | dawning's blog~</title><!-- hexo-inject:begin --><!-- hexo-inject:end -->
+  <title>dawning's blog~</title><!-- hexo-inject:begin --><!-- hexo-inject:end -->
   
 
 
@@ -167,7 +162,8 @@
     
   
 
-  <!-- hexo-inject:begin --><!-- hexo-inject:end --><div class="container sidebar-position-right page-post-detail">
+  <!-- hexo-inject:begin --><!-- hexo-inject:end --><div class="container sidebar-position-right 
+  page-home">
     <div class="headband"></div>
 
     <header id="header" class="header" itemscope itemtype="http://schema.org/WPHeader">
@@ -250,9 +246,9 @@
         <div class="content-wrap">
           <div id="content" class="content">
             
-
-  <div id="posts" class="posts-expand">
+  <section id="posts" class="posts-expand">
     
+      
 
   
 
@@ -265,7 +261,7 @@
   
   
   <div class="post-block">
-    <link itemprop="mainEntityOfPage" href="http://yoursite.com/2017/10/17/MongoDB存储引擎/">
+    <link itemprop="mainEntityOfPage" href="http://yoursite.com/2017/09/07/Scala函数式编程-递归数据结构/">
 
     <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
       <meta itemprop="name" content="dawning7670">
@@ -282,7 +278,9 @@
 
         
         
-          <h1 class="post-title" itemprop="name headline">MongoDB-WiredTiger存储引擎</h1>
+          <h1 class="post-title" itemprop="name headline">
+                
+                <a class="post-title-link" href="/2017/09/07/Scala函数式编程-递归数据结构/" itemprop="url">Scala函数式编程-递归数据结构</a></h1>
         
 
         <div class="post-meta">
@@ -294,8 +292,8 @@
               
                 <span class="post-meta-item-text">发表于</span>
               
-              <time title="创建于" itemprop="dateCreated datePublished" datetime="2017-10-17T21:59:23+08:00">
-                2017-10-17
+              <time title="创建于" itemprop="dateCreated datePublished" datetime="2017-09-07T21:12:47+08:00">
+                2017-09-07
               </time>
             
 
@@ -332,39 +330,33 @@
       
 
       
-        <h1 id="前言"><a href="#前言" class="headerlink" title="前言"></a>前言</h1><p>MongoDB 3.2版本之后都默认使用该存储引擎</p>
-<h1 id="特点"><a href="#特点" class="headerlink" title="特点"></a>特点</h1><h2 id="文档级并行"><a href="#文档级并行" class="headerlink" title="文档级并行"></a>文档级并行</h2><ul>
-<li>写操作加锁的粒度是文档级别，可以极大提高插入性能</li>
-<li>仍然存在一些操作需要锁库锁集合，例如删除集合操作等</li>
+        
+          
+            <h1 id="递归定义列表"><a href="#递归定义列表" class="headerlink" title="递归定义列表"></a>递归定义列表</h1><p>对于任意一个列表[1, 2, 3…]，它可以看成由头元素和剩下的列表组成</p>
+<p>在Scala标准库中的List是一种类似单向链表的结构</p>
+<p>例如：<br><figure class="highlight scala"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div></pre></td><td class="code"><pre><div class="line"><span class="type">List</span>(<span class="number">1</span>, <span class="number">2</span>, <span class="number">3</span>) = <span class="number">1</span> :: (<span class="number">2</span> :: (<span class="number">3</span> :: <span class="type">Nil</span>))</div><div class="line"><span class="type">List</span>(<span class="number">1</span>) = <span class="number">1</span> :: <span class="type">Nil</span></div></pre></td></tr></table></figure></p>
+<h1 id="常用函数递归实现"><a href="#常用函数递归实现" class="headerlink" title="常用函数递归实现"></a>常用函数递归实现</h1><h2 id="求和函数"><a href="#求和函数" class="headerlink" title="求和函数"></a>求和函数</h2><p>对于递归定义的列表，求所有元素的总和可以表达成下面的递归式：</p>
+<p>sum(lst) = head(lst) + sum(tail(lst))</p>
+<p>将上面的递归式转化成Scala中的代码<br><figure class="highlight scala"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div></pre></td><td class="code"><pre><div class="line"><span class="function"><span class="keyword">def</span> <span class="title">sum</span></span>(lst: <span class="type">List</span>[<span class="type">Int</span>]): <span class="type">Int</span> = lst <span class="keyword">match</span> &#123;</div><div class="line">  <span class="keyword">case</span> head :: tail =&gt; head + sum(tail)</div><div class="line">  <span class="keyword">case</span> _ =&gt; <span class="number">0</span></div><div class="line">&#125;</div></pre></td></tr></table></figure></p>
+<h2 id="求乘积"><a href="#求乘积" class="headerlink" title="求乘积"></a>求乘积</h2><figure class="highlight scala"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div></pre></td><td class="code"><pre><div class="line"><span class="function"><span class="keyword">def</span> <span class="title">multi</span></span>(lst: <span class="type">List</span>[<span class="type">Int</span>]): <span class="type">Int</span> = lst <span class="keyword">match</span> &#123;</div><div class="line">  <span class="keyword">case</span> head :: tail =&gt; head * sum(tail)</div><div class="line">  <span class="keyword">case</span> _ =&gt; <span class="number">1</span></div><div class="line">&#125;</div></pre></td></tr></table></figure>
+<h2 id="统计某个元素出现次数"><a href="#统计某个元素出现次数" class="headerlink" title="统计某个元素出现次数"></a>统计某个元素出现次数</h2><figure class="highlight scala"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div></pre></td><td class="code"><pre><div class="line"><span class="function"><span class="keyword">def</span> <span class="title">count</span></span>[<span class="type">A</span>](lst: <span class="type">List</span>[<span class="type">A</span>], a: <span class="type">A</span>): <span class="type">Int</span> = lst <span class="keyword">match</span> &#123;</div><div class="line">  <span class="keyword">case</span> head :: tail =&gt; <span class="keyword">if</span> (head == a) <span class="number">1</span> + count(tail, a) <span class="keyword">else</span> count(tail, a)</div><div class="line">  <span class="keyword">case</span> _ =&gt; <span class="number">0</span></div><div class="line">&#125;</div></pre></td></tr></table></figure>
+<h1 id="抽象成一般模式"><a href="#抽象成一般模式" class="headerlink" title="抽象成一般模式"></a>抽象成一般模式</h1><p>通过观察上面的几个常用函数的实现模式，我们可以发现每个函数的整体结构类似，不同之处在于</p>
+<ul>
+<li>对于空列表的返回值</li>
+<li>对每个元素的处理方式</li>
 </ul>
-<h2 id="MVCC和Checkpoints"><a href="#MVCC和Checkpoints" class="headerlink" title="MVCC和Checkpoints"></a>MVCC和Checkpoints</h2><ul>
-<li>WiredTiger存储引擎使用MVCC（多版本并发控制）达到类似读写分离的效果并且针对读多写少的场景能极大提高并发性能</li>
-<li>WiredTiger将所有内中中的快照写入到磁盘作为检查点，默认每隔60秒或操作日志达到2GB时将创建一个新的检查点（存档点）以便于发生意外情况时能迅速利用检查点和日志进行数据恢复</li>
-<li>新的检查点创建完成之后旧的检查点不会被立即清除，直到新的检查点可访问并已经持久化完毕（完全创建完成）</li>
+<p>所以我们可以将上述模式抽象成一个更加通用的高阶函数，这个函数需要下面几个参数</p>
+<ul>
+<li>列表为空时返回的初始值</li>
+<li>将列表元素与累加器合并的函数</li>
 </ul>
-<h2 id="WAL"><a href="#WAL" class="headerlink" title="WAL"></a>WAL</h2><ul>
-<li>将两个检查点之间的所有操作记录到WAL中</li>
-<li>默认使用snappy压缩日志文件，压缩的最小粒度是128字节，小于128字节的日志不会被压缩</li>
-<li>默认50ms将内存缓冲区中的WAL刷到磁盘中，可以在写请求中指定参数使该请求强制刷到磁盘中</li>
-<li>日志文件粒度是100MB，如果大于100M则会被分成多个日志文件</li>
-</ul>
-<h2 id="数据压缩"><a href="#数据压缩" class="headerlink" title="数据压缩"></a>数据压缩</h2><ul>
-<li>WiredTiger会压缩所有的集合和索引数据</li>
-<li>默认使用snappy压缩集合数据，前缀压缩索引数据</li>
-<li>对于大多数使用场景，使用默认的数据压缩选项即可</li>
-</ul>
-<h2 id="内存使用"><a href="#内存使用" class="headerlink" title="内存使用"></a>内存使用</h2><ul>
-<li>内存下限是 256MB</li>
-<li>内存上限是 [RAM]/2 - 1G</li>
-</ul>
-<h1 id="操作系统参数"><a href="#操作系统参数" class="headerlink" title="操作系统参数"></a>操作系统参数</h1><ul>
-<li>禁用NUMA</li>
-<li>使用xfs文件系统较于ext4性能更好并且可以避免出现性能问题</li>
-<li>关闭THP</li>
-<li>禁用SELinux</li>
-<li>将readahead设为0</li>
-</ul>
+<p>下面给出这个函数的实现<br><figure class="highlight scala"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div></pre></td><td class="code"><pre><div class="line"><span class="function"><span class="keyword">def</span> <span class="title">foldRight</span></span>[<span class="type">A</span>, <span class="type">B</span>](lst: <span class="type">List</span>[<span class="type">A</span>], z: <span class="type">B</span>)(f : (<span class="type">A</span>, <span class="type">B</span>) =&gt; <span class="type">B</span>): <span class="type">B</span> = lst <span class="keyword">match</span> &#123;</div><div class="line">  <span class="keyword">case</span> x :: xs =&gt; f(x, foldRight(xs, z)(f))</div><div class="line">  <span class="keyword">case</span> _ =&gt; z</div><div class="line">&#125;</div></pre></td></tr></table></figure></p>
+<p>利用这个foldRight我们可以重构上面三个函数</p>
+<figure class="highlight scala"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div></pre></td><td class="code"><pre><div class="line"><span class="function"><span class="keyword">def</span> <span class="title">sum</span></span>(lst: <span class="type">List</span>[<span class="type">Int</span>]): <span class="type">Int</span> =</div><div class="line">  foldRight(lst, <span class="number">0</span>)((x, acc) =&gt; x + acc)</div><div class="line"></div><div class="line"><span class="comment">// _ * _ 等价于 (a, b) =&gt; (a * b)</span></div><div class="line"><span class="function"><span class="keyword">def</span> <span class="title">multi</span></span>(lst: <span class="type">List</span>[<span class="type">Int</span>]): <span class="type">Int</span> =</div><div class="line">  foldRight(lst, <span class="number">1</span>)(_ * _)</div><div class="line"></div><div class="line"><span class="function"><span class="keyword">def</span> <span class="title">count</span></span>[<span class="type">A</span>](lst: <span class="type">List</span>[<span class="type">A</span>], a: <span class="type">A</span>): <span class="type">Int</span> =</div><div class="line">  foldRight(lst, <span class="number">0</span>)((x, acc) =&gt; <span class="keyword">if</span> (x == a) <span class="number">1</span> + acc <span class="keyword">else</span> acc)</div></pre></td></tr></table></figure>
+<p>Cool！</p>
 
+          
+        
       
     </div>
     
@@ -379,42 +371,14 @@
 
     <footer class="post-footer">
       
-        <div class="post-tags">
-          
-            <a href="/tags/MongoDB/" rel="tag"># MongoDB</a>
-          
-            <a href="/tags/WiredTiger/" rel="tag"># WiredTiger</a>
-          
-        </div>
+
+      
+
       
 
       
       
-      
-
-      
-        <div class="post-nav">
-          <div class="post-nav-next post-nav-item">
-            
-              <a href="/2017/10/15/Git正确使用姿势/" rel="next" title="git正确使用姿势">
-                <i class="fa fa-chevron-left"></i> git正确使用姿势
-              </a>
-            
-          </div>
-
-          <span class="post-nav-divider"></span>
-
-          <div class="post-nav-prev post-nav-item">
-            
-              <a href="/2017/10/25/深入理解gevent/" rel="prev" title="深入理解gevent">
-                深入理解gevent <i class="fa fa-chevron-right"></i>
-              </a>
-            
-          </div>
-        </div>
-      
-
-      
+        <div class="post-eof"></div>
       
     </footer>
   </div>
@@ -424,11 +388,14 @@
   </article>
 
 
+    
+  </section>
 
-    <div class="post-spread">
-      
-    </div>
-  </div>
+  
+  <nav class="pagination">
+    <a class="extend prev" rel="prev" href="/"><i class="fa fa-angle-left"></i></a><a class="page-number" href="/">1</a><span class="page-number current">2</span>
+  </nav>
+
 
 
           </div>
@@ -436,10 +403,6 @@
 
 
           
-  <div class="comments" id="comments">
-    
-  </div>
-
 
         </div>
         
@@ -460,17 +423,8 @@
       
 
       
-        <ul class="sidebar-nav motion-element">
-          <li class="sidebar-nav-toc sidebar-nav-active" data-target="post-toc-wrap" >
-            文章目录
-          </li>
-          <li class="sidebar-nav-overview" data-target="site-overview">
-            站点概览
-          </li>
-        </ul>
-      
 
-      <section class="site-overview sidebar-panel">
+      <section class="site-overview sidebar-panel sidebar-panel-active">
         <div class="site-author motion-element" itemprop="author" itemscope itemtype="http://schema.org/Person">
           
             <p class="site-author-name" itemprop="name">dawning7670</p>
@@ -522,22 +476,6 @@
 
       </section>
 
-      
-      <!--noindex-->
-        <section class="post-toc-wrap motion-element sidebar-panel sidebar-panel-active">
-          <div class="post-toc">
-
-            
-              
-            
-
-            
-              <div class="post-toc-content"><ol class="nav"><li class="nav-item nav-level-1"><a class="nav-link" href="#前言"><span class="nav-number">1.</span> <span class="nav-text">前言</span></a></li><li class="nav-item nav-level-1"><a class="nav-link" href="#特点"><span class="nav-number">2.</span> <span class="nav-text">特点</span></a><ol class="nav-child"><li class="nav-item nav-level-2"><a class="nav-link" href="#文档级并行"><span class="nav-number">2.1.</span> <span class="nav-text">文档级并行</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#MVCC和Checkpoints"><span class="nav-number">2.2.</span> <span class="nav-text">MVCC和Checkpoints</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#WAL"><span class="nav-number">2.3.</span> <span class="nav-text">WAL</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#数据压缩"><span class="nav-number">2.4.</span> <span class="nav-text">数据压缩</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#内存使用"><span class="nav-number">2.5.</span> <span class="nav-text">内存使用</span></a></li></ol></li><li class="nav-item nav-level-1"><a class="nav-link" href="#操作系统参数"><span class="nav-number">3.</span> <span class="nav-text">操作系统参数</span></a></li></ol></div>
-            
-
-          </div>
-        </section>
-      <!--/noindex-->
       
 
       
@@ -659,10 +597,6 @@
 
 
   
-  <script type="text/javascript" src="/js/src/scrollspy.js?v=5.1.2"></script>
-<script type="text/javascript" src="/js/src/post-details.js?v=5.1.2"></script>
-
-
 
   
 

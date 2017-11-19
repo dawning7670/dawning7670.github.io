@@ -261,6 +261,276 @@
   
   
   <div class="post-block">
+    <link itemprop="mainEntityOfPage" href="http://yoursite.com/2017/11/12/CSAPP-CPU体系结构/">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="name" content="dawning7670">
+      <meta itemprop="description" content="">
+      <meta itemprop="image" content="/images/avatar.gif">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="dawning's blog~">
+    </span>
+
+    
+      <header class="post-header">
+
+        
+        
+          <h1 class="post-title" itemprop="name headline">
+                
+                <a class="post-title-link" href="/2017/11/12/CSAPP-CPU体系结构/" itemprop="url">关于补码</a></h1>
+        
+
+        <div class="post-meta">
+          <span class="post-time">
+            
+              <span class="post-meta-item-icon">
+                <i class="fa fa-calendar-o"></i>
+              </span>
+              
+                <span class="post-meta-item-text">发表于</span>
+              
+              <time title="创建于" itemprop="dateCreated datePublished" datetime="2017-11-12T00:00:00+08:00">
+                2017-11-12
+              </time>
+            
+
+            
+
+            
+          </span>
+
+          
+
+          
+            
+          
+
+          
+          
+
+          
+
+          
+
+          
+
+        </div>
+      </header>
+    
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody">
+
+      
+      
+
+      
+        
+          
+            <h1 id="指令集"><a href="#指令集" class="headerlink" title="指令集"></a>指令集</h1><p>每个CPU都有它自己的<strong>指令集</strong>（ISA），这些指令集是对CPU操作的一种抽象，这样编译器开发者只需要知道指令集而无需关具体的CPU内部实现。</p>
+<h1 id="Y86-64指令集结构"><a href="#Y86-64指令集结构" class="headerlink" title="Y86-64指令集结构"></a>Y86-64指令集结构</h1><h2 id="寄存器和条件码"><a href="#寄存器和条件码" class="headerlink" title="寄存器和条件码"></a>寄存器和条件码</h2><p><img src="http://note.youdao.com/yws/public/resource/e0a47c600fb4ad22bdc347a23a2d449c/xmlnote/D8A3B1933AC843098FE3990E5781F010/2514" alt=""></p>
+<ul>
+<li>寄存器的定义和<code>X86-64</code>基本一致，只是少了一个<code>%r15</code></li>
+<li>条件码包含三个<ul>
+<li>ZF：零标志</li>
+<li>SF：符号标志</li>
+<li>OF：溢出标志</li>
+</ul>
+</li>
+<li><code>Stat</code>为程序状态的定义<ul>
+<li>SAOK：正常</li>
+<li>SADR：地址异常</li>
+<li>SINS：非法指令</li>
+<li>SHLT：停止状态</li>
+</ul>
+</li>
+</ul>
+<h2 id="指令集-1"><a href="#指令集-1" class="headerlink" title="指令集"></a>指令集</h2><p><img src="http://note.youdao.com/yws/public/resource/e0a47c600fb4ad22bdc347a23a2d449c/xmlnote/BFD997AAFC9B4980A5E5BE33EF313103/2415" alt=""></p>
+<p><img src="http://note.youdao.com/yws/public/resource/e0a47c600fb4ad22bdc347a23a2d449c/xmlnote/38BCED5AAA5B4D43B89DDCFF51AB802B/2516" alt=""></p>
+<ul>
+<li>所有的指令集都被编码成<code>3-10</code>个字节不等</li>
+<li><code>OP</code>操作包括：<code>addq subq andq xorq</code></li>
+<li><code>JXX</code>操作包括：<code>jmp jle jl je jne jge</code></li>
+<li><code>cmovXX</code>操作包括：<code>cmovle cmovl cmove cmovne cmovge cmovg</code></li>
+<li>这里很巧妙的将<code>rrmoveq</code>和<code>cmovXX</code>两种指令编码在一起，因为他们的功能都是数据传送，并且原操作数和目的操作数都是寄存器</li>
+</ul>
+<h1 id="寄存器抽象"><a href="#寄存器抽象" class="headerlink" title="寄存器抽象"></a>寄存器抽象</h1><p><img src="http://note.youdao.com/yws/public/resource/e0a47c600fb4ad22bdc347a23a2d449c/xmlnote/949D5611617A464FB0331449D18978A3/2518" alt=""></p>
+<ul>
+<li>把寄存器想象成一个文件，不同之处在于读写操作都由时钟控制（每次时钟从0跳变成1的时候就会触发读和写操作）</li>
+<li>读操作：在<code>srcX</code>处输入寄存器标号，一段延时过后，对应的<code>valX</code>处的值就是对应寄存器的值</li>
+<li>写操作：在<code>dstW</code>处输入寄存器标号，在<code>valW</code>处输入待写入的值，一段延时过后对应寄存器被赋值</li>
+</ul>
+<h1 id="指令执行过程分解"><a href="#指令执行过程分解" class="headerlink" title="指令执行过程分解"></a>指令执行过程分解</h1><p>将每条指令的执行过程分解成若干个步骤，并且尽量将每条指令的行为正规化有利于后续实现。这里我们可以将指令的执行分解成六个步骤</p>
+<ol>
+<li><p>取指（fetch）</p>
+<p>将指令从内存中取出并解析指令的格式，指令地址为程序计数器<code>PC</code>的值。</p>
+</li>
+<li><p>译码（decode）</p>
+<p>主要是从寄存器文件中获得两个操作数的值</p>
+</li>
+<li><p>执行（execute）</p>
+<p>使用算数逻辑单元<code>ALU</code>执行计算操作，具体的操作由<code>opXX</code>指令的<code>fn</code>字段决定</p>
+</li>
+<li><p>访存（memory）</p>
+<p>执行访存操作，读取或写入内存的某个地址</p>
+</li>
+<li><p>写回（write-back）</p>
+<p>将值写回寄存器文件</p>
+</li>
+<li><p>更新PC</p>
+<p>将程序计数器<code>PC</code>的地址设置成下一条指令的地址</p>
+</li>
+</ol>
+<p>根据上面这六个步骤我们可以将所有指令都分解成上述六个步骤</p>
+<p><img src="http://note.youdao.com/yws/public/resource/e0a47c600fb4ad22bdc347a23a2d449c/xmlnote/40E49CB4A82A47D0894DF60F91BF9695/2429" alt=""></p>
+<p><img src="http://note.youdao.com/yws/public/resource/e0a47c600fb4ad22bdc347a23a2d449c/xmlnote/0F8DC9A9ED194C8F99A4FA868A48927E/2431" alt=""></p>
+<p><img src="http://note.youdao.com/yws/public/resource/e0a47c600fb4ad22bdc347a23a2d449c/xmlnote/D0063929C5CD4D2A955A7930D3AD9243/2465" alt=""></p>
+<p><img src="http://note.youdao.com/yws/public/resource/e0a47c600fb4ad22bdc347a23a2d449c/xmlnote/0D93BA836E07429C878D7886383CA5F2/2435" alt=""></p>
+<ul>
+<li>icode：指令类型</li>
+<li>ifun：指令的具体功能，比如区分跳转指令的类型</li>
+<li>valA：寄存器<code>rA</code>对应的值</li>
+<li>valB：寄存器<code>rB</code>对应的值</li>
+<li>valE：执行阶段完成后的中间结果</li>
+<li>valP：下一个程序计数器<code>PC</code>的值</li>
+<li>Cnd：条件码，用于跳转指令的条件</li>
+</ul>
+<p>现在我们将所有指令的执行过程都分解成统一的几个步骤之后，所有的准备工作都已经完成，接下来就可以开始实现一个顺序执行的<code>Y86-64</code>处理器了</p>
+<h1 id="硬件描述语言HCL简单介绍"><a href="#硬件描述语言HCL简单介绍" class="headerlink" title="硬件描述语言HCL简单介绍"></a>硬件描述语言HCL简单介绍</h1><p><code>HCL</code>语言用来描述硬件的组合逻辑，语法类似C语言，只不过最后编译生成的不是机器码而是组合逻辑电路。下面是组成该语言的基本元素</p>
+<ul>
+<li><p>变量类型</p>
+<ul>
+<li>bool</li>
+<li>int</li>
+<li>word</li>
+</ul>
+</li>
+<li><p>基本运算符</p>
+<ul>
+<li>&amp;&amp;</li>
+<li>||</li>
+<li>!</li>
+<li>==</li>
+<li>in</li>
+</ul>
+</li>
+<li><p>分支条件</p>
+<figure class="highlight verilog"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div></pre></td><td class="code"><pre><div class="line">bool x = [</div><div class="line">    a: <span class="number">0</span> # a为true则x的值为<span class="number">1</span></div><div class="line">  	b: <span class="number">1</span> # b为true则x的值为<span class="number">1</span></div><div class="line">]</div></pre></td></tr></table></figure>
+</li>
+</ul>
+<h1 id="Y86-64顺序实现"><a href="#Y86-64顺序实现" class="headerlink" title="Y86-64顺序实现"></a>Y86-64顺序实现</h1><p><img src="http://note.youdao.com/yws/public/resource/e0a47c600fb4ad22bdc347a23a2d449c/xmlnote/2341718563F2404B8C306F748E51214F/2427" alt=""></p>
+<h2 id="取指"><a href="#取指" class="headerlink" title="取指"></a>取指</h2><p><img src="http://note.youdao.com/yws/public/resource/e0a47c600fb4ad22bdc347a23a2d449c/xmlnote/27E6A6F9F89E4476B5F0C4050E4AB7E7/2445" alt=""></p>
+<figure class="highlight verilog"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div></pre></td><td class="code"><pre><div class="line">bool instr_valid = icode in </div><div class="line">	&#123; INOP, IHALT, IRRMOVL, IIRMOVL, IRMMOVL, IMRMOVL,</div><div class="line">	       IOPL, IJXX, ICALL, IRET, IPUSHL, IPOPL &#125;;</div><div class="line">bool need_regids =</div><div class="line">	icode in &#123; IRRMOVL, IOPL, IPUSHL, IPOPL, </div><div class="line">		     IIRMOVL, IRMMOVL, IMRMOVL &#125;;</div><div class="line">bool need_valC =</div><div class="line">	icode in &#123; IIRMOVL, IRMMOVL, IMRMOVL, IJXX, ICALL &#125;;</div></pre></td></tr></table></figure>
+<h2 id="译码和写回"><a href="#译码和写回" class="headerlink" title="译码和写回"></a>译码和写回</h2><p><img src="http://note.youdao.com/yws/public/resource/e0a47c600fb4ad22bdc347a23a2d449c/xmlnote/228F08CE869E4DFEB89062EF0C70ACFD/2448" alt=""></p>
+<figure class="highlight verilog"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div><div class="line">11</div><div class="line">12</div><div class="line">13</div><div class="line">14</div><div class="line">15</div><div class="line">16</div><div class="line">17</div><div class="line">18</div><div class="line">19</div><div class="line">20</div><div class="line">21</div><div class="line">22</div><div class="line">23</div><div class="line">24</div><div class="line">25</div><div class="line">26</div><div class="line">27</div></pre></td><td class="code"><pre><div class="line">## What register should be used as the A source?</div><div class="line"><span class="keyword">int</span> srcA = [</div><div class="line">	icode in &#123; IRRMOVL, IRMMOVL, IOPL, IPUSHL  &#125; : rA;</div><div class="line">	icode in &#123; IPOPL, IRET &#125; : RESP;</div><div class="line">	<span class="number">1</span> : RNONE; # Don't need register</div><div class="line">];</div><div class="line"></div><div class="line">## What register should be used as the B source?</div><div class="line"><span class="keyword">int</span> srcB = [</div><div class="line">	icode in &#123; IOPL, IRMMOVL, IMRMOVL  &#125; : rB;</div><div class="line">	icode in &#123; IPUSHL, IPOPL, ICALL, IRET &#125; : RESP;</div><div class="line">	<span class="number">1</span> : RNONE;  # Don't need register</div><div class="line">];</div><div class="line"></div><div class="line">## What register should be used as the E destination?</div><div class="line"><span class="keyword">int</span> dstE = [</div><div class="line">	icode in &#123; IRRMOVL &#125; &amp;&amp; Cnd : rB;</div><div class="line">	icode in &#123; IIRMOVL, IOPL&#125; : rB;</div><div class="line">	icode in &#123; IPUSHL, IPOPL, ICALL, IRET &#125; : RESP;</div><div class="line">	<span class="number">1</span> : RNONE;  # Don't write any register</div><div class="line">];</div><div class="line"></div><div class="line">## What register should be used as the M destination?</div><div class="line"><span class="keyword">int</span> dstM = [</div><div class="line">	icode in &#123; IMRMOVL, IPOPL &#125; : rA;</div><div class="line">	<span class="number">1</span> : RNONE;  # Don't write any register</div><div class="line">];</div></pre></td></tr></table></figure>
+<h2 id="执行"><a href="#执行" class="headerlink" title="执行"></a>执行</h2><p><img src="http://note.youdao.com/yws/public/resource/e0a47c600fb4ad22bdc347a23a2d449c/xmlnote/14D4D8A979D04E49950213A9006A98EF/2451" alt=""></p>
+<figure class="highlight verilog"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div><div class="line">11</div><div class="line">12</div><div class="line">13</div><div class="line">14</div><div class="line">15</div><div class="line">16</div><div class="line">17</div><div class="line">18</div><div class="line">19</div><div class="line">20</div><div class="line">21</div><div class="line">22</div><div class="line">23</div><div class="line">24</div><div class="line">25</div></pre></td><td class="code"><pre><div class="line">## Select <span class="keyword">input</span> A to ALU</div><div class="line"><span class="keyword">int</span> aluA = [</div><div class="line">	icode in &#123; IRRMOVL, IOPL &#125; : valA;</div><div class="line">	icode in &#123; IIRMOVL, IRMMOVL, IMRMOVL &#125; : valC;</div><div class="line">	icode in &#123; ICALL, IPUSHL &#125; : -<span class="number">4</span>;</div><div class="line">	icode in &#123; IRET, IPOPL &#125; : <span class="number">4</span>;</div><div class="line">	# Other instructions don't need ALU</div><div class="line">];</div><div class="line"></div><div class="line">## Select <span class="keyword">input</span> B to ALU</div><div class="line"><span class="keyword">int</span> aluB = [</div><div class="line">	icode in &#123; IRMMOVL, IMRMOVL, IOPL, ICALL, </div><div class="line">		      IPUSHL, IRET, IPOPL &#125; : valB;</div><div class="line">	icode in &#123; IRRMOVL, IIRMOVL &#125; : <span class="number">0</span>;</div><div class="line">	# Other instructions don't need ALU</div><div class="line">];</div><div class="line"></div><div class="line">## Set the ALU <span class="keyword">function</span></div><div class="line"><span class="keyword">int</span> alufun = [</div><div class="line">	icode == IOPL : ifun;</div><div class="line">	<span class="number">1</span> : ALUADD;</div><div class="line">];</div><div class="line">  </div><div class="line">## Should the condition codes be updated?</div><div class="line">bool set_cc = icode in &#123; IOPL &#125;;</div></pre></td></tr></table></figure>
+<h2 id="访存"><a href="#访存" class="headerlink" title="访存"></a>访存</h2><p><img src="http://note.youdao.com/yws/public/resource/e0a47c600fb4ad22bdc347a23a2d449c/xmlnote/D0224D4328364E31888C6179D09F8AA6/2453" alt=""></p>
+<figure class="highlight verilog"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div><div class="line">11</div><div class="line">12</div><div class="line">13</div><div class="line">14</div><div class="line">15</div><div class="line">16</div><div class="line">17</div><div class="line">18</div><div class="line">19</div><div class="line">20</div><div class="line">21</div><div class="line">22</div><div class="line">23</div><div class="line">24</div><div class="line">25</div><div class="line">26</div><div class="line">27</div><div class="line">28</div><div class="line">29</div></pre></td><td class="code"><pre><div class="line">## Set read control signal</div><div class="line">bool mem_read = icode in &#123; IMRMOVL, IPOPL, IRET &#125;;</div><div class="line"></div><div class="line">## Set write control signal</div><div class="line">bool mem_write = icode in &#123; IRMMOVL, IPUSHL, ICALL &#125;;</div><div class="line"></div><div class="line">## Select memory address</div><div class="line"><span class="keyword">int</span> mem_addr = [</div><div class="line">	icode in &#123; IRMMOVL, IPUSHL, ICALL, IMRMOVL &#125; : valE;</div><div class="line">	icode in &#123; IPOPL, IRET &#125; : valA;</div><div class="line">	# Other instructions don't need address</div><div class="line">];</div><div class="line"></div><div class="line">## Select memory <span class="keyword">input</span> data</div><div class="line"><span class="keyword">int</span> mem_data = [</div><div class="line">	# Value from register</div><div class="line">	icode in &#123; IRMMOVL, IPUSHL &#125; : valA;</div><div class="line">	# Return PC</div><div class="line">	icode == ICALL : valP;</div><div class="line">	# Default: Don't write anything</div><div class="line">];</div><div class="line"></div><div class="line">## Determine instruction status</div><div class="line"><span class="keyword">int</span> Stat = [</div><div class="line">	imem_error || dmem_error : SADR;</div><div class="line">	!instr_valid: SINS;</div><div class="line">	icode == IHALT : SHLT;</div><div class="line">	<span class="number">1</span> : SAOK;</div><div class="line">];</div></pre></td></tr></table></figure>
+<h2 id="更新PC"><a href="#更新PC" class="headerlink" title="更新PC"></a>更新PC</h2><p><img src="http://note.youdao.com/yws/public/resource/e0a47c600fb4ad22bdc347a23a2d449c/xmlnote/B4551F584DAA4858B7280B800366C4B9/2455" alt=""></p>
+<figure class="highlight verilog"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div></pre></td><td class="code"><pre><div class="line"><span class="keyword">int</span> new_pc = [</div><div class="line">	# Call.  Use instruction constant</div><div class="line">	icode == ICALL : valC;</div><div class="line">	# Taken branch.  Use instruction constant</div><div class="line">	icode == IJXX &amp;&amp; Cnd : valC;</div><div class="line">	# Completion of RET instruction.  Use value from stack</div><div class="line">	icode == IRET : valM;</div><div class="line">	# Default: Use incremented PC</div><div class="line">	<span class="number">1</span> : valP;</div><div class="line">];</div></pre></td></tr></table></figure>
+<h1 id="SEQ总结"><a href="#SEQ总结" class="headerlink" title="SEQ总结"></a>SEQ总结</h1><p>我们将所有指令分解成一个一个的小过程，再实现所有的小过程并把它们连在一起就构成了一个顺序执行的处理器。这里所有的组合逻辑都使用<code>HCL</code>语言来描述，组合逻辑就像编程语言中的一个个函数，根据输入参数（信号）得到对应输出值（信号），你如果需要添加一个参数（信号）只需要在函数签名处添加参数（在逻辑门处添加一根导线）。</p>
+<p>虽然这个顺序的<code>Y86-64</code>处理器能成功执行指令，但是它的速度实在是太慢了，因为它的时钟周期需要足够长来保证信号能通过所有的逻辑门。我们可以设想一条指令的执行过程，它一次通过取指、译码、执行、访存、写回和更新PC六个阶段，如果我们的时钟周期设置的不合适（过短）会导致一条指令还没执行完就执行下一条指令（下一个<code>0-1</code>的跳变导致寄存器触发了状态更新）。</p>
+<h1 id="流水线通用原理"><a href="#流水线通用原理" class="headerlink" title="流水线通用原理"></a>流水线通用原理</h1><p>顺序实现导致效率低下的原因就是无法充分利用硬件单元，使得它长时间处于等待状态。例如：一条指令执行的时候一次经过几个阶段，当该指令经过译码阶段时，我们如果可以紧接着让下一条指令进入取指，这样就能极大提高硬件单元的利用率。</p>
+<p><img src="http://note.youdao.com/yws/public/resource/e0a47c600fb4ad22bdc347a23a2d449c/xmlnote/861A6B75CBAA4C88BF0B887B1582225A/2526" alt=""></p>
+<p><img src="http://note.youdao.com/yws/public/resource/e0a47c600fb4ad22bdc347a23a2d449c/xmlnote/9DDD8871286C4449AA6F442FD1434A66/2528" alt=""></p>
+<p> 从图中我们可以发现当指令<code>I1</code>处于<code>C</code>阶段的时候，指令<code>I2</code>处于<code>B</code>阶段，指令<code>I3</code>处于<code>A</code>阶段，由于硬件单元得到了充分的利用，从而吞吐量也响应的提高了。</p>
+<h1 id="Y86-64流水线化"><a href="#Y86-64流水线化" class="headerlink" title="Y86-64流水线化"></a>Y86-64流水线化</h1><p><img src="http://note.youdao.com/yws/public/resource/e0a47c600fb4ad22bdc347a23a2d449c/xmlnote/6502D2A9DC5D47CFB030A704241C3F3C/2440" alt=""></p>
+<p>首先我们将PC更新阶段放到了最底部，然后在每个阶段之间加入必要的流水线寄存器保存中间状态，这样就顺利的把我们之前的顺序实现流水线化了，但是这里存在的问题就是<strong>一条指令需要依赖上一条指令的执行结果</strong>，例如</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div></pre></td><td class="code"><pre><div class="line">irmovq $3, %rbx</div><div class="line">irmovq $1, %rax</div><div class="line">irmovq $1, %rbx</div><div class="line">addq %rax, %rbx</div></pre></td></tr></table></figure>
+<p>根据之前的<strong>流水线原理</strong>我们可以得出当指令<code>addq %rax, %rbx</code>处于译码阶段时，<code>irmovq $1, %rbx</code>指令处于执行阶段，这将会导致我们获取到的寄存器<code>%rbx</code>的值不是我们想要的1而是3，这将会导致我们指令的实际执行结果和预期不一致，这就是下面要说的<strong>流水线冒险</strong></p>
+<h2 id="流水线冒险"><a href="#流水线冒险" class="headerlink" title="流水线冒险"></a>流水线冒险</h2><h3 id="数据冒险"><a href="#数据冒险" class="headerlink" title="数据冒险"></a>数据冒险</h3><ul>
+<li><p>定义</p>
+<p>指令无法获取到正确的值</p>
+</li>
+<li><p>产生场景</p>
+<p><img src="http://note.youdao.com/yws/public/resource/e0a47c600fb4ad22bdc347a23a2d449c/xmlnote/0A7CB72473DC4788A179CF15D83B6962/2532" alt=""></p>
+<p><img src="http://note.youdao.com/yws/public/resource/e0a47c600fb4ad22bdc347a23a2d449c/xmlnote/36A5A602AC1B4332A6ADFEA358F9BCDE/2535" alt=""></p>
+</li>
+</ul>
+<ul>
+<li><p>处理方式</p>
+<p>针对第一种场景，我们可以使用<strong>数据转发</strong>，因为我们可以将上一条指令<code>irmovq $3, %rax</code>的执行阶段的值转发到译码阶段的组合逻辑中，让<code>addq %rdx, %rax</code>指令的译码阶段取得正确的值</p>
+<p>针对第二种场景，我们必须使用<strong>暂停</strong>，因为当<code>mrmovq 0(%rdx), %rax</code>指令在访存阶段时才能获取到内存中的值，这时<code>addq %ebx, %eax</code>指令处于执行阶段，所以这里如果用数据转发方式我们要把这个值转发到<code>addq %ebx, %eax</code>的译码阶段，可是它目前处于执行阶段，所以产生了矛盾，致使我们必须将<code>addq</code>指令暂停在译码阶段一个周期才能顺利的取到正确的值</p>
+</li>
+</ul>
+<h3 id="控制冒险"><a href="#控制冒险" class="headerlink" title="控制冒险"></a>控制冒险</h3><ul>
+<li><p>定义</p>
+<p>处理器无法预测下一条指令的地址</p>
+</li>
+<li><p>产生场景</p>
+<p>跳转指令<code>jXX</code>和返回指令<code>ret</code></p>
+</li>
+<li><p>处理方式</p>
+<p>对于跳转指令我们可以使用<strong>分支预测</strong>，例如对于跳转指令我们总是取跳转后的地址作为下一条指令的地址，等到该跳转指令处于执行阶段时我们再根据条件码来处理预测错误的情况</p>
+<p>对于返回指令我们无法预测它的地址，所以只能采取<strong>暂停</strong>方式</p>
+</li>
+</ul>
+<h1 id="Y86-64流水线实现"><a href="#Y86-64流水线实现" class="headerlink" title="Y86-64流水线实现"></a>Y86-64流水线实现</h1><p><img src="http://note.youdao.com/yws/public/resource/e0a47c600fb4ad22bdc347a23a2d449c/xmlnote/06351741F5FA498A9B51DD11C5914318/2458" alt=""></p>
+<h2 id="取指-1"><a href="#取指-1" class="headerlink" title="取指"></a>取指</h2><p><img src="http://note.youdao.com/yws/public/resource/e0a47c600fb4ad22bdc347a23a2d449c/xmlnote/CE8F2F4421EA407D8F02762BA5F653A8/2460" alt=""></p>
+<figure class="highlight verilog"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div><div class="line">11</div><div class="line">12</div><div class="line">13</div><div class="line">14</div><div class="line">15</div><div class="line">16</div><div class="line">17</div><div class="line">18</div><div class="line">19</div><div class="line">20</div><div class="line">21</div><div class="line">22</div><div class="line">23</div><div class="line">24</div><div class="line">25</div><div class="line">26</div><div class="line">27</div><div class="line">28</div><div class="line">29</div><div class="line">30</div><div class="line">31</div><div class="line">32</div><div class="line">33</div><div class="line">34</div><div class="line">35</div><div class="line">36</div><div class="line">37</div><div class="line">38</div><div class="line">39</div><div class="line">40</div><div class="line">41</div><div class="line">42</div><div class="line">43</div><div class="line">44</div><div class="line">45</div><div class="line">46</div><div class="line">47</div><div class="line">48</div><div class="line">49</div></pre></td><td class="code"><pre><div class="line">## What address should instruction be fetched at</div><div class="line"><span class="keyword">int</span> f_pc = [</div><div class="line">	# Mispredicted branch.  Fetch at incremented PC</div><div class="line">	M_icode == IJXX &amp;&amp; !M_Cnd : M_valA;</div><div class="line">	# Completion of RET instruction.</div><div class="line">	W_icode == IRET : W_valM;</div><div class="line">	# Default: Use predicted value of PC</div><div class="line">	<span class="number">1</span> : F_predPC;</div><div class="line">];</div><div class="line"></div><div class="line">## Determine icode of fetched instruction</div><div class="line"><span class="keyword">int</span> f_icode = [</div><div class="line">	imem_error : INOP;</div><div class="line">	<span class="number">1</span>: imem_icode;</div><div class="line">];</div><div class="line"></div><div class="line"># Determine ifun</div><div class="line"><span class="keyword">int</span> f_ifun = [</div><div class="line">	imem_error : FNONE;</div><div class="line">	<span class="number">1</span>: imem_ifun;</div><div class="line">];</div><div class="line"></div><div class="line"># Is instruction valid?</div><div class="line">bool instr_valid = f_icode in </div><div class="line">	&#123; INOP, IHALT, IRRMOVL, IIRMOVL, IRMMOVL, IMRMOVL,</div><div class="line">	  IOPL, IJXX, ICALL, IRET, IPUSHL, IPOPL &#125;;</div><div class="line"></div><div class="line"># Determine status code <span class="keyword">for</span> fetched instruction</div><div class="line"><span class="keyword">int</span> f_stat = [</div><div class="line">	imem_error: SADR;</div><div class="line">	!instr_valid : SINS;</div><div class="line">	f_icode == IHALT : SHLT;</div><div class="line">	<span class="number">1</span> : SAOK;</div><div class="line">];</div><div class="line"></div><div class="line"># Does fetched instruction require a regid <span class="keyword">byte</span>?</div><div class="line">bool need_regids =</div><div class="line">	f_icode in &#123; IRRMOVL, IOPL, IPUSHL, IPOPL, </div><div class="line">		     IIRMOVL, IRMMOVL, IMRMOVL &#125;;</div><div class="line"></div><div class="line"># Does fetched instruction require a constant word?</div><div class="line">bool need_valC =</div><div class="line">	f_icode in &#123; IIRMOVL, IRMMOVL, IMRMOVL, IJXX, ICALL &#125;;</div><div class="line"></div><div class="line"># Predict next value of PC</div><div class="line"><span class="keyword">int</span> f_predPC = [</div><div class="line">	f_icode in &#123; IJXX, ICALL &#125; : f_valC;</div><div class="line">	<span class="number">1</span> : f_valP;</div><div class="line">];</div></pre></td></tr></table></figure>
+<h2 id="译码和写回-1"><a href="#译码和写回-1" class="headerlink" title="译码和写回"></a>译码和写回</h2><p><img src="http://note.youdao.com/yws/public/resource/e0a47c600fb4ad22bdc347a23a2d449c/xmlnote/5749EA60A04F404AA60DB720547E79AB/2462" alt=""></p>
+<figure class="highlight verilog"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div><div class="line">11</div><div class="line">12</div><div class="line">13</div><div class="line">14</div><div class="line">15</div><div class="line">16</div><div class="line">17</div><div class="line">18</div><div class="line">19</div><div class="line">20</div><div class="line">21</div><div class="line">22</div><div class="line">23</div><div class="line">24</div><div class="line">25</div><div class="line">26</div><div class="line">27</div><div class="line">28</div><div class="line">29</div><div class="line">30</div><div class="line">31</div><div class="line">32</div><div class="line">33</div><div class="line">34</div><div class="line">35</div><div class="line">36</div><div class="line">37</div><div class="line">38</div><div class="line">39</div><div class="line">40</div><div class="line">41</div><div class="line">42</div><div class="line">43</div><div class="line">44</div><div class="line">45</div><div class="line">46</div><div class="line">47</div></pre></td><td class="code"><pre><div class="line">## What register should be used as the A source?</div><div class="line"><span class="keyword">int</span> d_srcA = [</div><div class="line">	D_icode in &#123; IRRMOVL, IRMMOVL, IOPL, IPUSHL  &#125; : D_rA;</div><div class="line">	D_icode in &#123; IPOPL, IRET &#125; : RESP;</div><div class="line">	<span class="number">1</span> : RNONE; # Don't need register</div><div class="line">];</div><div class="line"></div><div class="line">## What register should be used as the B source?</div><div class="line"><span class="keyword">int</span> d_srcB = [</div><div class="line">	D_icode in &#123; IOPL, IRMMOVL, IMRMOVL  &#125; : D_rB;</div><div class="line">	D_icode in &#123; IPUSHL, IPOPL, ICALL, IRET &#125; : RESP;</div><div class="line">	<span class="number">1</span> : RNONE;  # Don't need register</div><div class="line">];</div><div class="line"></div><div class="line">## What register should be used as the E destination?</div><div class="line"><span class="keyword">int</span> d_dstE = [</div><div class="line">	D_icode in &#123; IRRMOVL, IIRMOVL, IOPL&#125; : D_rB;</div><div class="line">	D_icode in &#123; IPUSHL, IPOPL, ICALL, IRET &#125; : RESP;</div><div class="line">	<span class="number">1</span> : RNONE;  # Don't write any register</div><div class="line">];</div><div class="line"></div><div class="line">## What register should be used as the M destination?</div><div class="line"><span class="keyword">int</span> d_dstM = [</div><div class="line">	D_icode in &#123; IMRMOVL, IPOPL &#125; : D_rA;</div><div class="line">	<span class="number">1</span> : RNONE;  # Don't write any register</div><div class="line">];</div><div class="line"></div><div class="line">## What should be the A value?</div><div class="line">## Forward into decode stage <span class="keyword">for</span> valA</div><div class="line"><span class="keyword">int</span> d_valA = [</div><div class="line">	D_icode in &#123; ICALL, IJXX &#125; : D_valP; # Use incremented PC</div><div class="line">	d_srcA == e_dstE : e_valE;    # Forward valE from execute</div><div class="line">	d_srcA == M_dstM : m_valM;    # Forward valM from memory</div><div class="line">	d_srcA == M_dstE : M_valE;    # Forward valE from memory</div><div class="line">	d_srcA == W_dstM : W_valM;    # Forward valM from write back</div><div class="line">	d_srcA == W_dstE : W_valE;    # Forward valE from write back</div><div class="line">	<span class="number">1</span> : d_rvalA;  # Use value read from register file</div><div class="line">];</div><div class="line"></div><div class="line"><span class="keyword">int</span> d_valB = [</div><div class="line">	d_srcB == e_dstE : e_valE;    # Forward valE from execute</div><div class="line">	d_srcB == M_dstM : m_valM;    # Forward valM from memory</div><div class="line">	d_srcB == M_dstE : M_valE;    # Forward valE from memory</div><div class="line">	d_srcB == W_dstM : W_valM;    # Forward valM from write back</div><div class="line">	d_srcB == W_dstE : W_valE;    # Forward valE from write back</div><div class="line">	<span class="number">1</span> : d_rvalB;  # Use value read from register file</div><div class="line">];</div></pre></td></tr></table></figure>
+<h2 id="执行-1"><a href="#执行-1" class="headerlink" title="执行"></a>执行</h2><p><img src="http://note.youdao.com/yws/public/resource/e0a47c600fb4ad22bdc347a23a2d449c/xmlnote/1B9778F5E1E540E2AB428D34F1E8E015/2469" alt=""></p>
+<figure class="highlight verilog"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div><div class="line">11</div><div class="line">12</div><div class="line">13</div><div class="line">14</div><div class="line">15</div><div class="line">16</div><div class="line">17</div><div class="line">18</div><div class="line">19</div><div class="line">20</div><div class="line">21</div><div class="line">22</div><div class="line">23</div><div class="line">24</div><div class="line">25</div><div class="line">26</div><div class="line">27</div><div class="line">28</div><div class="line">29</div><div class="line">30</div><div class="line">31</div><div class="line">32</div><div class="line">33</div><div class="line">34</div><div class="line">35</div><div class="line">36</div></pre></td><td class="code"><pre><div class="line">## Select <span class="keyword">input</span> A to ALU</div><div class="line"><span class="keyword">int</span> aluA = [</div><div class="line">	E_icode in &#123; IRRMOVL, IOPL &#125; : E_valA;</div><div class="line">	E_icode in &#123; IIRMOVL, IRMMOVL, IMRMOVL &#125; : E_valC;</div><div class="line">	E_icode in &#123; ICALL, IPUSHL &#125; : -<span class="number">4</span>;</div><div class="line">	E_icode in &#123; IRET, IPOPL &#125; : <span class="number">4</span>;</div><div class="line">	# Other instructions don't need ALU</div><div class="line">];</div><div class="line"></div><div class="line">## Select <span class="keyword">input</span> B to ALU</div><div class="line"><span class="keyword">int</span> aluB = [</div><div class="line">	E_icode in &#123; IRMMOVL, IMRMOVL, IOPL, ICALL, </div><div class="line">		     IPUSHL, IRET, IPOPL &#125; : E_valB;</div><div class="line">	E_icode in &#123; IRRMOVL, IIRMOVL &#125; : <span class="number">0</span>;</div><div class="line">	# Other instructions don't need ALU</div><div class="line">];</div><div class="line"></div><div class="line">## Set the ALU <span class="keyword">function</span></div><div class="line"><span class="keyword">int</span> alufun = [</div><div class="line">	E_icode == IOPL : E_ifun;</div><div class="line">	<span class="number">1</span> : ALUADD;</div><div class="line">];</div><div class="line"></div><div class="line">## Should the condition codes be updated?</div><div class="line">bool set_cc = E_icode == IOPL &amp;&amp;</div><div class="line">	# State changes only during normal operation</div><div class="line">	!m_stat in &#123; SADR, SINS, SHLT &#125; &amp;&amp; !W_stat in &#123; SADR, SINS, SHLT &#125;;</div><div class="line"></div><div class="line">## Generate valA in execute stage</div><div class="line"><span class="keyword">int</span> e_valA = E_valA;    # Pass valA through stage</div><div class="line"></div><div class="line">## Set dstE to RNONE in <span class="keyword">event</span> of <span class="keyword">not</span>-taken conditional move</div><div class="line"><span class="keyword">int</span> e_dstE = [</div><div class="line">	E_icode == IRRMOVL &amp;&amp; !e_Cnd : RNONE;</div><div class="line">	<span class="number">1</span> : E_dstE;</div><div class="line">];</div></pre></td></tr></table></figure>
+<h2 id="访存-1"><a href="#访存-1" class="headerlink" title="访存"></a>访存</h2><p><img src="http://note.youdao.com/yws/public/resource/e0a47c600fb4ad22bdc347a23a2d449c/xmlnote/C33B4B394241447B972BB0410092B278/2471" alt=""></p>
+<figure class="highlight verilog"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div><div class="line">11</div><div class="line">12</div><div class="line">13</div><div class="line">14</div><div class="line">15</div><div class="line">16</div><div class="line">17</div><div class="line">18</div><div class="line">19</div><div class="line">20</div><div class="line">21</div><div class="line">22</div><div class="line">23</div><div class="line">24</div><div class="line">25</div><div class="line">26</div><div class="line">27</div><div class="line">28</div><div class="line">29</div><div class="line">30</div><div class="line">31</div><div class="line">32</div><div class="line">33</div><div class="line">34</div><div class="line">35</div><div class="line">36</div><div class="line">37</div><div class="line">38</div></pre></td><td class="code"><pre><div class="line">## Select memory address</div><div class="line"><span class="keyword">int</span> mem_addr = [</div><div class="line">	M_icode in &#123; IRMMOVL, IPUSHL, ICALL, IMRMOVL &#125; : M_valE;</div><div class="line">	M_icode in &#123; IPOPL, IRET &#125; : M_valA;</div><div class="line">	# Other instructions don't need address</div><div class="line">];</div><div class="line"></div><div class="line">## Set read control signal</div><div class="line">bool mem_read = M_icode in &#123; IMRMOVL, IPOPL, IRET &#125;;</div><div class="line"></div><div class="line">## Set write control signal</div><div class="line">bool mem_write = M_icode in &#123; IRMMOVL, IPUSHL, ICALL &#125;;</div><div class="line"></div><div class="line">#<span class="comment">/* $begin pipe-m_stat-hcl */</span></div><div class="line">## Update the status</div><div class="line"><span class="keyword">int</span> m_stat = [</div><div class="line">	dmem_error : SADR;</div><div class="line">	<span class="number">1</span> : M_stat;</div><div class="line">];</div><div class="line">#<span class="comment">/* $end pipe-m_stat-hcl */</span></div><div class="line"></div><div class="line">## Set E port register ID</div><div class="line"><span class="keyword">int</span> w_dstE = W_dstE;</div><div class="line"></div><div class="line">## Set E port value</div><div class="line"><span class="keyword">int</span> w_valE = W_valE;</div><div class="line"></div><div class="line">## Set M port register ID</div><div class="line"><span class="keyword">int</span> w_dstM = W_dstM;</div><div class="line"></div><div class="line">## Set M port value</div><div class="line"><span class="keyword">int</span> w_valM = W_valM;</div><div class="line"></div><div class="line">## Update processor status</div><div class="line"><span class="keyword">int</span> Stat = [</div><div class="line">	W_stat == SBUB : SAOK;</div><div class="line">	<span class="number">1</span> : W_stat;</div><div class="line">];</div></pre></td></tr></table></figure>
+<h2 id="流水线控制逻辑"><a href="#流水线控制逻辑" class="headerlink" title="流水线控制逻辑"></a>流水线控制逻辑</h2><p><img src="http://note.youdao.com/yws/public/resource/e0a47c600fb4ad22bdc347a23a2d449c/xmlnote/569808D8388D45D593E8CE8CB2A3C111/2537" alt=""></p>
+<figure class="highlight verilog"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div><div class="line">11</div><div class="line">12</div><div class="line">13</div><div class="line">14</div><div class="line">15</div><div class="line">16</div><div class="line">17</div><div class="line">18</div><div class="line">19</div><div class="line">20</div><div class="line">21</div><div class="line">22</div><div class="line">23</div><div class="line">24</div><div class="line">25</div><div class="line">26</div><div class="line">27</div><div class="line">28</div><div class="line">29</div><div class="line">30</div><div class="line">31</div><div class="line">32</div><div class="line">33</div><div class="line">34</div><div class="line">35</div><div class="line">36</div><div class="line">37</div><div class="line">38</div><div class="line">39</div><div class="line">40</div><div class="line">41</div><div class="line">42</div><div class="line">43</div><div class="line">44</div></pre></td><td class="code"><pre><div class="line"># Should I stall <span class="keyword">or</span> inject a bubble into Pipeline Register F?</div><div class="line"># At most one of these can be true.</div><div class="line">bool F_bubble = <span class="number">0</span>;</div><div class="line">bool F_stall =</div><div class="line">	# Conditions <span class="keyword">for</span> a load/<span class="keyword">use</span> hazard</div><div class="line">	E_icode in &#123; IMRMOVL, IPOPL &#125; &amp;&amp;</div><div class="line">	 E_dstM in &#123; d_srcA, d_srcB &#125; ||</div><div class="line">	# Stalling at fetch <span class="keyword">while</span> ret passes through pipeline</div><div class="line">	IRET in &#123; D_icode, E_icode, M_icode &#125;;</div><div class="line"></div><div class="line"># Should I stall <span class="keyword">or</span> inject a bubble into Pipeline Register D?</div><div class="line"># At most one of these can be true.</div><div class="line">bool D_stall = </div><div class="line">	# Conditions <span class="keyword">for</span> a load/<span class="keyword">use</span> hazard</div><div class="line">	E_icode in &#123; IMRMOVL, IPOPL &#125; &amp;&amp;</div><div class="line">	 E_dstM in &#123; d_srcA, d_srcB &#125;;</div><div class="line"></div><div class="line">bool D_bubble =</div><div class="line">	# Mispredicted branch</div><div class="line">	(E_icode == IJXX &amp;&amp; !e_Cnd) ||</div><div class="line">	# Stalling at fetch <span class="keyword">while</span> ret passes through pipeline</div><div class="line">	# but <span class="keyword">not</span> condition <span class="keyword">for</span> a load/<span class="keyword">use</span> hazard</div><div class="line">	!(E_icode in &#123; IMRMOVL, IPOPL &#125; &amp;&amp; E_dstM in &#123; d_srcA, d_srcB &#125;) &amp;&amp;</div><div class="line">	  IRET in &#123; D_icode, E_icode, M_icode &#125;;</div><div class="line"></div><div class="line"># Should I stall <span class="keyword">or</span> inject a bubble into Pipeline Register E?</div><div class="line"># At most one of these can be true.</div><div class="line">bool E_stall = <span class="number">0</span>;</div><div class="line">bool E_bubble =</div><div class="line">	# Mispredicted branch</div><div class="line">	(E_icode == IJXX &amp;&amp; !e_Cnd) ||</div><div class="line">	# Conditions <span class="keyword">for</span> a load/<span class="keyword">use</span> hazard</div><div class="line">	E_icode in &#123; IMRMOVL, IPOPL &#125; &amp;&amp;</div><div class="line">	 E_dstM in &#123; d_srcA, d_srcB&#125;;</div><div class="line"></div><div class="line"># Should I stall <span class="keyword">or</span> inject a bubble into Pipeline Register M?</div><div class="line"># At most one of these can be true.</div><div class="line">bool M_stall = <span class="number">0</span>;</div><div class="line"># Start injecting bubbles as soon as exception passes through memory stage</div><div class="line">bool M_bubble = m_stat in &#123; SADR, SINS, SHLT &#125; || W_stat in &#123; SADR, SINS, SHLT &#125;;</div><div class="line"></div><div class="line"># Should I stall <span class="keyword">or</span> inject a bubble into Pipeline Register W?</div><div class="line">bool W_stall = W_stat in &#123; SADR, SINS, SHLT &#125;;</div><div class="line">bool W_bubble = <span class="number">0</span>;</div></pre></td></tr></table></figure>
+<h1 id="PIPE总结"><a href="#PIPE总结" class="headerlink" title="PIPE总结"></a>PIPE总结</h1><p>现代处理器都是使用流水线方式来提高性能，但是提高性能的代价就是复杂度的增加，我们必须小心的处理流水线冒险来使得处理器的执行结果和预期结果一致。这里还只是一个简单的5级流水线就有这么多情况要处理，实际的处理器流水线级数可能更多，所以可想而知其复杂程度。</p>
+
+          
+        
+      
+    </div>
+    
+    
+    
+
+    
+
+    
+
+    
+
+    <footer class="post-footer">
+      
+
+      
+
+      
+
+      
+      
+        <div class="post-eof"></div>
+      
+    </footer>
+  </div>
+  
+  
+  
+  </article>
+
+
+    
+      
+
+  
+
+  
+  
+  
+
+  <article class="post post-type-normal" itemscope itemtype="http://schema.org/Article">
+  
+  
+  
+  <div class="post-block">
     <link itemprop="mainEntityOfPage" href="http://yoursite.com/2017/10/31/关于补码/">
 
     <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
@@ -1786,150 +2056,13 @@ x_补 + y_补 = 2^w + x + 2^w + y = 2^w + (2^w + x + y)</script><p> $x + y &lt; 
 
 
     
-      
-
-  
-
-  
-  
-  
-
-  <article class="post post-type-normal" itemscope itemtype="http://schema.org/Article">
-  
-  
-  
-  <div class="post-block">
-    <link itemprop="mainEntityOfPage" href="http://yoursite.com/2017/09/07/Scala函数式编程-递归数据结构/">
-
-    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
-      <meta itemprop="name" content="dawning7670">
-      <meta itemprop="description" content="">
-      <meta itemprop="image" content="/images/avatar.gif">
-    </span>
-
-    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
-      <meta itemprop="name" content="dawning's blog~">
-    </span>
-
-    
-      <header class="post-header">
-
-        
-        
-          <h1 class="post-title" itemprop="name headline">
-                
-                <a class="post-title-link" href="/2017/09/07/Scala函数式编程-递归数据结构/" itemprop="url">Scala函数式编程-递归数据结构</a></h1>
-        
-
-        <div class="post-meta">
-          <span class="post-time">
-            
-              <span class="post-meta-item-icon">
-                <i class="fa fa-calendar-o"></i>
-              </span>
-              
-                <span class="post-meta-item-text">发表于</span>
-              
-              <time title="创建于" itemprop="dateCreated datePublished" datetime="2017-09-07T21:12:47+08:00">
-                2017-09-07
-              </time>
-            
-
-            
-
-            
-          </span>
-
-          
-
-          
-            
-          
-
-          
-          
-
-          
-
-          
-
-          
-
-        </div>
-      </header>
-    
-
-    
-    
-    
-    <div class="post-body" itemprop="articleBody">
-
-      
-      
-
-      
-        
-          
-            <h1 id="递归定义列表"><a href="#递归定义列表" class="headerlink" title="递归定义列表"></a>递归定义列表</h1><p>对于任意一个列表[1, 2, 3…]，它可以看成由头元素和剩下的列表组成</p>
-<p>在Scala标准库中的List是一种类似单向链表的结构</p>
-<p>例如：<br><figure class="highlight scala"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div></pre></td><td class="code"><pre><div class="line"><span class="type">List</span>(<span class="number">1</span>, <span class="number">2</span>, <span class="number">3</span>) = <span class="number">1</span> :: (<span class="number">2</span> :: (<span class="number">3</span> :: <span class="type">Nil</span>))</div><div class="line"><span class="type">List</span>(<span class="number">1</span>) = <span class="number">1</span> :: <span class="type">Nil</span></div></pre></td></tr></table></figure></p>
-<h1 id="常用函数递归实现"><a href="#常用函数递归实现" class="headerlink" title="常用函数递归实现"></a>常用函数递归实现</h1><h2 id="求和函数"><a href="#求和函数" class="headerlink" title="求和函数"></a>求和函数</h2><p>对于递归定义的列表，求所有元素的总和可以表达成下面的递归式：</p>
-<p>sum(lst) = head(lst) + sum(tail(lst))</p>
-<p>将上面的递归式转化成Scala中的代码<br><figure class="highlight scala"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div></pre></td><td class="code"><pre><div class="line"><span class="function"><span class="keyword">def</span> <span class="title">sum</span></span>(lst: <span class="type">List</span>[<span class="type">Int</span>]): <span class="type">Int</span> = lst <span class="keyword">match</span> &#123;</div><div class="line">  <span class="keyword">case</span> head :: tail =&gt; head + sum(tail)</div><div class="line">  <span class="keyword">case</span> _ =&gt; <span class="number">0</span></div><div class="line">&#125;</div></pre></td></tr></table></figure></p>
-<h2 id="求乘积"><a href="#求乘积" class="headerlink" title="求乘积"></a>求乘积</h2><figure class="highlight scala"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div></pre></td><td class="code"><pre><div class="line"><span class="function"><span class="keyword">def</span> <span class="title">multi</span></span>(lst: <span class="type">List</span>[<span class="type">Int</span>]): <span class="type">Int</span> = lst <span class="keyword">match</span> &#123;</div><div class="line">  <span class="keyword">case</span> head :: tail =&gt; head * sum(tail)</div><div class="line">  <span class="keyword">case</span> _ =&gt; <span class="number">1</span></div><div class="line">&#125;</div></pre></td></tr></table></figure>
-<h2 id="统计某个元素出现次数"><a href="#统计某个元素出现次数" class="headerlink" title="统计某个元素出现次数"></a>统计某个元素出现次数</h2><figure class="highlight scala"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div></pre></td><td class="code"><pre><div class="line"><span class="function"><span class="keyword">def</span> <span class="title">count</span></span>[<span class="type">A</span>](lst: <span class="type">List</span>[<span class="type">A</span>], a: <span class="type">A</span>): <span class="type">Int</span> = lst <span class="keyword">match</span> &#123;</div><div class="line">  <span class="keyword">case</span> head :: tail =&gt; <span class="keyword">if</span> (head == a) <span class="number">1</span> + count(tail, a) <span class="keyword">else</span> count(tail, a)</div><div class="line">  <span class="keyword">case</span> _ =&gt; <span class="number">0</span></div><div class="line">&#125;</div></pre></td></tr></table></figure>
-<h1 id="抽象成一般模式"><a href="#抽象成一般模式" class="headerlink" title="抽象成一般模式"></a>抽象成一般模式</h1><p>通过观察上面的几个常用函数的实现模式，我们可以发现每个函数的整体结构类似，不同之处在于</p>
-<ul>
-<li>对于空列表的返回值</li>
-<li>对每个元素的处理方式</li>
-</ul>
-<p>所以我们可以将上述模式抽象成一个更加通用的高阶函数，这个函数需要下面几个参数</p>
-<ul>
-<li>列表为空时返回的初始值</li>
-<li>将列表元素与累加器合并的函数</li>
-</ul>
-<p>下面给出这个函数的实现<br><figure class="highlight scala"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div></pre></td><td class="code"><pre><div class="line"><span class="function"><span class="keyword">def</span> <span class="title">foldRight</span></span>[<span class="type">A</span>, <span class="type">B</span>](lst: <span class="type">List</span>[<span class="type">A</span>], z: <span class="type">B</span>)(f : (<span class="type">A</span>, <span class="type">B</span>) =&gt; <span class="type">B</span>): <span class="type">B</span> = lst <span class="keyword">match</span> &#123;</div><div class="line">  <span class="keyword">case</span> x :: xs =&gt; f(x, foldRight(xs, z)(f))</div><div class="line">  <span class="keyword">case</span> _ =&gt; z</div><div class="line">&#125;</div></pre></td></tr></table></figure></p>
-<p>利用这个foldRight我们可以重构上面三个函数</p>
-<figure class="highlight scala"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div></pre></td><td class="code"><pre><div class="line"><span class="function"><span class="keyword">def</span> <span class="title">sum</span></span>(lst: <span class="type">List</span>[<span class="type">Int</span>]): <span class="type">Int</span> =</div><div class="line">  foldRight(lst, <span class="number">0</span>)((x, acc) =&gt; x + acc)</div><div class="line"></div><div class="line"><span class="comment">// _ * _ 等价于 (a, b) =&gt; (a * b)</span></div><div class="line"><span class="function"><span class="keyword">def</span> <span class="title">multi</span></span>(lst: <span class="type">List</span>[<span class="type">Int</span>]): <span class="type">Int</span> =</div><div class="line">  foldRight(lst, <span class="number">1</span>)(_ * _)</div><div class="line"></div><div class="line"><span class="function"><span class="keyword">def</span> <span class="title">count</span></span>[<span class="type">A</span>](lst: <span class="type">List</span>[<span class="type">A</span>], a: <span class="type">A</span>): <span class="type">Int</span> =</div><div class="line">  foldRight(lst, <span class="number">0</span>)((x, acc) =&gt; <span class="keyword">if</span> (x == a) <span class="number">1</span> + acc <span class="keyword">else</span> acc)</div></pre></td></tr></table></figure>
-<p>Cool！</p>
-
-          
-        
-      
-    </div>
-    
-    
-    
-
-    
-
-    
-
-    
-
-    <footer class="post-footer">
-      
-
-      
-
-      
-
-      
-      
-        <div class="post-eof"></div>
-      
-    </footer>
-  </div>
-  
-  
-  
-  </article>
-
-
-    
   </section>
 
   
+  <nav class="pagination">
+    <span class="page-number current">1</span><a class="page-number" href="/page/2/">2</a><a class="extend next" rel="next" href="/page/2/"><i class="fa fa-angle-right"></i></a>
+  </nav>
+
 
 
           </div>
@@ -1972,7 +2105,7 @@ x_补 + y_补 = 2^w + x + 2^w + y = 2^w + (2^w + x + y)</script><p> $x + y &lt; 
             
               <a href="/archives/">
             
-                <span class="site-state-item-count">10</span>
+                <span class="site-state-item-count">11</span>
                 <span class="site-state-item-name">日志</span>
               </a>
             </div>
@@ -1985,7 +2118,7 @@ x_补 + y_补 = 2^w + x + 2^w + y = 2^w + (2^w + x + y)</script><p> $x + y &lt; 
             
             <div class="site-state-item site-state-tags">
               <a href="/tags/index.html">
-                <span class="site-state-item-count">19</span>
+                <span class="site-state-item-count">21</span>
                 <span class="site-state-item-name">标签</span>
               </a>
             </div>
