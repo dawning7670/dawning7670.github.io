@@ -1,0 +1,823 @@
+<!DOCTYPE html>
+
+
+
+  
+
+
+<html class="theme-next gemini use-motion" lang="zh-Hans">
+<head>
+  <!-- hexo-inject:begin --><!-- hexo-inject:end --><meta charset="UTF-8"/>
+<meta http-equiv="X-UA-Compatible" content="IE=edge" />
+<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1"/>
+<meta name="theme-color" content="#222">
+
+
+
+
+
+
+
+
+
+<meta http-equiv="Cache-Control" content="no-transform" />
+<meta http-equiv="Cache-Control" content="no-siteapp" />
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+  
+  
+  <link href="/lib/fancybox/source/jquery.fancybox.css?v=2.1.5" rel="stylesheet" type="text/css" />
+
+
+
+
+  
+  
+  
+  
+
+  
+    
+    
+  
+
+  
+
+  
+
+  
+
+  
+    
+      
+    
+
+    
+  
+
+  
+    
+    
+    <link href="//fonts.googleapis.com/css?family=Lato:300,300italic,400,400italic,700,700italic|consolas:300,300italic,400,400italic,700,700italic&subset=latin,latin-ext" rel="stylesheet" type="text/css">
+  
+
+
+
+
+
+
+<link href="/lib/font-awesome/css/font-awesome.min.css?v=4.6.2" rel="stylesheet" type="text/css" />
+
+<link href="/css/main.css?v=5.1.2" rel="stylesheet" type="text/css" />
+
+
+  <meta name="keywords" content="CSAPP,Cache," />
+
+
+
+
+
+
+
+
+  <link rel="shortcut icon" type="image/x-icon" href="/favicon.ico?v=5.1.2" />
+
+
+
+
+
+
+<meta name="description" content="实验简介该实验由A、B两个部分组成  PartA：编写一个缓存算法模拟器，根据s E b三个参数计算出缓存命中、缓存未命中和缓存替换的次数，其中缓存替换算法使用LRU PartB：在给定的高速缓存参数s=5, E=1, b=5的条件下，优化一个矩阵转置函数，使该函数的缓存命中率满足 32 x 32： miss &amp;lt; 300 64 x 64：miss &amp;lt; 1300 61 x 67：miss">
+<meta name="keywords" content="CSAPP,Cache">
+<meta property="og:type" content="article">
+<meta property="og:title" content="CSAPP-Lab-Cache">
+<meta property="og:url" content="http://yoursite.com/2017/11/20/CSAPP-Lab-Cache/index.html">
+<meta property="og:site_name" content="dawning&#39;s blog~">
+<meta property="og:description" content="实验简介该实验由A、B两个部分组成  PartA：编写一个缓存算法模拟器，根据s E b三个参数计算出缓存命中、缓存未命中和缓存替换的次数，其中缓存替换算法使用LRU PartB：在给定的高速缓存参数s=5, E=1, b=5的条件下，优化一个矩阵转置函数，使该函数的缓存命中率满足 32 x 32： miss &amp;lt; 300 64 x 64：miss &amp;lt; 1300 61 x 67：miss">
+<meta property="og:locale" content="zh-Hans">
+<meta property="og:image" content="https://note.youdao.com/yws/public/resource/45c03e20609703d6e2a5107363774cc1/xmlnote/1EB9C92CF3A84E05BFF97070630BD14F/2619">
+<meta property="og:image" content="https://note.youdao.com/yws/public/resource/45c03e20609703d6e2a5107363774cc1/xmlnote/2754234AABDC40C4A938A50694FAC116/2623">
+<meta property="og:image" content="https://note.youdao.com/yws/public/resource/45c03e20609703d6e2a5107363774cc1/xmlnote/2D09CF002B6B4F5F9C466A791C447484/2626">
+<meta property="og:image" content="https://note.youdao.com/yws/public/resource/45c03e20609703d6e2a5107363774cc1/xmlnote/746C67BF8A1C44748106AA221D52142A/2633">
+<meta property="og:image" content="https://note.youdao.com/yws/public/resource/45c03e20609703d6e2a5107363774cc1/xmlnote/D887A11304D1483894547532A1816681/2650">
+<meta property="og:updated_time" content="2017-11-21T15:36:08.276Z">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:title" content="CSAPP-Lab-Cache">
+<meta name="twitter:description" content="实验简介该实验由A、B两个部分组成  PartA：编写一个缓存算法模拟器，根据s E b三个参数计算出缓存命中、缓存未命中和缓存替换的次数，其中缓存替换算法使用LRU PartB：在给定的高速缓存参数s=5, E=1, b=5的条件下，优化一个矩阵转置函数，使该函数的缓存命中率满足 32 x 32： miss &amp;lt; 300 64 x 64：miss &amp;lt; 1300 61 x 67：miss">
+<meta name="twitter:image" content="https://note.youdao.com/yws/public/resource/45c03e20609703d6e2a5107363774cc1/xmlnote/1EB9C92CF3A84E05BFF97070630BD14F/2619">
+
+
+
+<script type="text/javascript" id="hexo.configurations">
+  var NexT = window.NexT || {};
+  var CONFIG = {
+    root: '/',
+    scheme: 'Gemini',
+    version: '5.1.2',
+    sidebar: {"position":"right","display":"post","offset":12,"offset_float":12,"b2t":false,"scrollpercent":false,"onmobile":false},
+    fancybox: true,
+    tabs: true,
+    motion: {"enable":true,"async":false,"transition":{"post_block":"fadeIn","post_header":"slideDownIn","post_body":"slideDownIn","coll_header":"slideLeftIn"}},
+    duoshuo: {
+      userId: '0',
+      author: '博主'
+    },
+    algolia: {
+      applicationID: '',
+      apiKey: '',
+      indexName: '',
+      hits: {"per_page":10},
+      labels: {"input_placeholder":"Search for Posts","hits_empty":"We didn't find any results for the search: ${query}","hits_stats":"${hits} results found in ${time} ms"}
+    }
+  };
+</script>
+
+
+
+  <link rel="canonical" href="http://yoursite.com/2017/11/20/CSAPP-Lab-Cache/"/>
+
+
+
+
+
+  <title>CSAPP-Lab-Cache | dawning's blog~</title><!-- hexo-inject:begin --><!-- hexo-inject:end -->
+  
+
+
+
+
+
+
+
+
+</head>
+
+<body itemscope itemtype="http://schema.org/WebPage" lang="zh-Hans">
+
+  
+  
+    
+  
+
+  <!-- hexo-inject:begin --><!-- hexo-inject:end --><div class="container sidebar-position-right page-post-detail">
+    <div class="headband"></div>
+
+    <header id="header" class="header" itemscope itemtype="http://schema.org/WPHeader">
+      <div class="header-inner"><div class="site-brand-wrapper">
+  <div class="site-meta ">
+    
+
+    <div class="custom-logo-site-title">
+      <a href="/"  class="brand" rel="start">
+        <span class="logo-line-before"><i></i></span>
+        <span class="site-title">dawning's blog~</span>
+        <span class="logo-line-after"><i></i></span>
+      </a>
+    </div>
+      
+        <p class="site-subtitle">庸人自扰之</p>
+      
+  </div>
+
+  <div class="site-nav-toggle">
+    <button>
+      <span class="btn-bar"></span>
+      <span class="btn-bar"></span>
+      <span class="btn-bar"></span>
+    </button>
+  </div>
+</div>
+
+<nav class="site-nav">
+  
+
+  
+    <ul id="menu" class="menu">
+      
+        
+        <li class="menu-item menu-item-home">
+          <a href="/" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-home"></i> <br />
+            
+            首页
+          </a>
+        </li>
+      
+        
+        <li class="menu-item menu-item-archives">
+          <a href="/archives/" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-archive"></i> <br />
+            
+            归档
+          </a>
+        </li>
+      
+        
+        <li class="menu-item menu-item-tags">
+          <a href="/tags/" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-tags"></i> <br />
+            
+            标签
+          </a>
+        </li>
+      
+
+      
+    </ul>
+  
+
+  
+</nav>
+
+
+
+ </div>
+    </header>
+
+    <main id="main" class="main">
+      <div class="main-inner">
+        <div class="content-wrap">
+          <div id="content" class="content">
+            
+
+  <div id="posts" class="posts-expand">
+    
+
+  
+
+  
+  
+  
+
+  <article class="post post-type-normal" itemscope itemtype="http://schema.org/Article">
+  
+  
+  
+  <div class="post-block">
+    <link itemprop="mainEntityOfPage" href="http://yoursite.com/2017/11/20/CSAPP-Lab-Cache/">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="name" content="dawning7670">
+      <meta itemprop="description" content="">
+      <meta itemprop="image" content="/images/avatar.gif">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="dawning's blog~">
+    </span>
+
+    
+      <header class="post-header">
+
+        
+        
+          <h1 class="post-title" itemprop="name headline">CSAPP-Lab-Cache</h1>
+        
+
+        <div class="post-meta">
+          <span class="post-time">
+            
+              <span class="post-meta-item-icon">
+                <i class="fa fa-calendar-o"></i>
+              </span>
+              
+                <span class="post-meta-item-text">发表于</span>
+              
+              <time title="创建于" itemprop="dateCreated datePublished" datetime="2017-11-20T00:00:00+08:00">
+                2017-11-20
+              </time>
+            
+
+            
+
+            
+          </span>
+
+          
+
+          
+            
+          
+
+          
+          
+
+          
+
+          
+
+          
+
+        </div>
+      </header>
+    
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody">
+
+      
+      
+
+      
+        <h1 id="实验简介"><a href="#实验简介" class="headerlink" title="实验简介"></a>实验简介</h1><p>该实验由A、B两个部分组成</p>
+<ul>
+<li>PartA：编写一个缓存算法模拟器，根据<code>s E b</code>三个参数计算出缓存命中、缓存未命中和缓存替换的次数，其中缓存替换算法使用<code>LRU</code></li>
+<li>PartB：在给定的高速缓存参数<code>s=5, E=1, b=5</code>的条件下，优化一个矩阵转置函数，使该函数的缓存命中率满足<ul>
+<li>32 x 32： <code>miss &lt; 300</code></li>
+<li>64 x 64：<code>miss &lt; 1300</code></li>
+<li>61 x 67：<code>miss &lt; 2000</code></li>
+</ul>
+</li>
+</ul>
+<h1 id="Part-A"><a href="#Part-A" class="headerlink" title="Part-A"></a>Part-A</h1><p>PartA部分没什么难点，主要就是缓存替换算法的实现，我这里使用一个二维数组<code>cache[S][E]</code>来表示缓存</p>
+<ul>
+<li><code>cache[i][j] = -1</code>：表示缓存无效</li>
+<li><code>cache[i][j] = tag</code>：表示该缓存块已经缓存了标记为<code>tag</code>的内存块</li>
+</ul>
+<p>缓存替换算法我们总是保证<code>cache[s]</code>数组中第一个元素<code>cache[s][0]</code>为将要被替换的元素，具体步骤如下：</p>
+<ol>
+<li><p>解析地址中的<code>s</code>和<code>tag</code>参数</p>
+</li>
+<li><p>如果<code>cache[s]</code>数组中未找到该标记则为未命中并且<code>cache[s]</code>数组中有效缓存个数小于E，则将<code>cache[s]</code>数组中第一个无效缓存块的值设置为<code>tag</code>，即<code>cache[s][FIRST_INVALID] = tag</code>；</p>
+<p>如果<code>cache[s]</code>数组中未找到该标记，但是<code>cache[s]</code>数组有效缓存已满，则将<code>cache[s]</code>数组中第一个元素之后的所有有效块都向前移动一个单位，最后将该<code>tag</code>添加到末尾；</p>
+<p>如果<code>cache[s]</code>数组中找到对应标记<code>tag</code>的位置<code>i</code>，则将<code>cache[s][i]</code>从数组中删除并追加到有效缓存块末尾</p>
+</li>
+</ol>
+<p>具体实现代码如下</p>
+<figure class="highlight c"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div><div class="line">11</div><div class="line">12</div><div class="line">13</div><div class="line">14</div><div class="line">15</div><div class="line">16</div><div class="line">17</div><div class="line">18</div><div class="line">19</div><div class="line">20</div><div class="line">21</div><div class="line">22</div><div class="line">23</div><div class="line">24</div><div class="line">25</div><div class="line">26</div><div class="line">27</div><div class="line">28</div><div class="line">29</div><div class="line">30</div><div class="line">31</div><div class="line">32</div><div class="line">33</div><div class="line">34</div><div class="line">35</div><div class="line">36</div><div class="line">37</div><div class="line">38</div><div class="line">39</div><div class="line">40</div><div class="line">41</div><div class="line">42</div><div class="line">43</div><div class="line">44</div><div class="line">45</div><div class="line">46</div><div class="line">47</div><div class="line">48</div><div class="line">49</div><div class="line">50</div><div class="line">51</div><div class="line">52</div><div class="line">53</div><div class="line">54</div><div class="line">55</div><div class="line">56</div><div class="line">57</div><div class="line">58</div><div class="line">59</div><div class="line">60</div><div class="line">61</div><div class="line">62</div><div class="line">63</div><div class="line">64</div><div class="line">65</div><div class="line">66</div><div class="line">67</div><div class="line">68</div><div class="line">69</div><div class="line">70</div><div class="line">71</div><div class="line">72</div><div class="line">73</div><div class="line">74</div><div class="line">75</div><div class="line">76</div><div class="line">77</div><div class="line">78</div><div class="line">79</div><div class="line">80</div><div class="line">81</div><div class="line">82</div><div class="line">83</div><div class="line">84</div><div class="line">85</div><div class="line">86</div><div class="line">87</div><div class="line">88</div><div class="line">89</div><div class="line">90</div><div class="line">91</div><div class="line">92</div><div class="line">93</div><div class="line">94</div><div class="line">95</div><div class="line">96</div><div class="line">97</div><div class="line">98</div><div class="line">99</div><div class="line">100</div><div class="line">101</div><div class="line">102</div><div class="line">103</div><div class="line">104</div><div class="line">105</div><div class="line">106</div><div class="line">107</div><div class="line">108</div><div class="line">109</div><div class="line">110</div><div class="line">111</div><div class="line">112</div><div class="line">113</div><div class="line">114</div><div class="line">115</div><div class="line">116</div><div class="line">117</div><div class="line">118</div><div class="line">119</div><div class="line">120</div><div class="line">121</div><div class="line">122</div><div class="line">123</div><div class="line">124</div><div class="line">125</div><div class="line">126</div><div class="line">127</div><div class="line">128</div><div class="line">129</div><div class="line">130</div><div class="line">131</div><div class="line">132</div><div class="line">133</div><div class="line">134</div><div class="line">135</div><div class="line">136</div><div class="line">137</div><div class="line">138</div><div class="line">139</div><div class="line">140</div><div class="line">141</div><div class="line">142</div><div class="line">143</div><div class="line">144</div><div class="line">145</div><div class="line">146</div><div class="line">147</div><div class="line">148</div><div class="line">149</div><div class="line">150</div><div class="line">151</div><div class="line">152</div><div class="line">153</div><div class="line">154</div><div class="line">155</div><div class="line">156</div><div class="line">157</div><div class="line">158</div><div class="line">159</div><div class="line">160</div><div class="line">161</div><div class="line">162</div><div class="line">163</div><div class="line">164</div><div class="line">165</div><div class="line">166</div><div class="line">167</div><div class="line">168</div><div class="line">169</div><div class="line">170</div><div class="line">171</div><div class="line">172</div><div class="line">173</div><div class="line">174</div><div class="line">175</div><div class="line">176</div><div class="line">177</div><div class="line">178</div><div class="line">179</div><div class="line">180</div><div class="line">181</div><div class="line">182</div><div class="line">183</div><div class="line">184</div><div class="line">185</div><div class="line">186</div><div class="line">187</div><div class="line">188</div><div class="line">189</div><div class="line">190</div><div class="line">191</div><div class="line">192</div><div class="line">193</div><div class="line">194</div><div class="line">195</div><div class="line">196</div><div class="line">197</div><div class="line">198</div><div class="line">199</div><div class="line">200</div><div class="line">201</div><div class="line">202</div><div class="line">203</div><div class="line">204</div><div class="line">205</div><div class="line">206</div><div class="line">207</div><div class="line">208</div><div class="line">209</div><div class="line">210</div><div class="line">211</div><div class="line">212</div><div class="line">213</div><div class="line">214</div><div class="line">215</div><div class="line">216</div><div class="line">217</div><div class="line">218</div><div class="line">219</div><div class="line">220</div><div class="line">221</div><div class="line">222</div><div class="line">223</div><div class="line">224</div><div class="line">225</div><div class="line">226</div><div class="line">227</div><div class="line">228</div><div class="line">229</div><div class="line">230</div><div class="line">231</div><div class="line">232</div><div class="line">233</div><div class="line">234</div><div class="line">235</div><div class="line">236</div><div class="line">237</div><div class="line">238</div><div class="line">239</div><div class="line">240</div><div class="line">241</div><div class="line">242</div><div class="line">243</div></pre></td><td class="code"><pre><div class="line"><span class="meta">#<span class="meta-keyword">include</span> <span class="meta-string">"cachelab.h"</span></span></div><div class="line"><span class="meta">#<span class="meta-keyword">include</span> <span class="meta-string">&lt;stdio.h&gt;</span></span></div><div class="line"><span class="meta">#<span class="meta-keyword">include</span> <span class="meta-string">&lt;string.h&gt;</span></span></div><div class="line"><span class="meta">#<span class="meta-keyword">include</span> <span class="meta-string">&lt;stdlib.h&gt;</span></span></div><div class="line"><span class="meta">#<span class="meta-keyword">define</span> BUFFER_SIZE 1024</span></div><div class="line"><span class="function"><span class="keyword">void</span> <span class="title">printUsage</span><span class="params">()</span></span></div><div class="line"><span class="function"></span>&#123;</div><div class="line">	<span class="built_in">printf</span>(<span class="string">"Usage: ./csim-ref [-hv] -s &lt;num&gt; -E &lt;num&gt; -b &lt;num&gt; -t &lt;file&gt;\n"</span></div><div class="line">			<span class="string">"Options:\n"</span></div><div class="line">			<span class="string">"  -h         Print this help message.\n"</span></div><div class="line">			<span class="string">"  -v         Optional verbose flag.\n"</span></div><div class="line">			<span class="string">"  -s &lt;num&gt;   Number of set index bits.\n"</span></div><div class="line">			<span class="string">"  -E &lt;num&gt;   Number of lines per set.\n"</span></div><div class="line">			<span class="string">"  -b &lt;num&gt;   Number of block offset bits.\n"</span></div><div class="line">			<span class="string">"  -t &lt;file&gt;  Trace file.\n\n"</span></div><div class="line">			<span class="string">"Examples:\n"</span></div><div class="line">			<span class="string">"  linux&gt;  ./csim-ref -s 4 -E 1 -b 4 -t traces/yi.trace\n"</span></div><div class="line">			<span class="string">"  linux&gt;  ./csim-ref -v -s 8 -E 2 -b 4 -t traces/yi.trace\n"</span>);</div><div class="line">&#125;</div><div class="line"></div><div class="line"><span class="function"><span class="keyword">void</span> <span class="title">move_to_tail</span><span class="params">(<span class="keyword">long</span> <span class="built_in">array</span>[], <span class="keyword">int</span> len, <span class="keyword">int</span> i)</span></span></div><div class="line"><span class="function"></span>&#123;</div><div class="line">	<span class="keyword">long</span> e = <span class="built_in">array</span>[i];</div><div class="line">	<span class="keyword">for</span> (<span class="keyword">int</span> j = i; j &lt; len - <span class="number">1</span>; j++)</div><div class="line">	&#123;</div><div class="line">		<span class="keyword">if</span> (<span class="built_in">array</span>[j + <span class="number">1</span>] != <span class="number">-1</span>)</div><div class="line">			<span class="built_in">array</span>[j] = <span class="built_in">array</span>[j + <span class="number">1</span>];</div><div class="line">		<span class="keyword">else</span></div><div class="line">		&#123;</div><div class="line">			<span class="built_in">array</span>[j] = e;</div><div class="line">			<span class="keyword">return</span>;</div><div class="line">		&#125;</div><div class="line">	&#125;</div><div class="line">	<span class="built_in">array</span>[len - <span class="number">1</span>] = e;</div><div class="line">&#125;</div><div class="line"></div><div class="line"><span class="function"><span class="keyword">int</span> <span class="title">add_to_cache</span><span class="params">(<span class="keyword">long</span> <span class="built_in">array</span>[], <span class="keyword">int</span> len, <span class="keyword">int</span> value)</span></span></div><div class="line"><span class="function"></span>&#123;</div><div class="line">	<span class="keyword">for</span> (<span class="keyword">int</span> i = <span class="number">0</span>; i &lt; len; i++)</div><div class="line">	&#123;</div><div class="line">		<span class="keyword">if</span> (<span class="built_in">array</span>[i] == <span class="number">-1</span>)</div><div class="line">		&#123;</div><div class="line">			<span class="built_in">array</span>[i] = value;</div><div class="line">			<span class="keyword">return</span> <span class="number">0</span>;</div><div class="line">		&#125;</div><div class="line">	&#125;</div><div class="line">	move_to_tail(<span class="built_in">array</span>, len, <span class="number">0</span>);</div><div class="line">	<span class="built_in">array</span>[len - <span class="number">1</span>] = value;</div><div class="line">	<span class="keyword">return</span> <span class="number">-1</span>;</div><div class="line">&#125;</div><div class="line"></div><div class="line"><span class="function"><span class="keyword">unsigned</span> <span class="keyword">long</span> <span class="title">hex2long</span><span class="params">(<span class="keyword">char</span>* hex_str, <span class="keyword">int</span> len)</span></span></div><div class="line"><span class="function"></span>&#123;</div><div class="line">	<span class="keyword">unsigned</span> <span class="keyword">long</span> result = <span class="number">0</span>;</div><div class="line">	<span class="keyword">int</span> i;</div><div class="line">	<span class="keyword">for</span> (i = <span class="number">0</span>; i &lt; len; i++)</div><div class="line">	&#123;</div><div class="line">		<span class="keyword">switch</span> (hex_str[i])</div><div class="line">		&#123;</div><div class="line">			<span class="keyword">case</span> <span class="string">'0'</span>:</div><div class="line">				<span class="keyword">break</span>;</div><div class="line">			<span class="keyword">case</span> <span class="string">'1'</span>:</div><div class="line">				result |= <span class="number">0x1</span>;</div><div class="line">				<span class="keyword">break</span>;</div><div class="line">			<span class="keyword">case</span> <span class="string">'2'</span>:</div><div class="line">				result |= <span class="number">0x2</span>;</div><div class="line">				<span class="keyword">break</span>;</div><div class="line">			<span class="keyword">case</span> <span class="string">'3'</span>:</div><div class="line">				result |= <span class="number">0x3</span>;</div><div class="line">				<span class="keyword">break</span>;</div><div class="line">			<span class="keyword">case</span> <span class="string">'4'</span>:</div><div class="line">				result |= <span class="number">0x4</span>;</div><div class="line">				<span class="keyword">break</span>;</div><div class="line">			<span class="keyword">case</span> <span class="string">'5'</span>:</div><div class="line">				result |= <span class="number">0x5</span>;</div><div class="line">				<span class="keyword">break</span>;</div><div class="line">			<span class="keyword">case</span> <span class="string">'6'</span>:</div><div class="line">				result |= <span class="number">0x6</span>;</div><div class="line">				<span class="keyword">break</span>;</div><div class="line">			<span class="keyword">case</span> <span class="string">'7'</span>:</div><div class="line">				result |= <span class="number">0x7</span>;</div><div class="line">				<span class="keyword">break</span>;</div><div class="line">			<span class="keyword">case</span> <span class="string">'8'</span>:</div><div class="line">				result |= <span class="number">0x8</span>;</div><div class="line">				<span class="keyword">break</span>;</div><div class="line">			<span class="keyword">case</span> <span class="string">'9'</span>:</div><div class="line">				result |= <span class="number">0x9</span>;</div><div class="line">				<span class="keyword">break</span>;</div><div class="line">			<span class="keyword">case</span> <span class="string">'a'</span>:</div><div class="line">				result |= <span class="number">0xa</span>;</div><div class="line">				<span class="keyword">break</span>;</div><div class="line">			<span class="keyword">case</span> <span class="string">'A'</span>:</div><div class="line">				result |= <span class="number">0xa</span>;</div><div class="line">				<span class="keyword">break</span>;</div><div class="line">			<span class="keyword">case</span> <span class="string">'b'</span>:</div><div class="line">				result |= <span class="number">0xb</span>;</div><div class="line">				<span class="keyword">break</span>;</div><div class="line">			<span class="keyword">case</span> <span class="string">'B'</span>:</div><div class="line">				result |= <span class="number">0xb</span>;</div><div class="line">				<span class="keyword">break</span>;</div><div class="line">			<span class="keyword">case</span> <span class="string">'c'</span>:</div><div class="line">				result |= <span class="number">0xc</span>;</div><div class="line">				<span class="keyword">break</span>;</div><div class="line">			<span class="keyword">case</span> <span class="string">'C'</span>:</div><div class="line">				result |= <span class="number">0xc</span>;</div><div class="line">				<span class="keyword">break</span>;</div><div class="line">			<span class="keyword">case</span> <span class="string">'d'</span>:</div><div class="line">				result |= <span class="number">0xd</span>;</div><div class="line">				<span class="keyword">break</span>;</div><div class="line">			<span class="keyword">case</span> <span class="string">'D'</span>:</div><div class="line">				result |= <span class="number">0xd</span>;</div><div class="line">				<span class="keyword">break</span>;</div><div class="line">			<span class="keyword">case</span> <span class="string">'e'</span>:</div><div class="line">				result |= <span class="number">0xe</span>;</div><div class="line">				<span class="keyword">break</span>;</div><div class="line">			<span class="keyword">case</span> <span class="string">'E'</span>:</div><div class="line">				result |= <span class="number">0xe</span>;</div><div class="line">				<span class="keyword">break</span>;</div><div class="line">			<span class="keyword">case</span> <span class="string">'f'</span>:</div><div class="line">				result |= <span class="number">0xf</span>;</div><div class="line">				<span class="keyword">break</span>;</div><div class="line">			<span class="keyword">case</span> <span class="string">'F'</span>:</div><div class="line">				result |= <span class="number">0xf</span>;</div><div class="line">				<span class="keyword">break</span>;</div><div class="line">			<span class="keyword">default</span>: <span class="keyword">break</span>;</div><div class="line">		&#125;</div><div class="line">		<span class="keyword">if</span> (i != len - <span class="number">1</span>)</div><div class="line">			result &lt;&lt;= <span class="number">4</span>;</div><div class="line">	&#125;</div><div class="line">	<span class="keyword">return</span> result;</div><div class="line">&#125;</div><div class="line"></div><div class="line"><span class="function"><span class="keyword">int</span> <span class="title">main</span><span class="params">(<span class="keyword">int</span> argc, <span class="keyword">char</span> *argv[])</span></span></div><div class="line"><span class="function"></span>&#123;</div><div class="line">	<span class="keyword">char</span>* h_arg = <span class="string">"-h"</span>;</div><div class="line">	<span class="keyword">if</span> (argc &lt; <span class="number">2</span> || <span class="built_in">strcmp</span>(argv[<span class="number">1</span>], h_arg) == <span class="number">0</span> || argc &lt; <span class="number">9</span>)</div><div class="line">	&#123;</div><div class="line">		printUsage();</div><div class="line">		<span class="keyword">return</span> <span class="number">-1</span>;</div><div class="line">	&#125;</div><div class="line">	<span class="keyword">int</span> s, e, b;</div><div class="line">	<span class="keyword">char</span>* t;</div><div class="line">	<span class="keyword">int</span> offset = argc == <span class="number">9</span> ? <span class="number">0</span> : <span class="number">1</span>;</div><div class="line">	<span class="keyword">int</span> is_debug = offset;</div><div class="line">	s = atoi(argv[<span class="number">2</span> + offset]);</div><div class="line">	e = atoi(argv[<span class="number">4</span> + offset]);</div><div class="line">	b = atoi(argv[<span class="number">6</span> + offset]);</div><div class="line">	t = argv[<span class="number">8</span> + offset];</div><div class="line">	<span class="keyword">unsigned</span> <span class="keyword">int</span> set_num;</div><div class="line">	set_num = <span class="number">1</span> &lt;&lt; s;</div><div class="line">	<span class="keyword">long</span> cache[set_num][e];</div><div class="line">	<span class="built_in">memset</span>(cache, <span class="number">-1</span>, <span class="keyword">sizeof</span>(cache));</div><div class="line">	<span class="keyword">char</span> str_line[BUFFER_SIZE];</div><div class="line">	FILE *fp;</div><div class="line">	<span class="keyword">if</span> ((fp=fopen(t, <span class="string">"r"</span>)) == <span class="literal">NULL</span>)</div><div class="line">	&#123;</div><div class="line">		<span class="built_in">printf</span>(<span class="string">"%s: No such file or directory\n"</span>, t);</div><div class="line">		<span class="keyword">return</span> <span class="number">-1</span>;</div><div class="line">	&#125;</div><div class="line">	<span class="keyword">int</span> hits = <span class="number">0</span>, misses = <span class="number">0</span>, evictions = <span class="number">0</span>;</div><div class="line">	<span class="keyword">while</span> (!feof(fp))</div><div class="line">	&#123;</div><div class="line">		<span class="keyword">if</span> (fgets(str_line, BUFFER_SIZE, fp) == <span class="literal">NULL</span>)</div><div class="line">			<span class="keyword">continue</span>;</div><div class="line">		<span class="keyword">if</span> (str_line[<span class="number">0</span>] != <span class="string">' '</span>)</div><div class="line">			<span class="keyword">continue</span>;</div><div class="line">		<span class="keyword">int</span> pos = <span class="built_in">strchr</span>(str_line, <span class="string">','</span>) - str_line;</div><div class="line">		<span class="keyword">unsigned</span> <span class="keyword">long</span> address = hex2long(str_line+<span class="number">3</span>, pos - <span class="number">3</span>);</div><div class="line">		<span class="keyword">unsigned</span> <span class="keyword">long</span> set_idx = (address &gt;&gt; b) &amp; (~(~<span class="number">0</span> &lt;&lt; s));</div><div class="line">		<span class="keyword">unsigned</span> <span class="keyword">long</span> tag = address &gt;&gt; (s + b);</div><div class="line">		<span class="comment">// int size = atoi(str_line + pos + 1);</span></div><div class="line">		<span class="keyword">if</span> (is_debug)</div><div class="line">		&#123;</div><div class="line">			<span class="keyword">int</span> l = <span class="built_in">strlen</span>(str_line);</div><div class="line">			str_line[l - <span class="number">1</span>] = <span class="string">'\0'</span>;</div><div class="line">			<span class="built_in">printf</span>(<span class="string">"%s"</span>, str_line + <span class="number">1</span>);</div><div class="line">		&#125;</div><div class="line">		<span class="keyword">if</span> (str_line[<span class="number">1</span>] == <span class="string">'L'</span> || str_line[<span class="number">1</span>] == <span class="string">'S'</span>)</div><div class="line">		&#123;</div><div class="line">			<span class="keyword">int</span> found = <span class="number">0</span>;</div><div class="line">			<span class="keyword">for</span> (<span class="keyword">int</span> i = <span class="number">0</span>; i &lt; e; i++)</div><div class="line">			&#123;</div><div class="line">				<span class="keyword">if</span> (cache[set_idx][i] == tag)</div><div class="line">				&#123;</div><div class="line">					hits++;</div><div class="line">					move_to_tail(cache[set_idx], e, i);</div><div class="line">					found = <span class="number">1</span>;</div><div class="line">					<span class="keyword">if</span> (is_debug)</div><div class="line">						<span class="built_in">printf</span>(<span class="string">" hit\n"</span>);</div><div class="line">					<span class="keyword">break</span>;</div><div class="line">				&#125;</div><div class="line">			&#125;</div><div class="line">			<span class="keyword">if</span> (!found)</div><div class="line">			&#123;</div><div class="line">				misses++;</div><div class="line">				<span class="keyword">int</span> evi = add_to_cache(cache[set_idx], e, tag);</div><div class="line">				<span class="keyword">if</span> (evi == <span class="number">-1</span>)</div><div class="line">					evictions++;</div><div class="line">				<span class="keyword">if</span> (is_debug)</div><div class="line">				&#123;</div><div class="line">					<span class="keyword">if</span> (evi == <span class="number">-1</span>)</div><div class="line">						<span class="built_in">printf</span>(<span class="string">" miss eviction\n"</span>);</div><div class="line">					<span class="keyword">else</span></div><div class="line">						<span class="built_in">printf</span>(<span class="string">" miss\n"</span>);</div><div class="line">				&#125;</div><div class="line">			&#125;</div><div class="line">		&#125;</div><div class="line">		</div><div class="line">		<span class="keyword">if</span> (str_line[<span class="number">1</span>] == <span class="string">'M'</span>)</div><div class="line">		&#123;</div><div class="line">			<span class="keyword">int</span> found = <span class="number">0</span>;</div><div class="line">			<span class="keyword">for</span> (<span class="keyword">int</span> i = <span class="number">0</span>; i &lt; e; i++)</div><div class="line">			&#123;</div><div class="line">				<span class="keyword">if</span> (cache[set_idx][i] == tag)</div><div class="line">				&#123;</div><div class="line">					hits += <span class="number">2</span>;</div><div class="line">					move_to_tail(cache[set_idx], e, i);</div><div class="line">					found = <span class="number">1</span>;</div><div class="line">					<span class="keyword">if</span> (is_debug)</div><div class="line">						<span class="built_in">printf</span>(<span class="string">" hit hit\n"</span>);</div><div class="line">					<span class="keyword">break</span>;</div><div class="line">				&#125;</div><div class="line">			&#125;</div><div class="line">			<span class="keyword">if</span> (!found)</div><div class="line">			&#123;</div><div class="line">				misses++;</div><div class="line">				<span class="keyword">int</span> evi = add_to_cache(cache[set_idx], e, tag);</div><div class="line">				<span class="keyword">if</span> (evi == <span class="number">-1</span>)</div><div class="line">					evictions++;</div><div class="line">				hits++;</div><div class="line">				<span class="keyword">if</span> (is_debug)</div><div class="line">				&#123;</div><div class="line">					<span class="keyword">if</span> (evi == <span class="number">-1</span>)</div><div class="line">						<span class="built_in">printf</span>(<span class="string">" miss eviction hit\n"</span>);</div><div class="line">					<span class="keyword">else</span></div><div class="line">						<span class="built_in">printf</span>(<span class="string">" miss hit\n"</span>);</div><div class="line">				&#125;</div><div class="line">			&#125;</div><div class="line">		&#125;</div><div class="line">	&#125;</div><div class="line">    printSummary(hits, misses, evictions);</div><div class="line">    <span class="keyword">return</span> <span class="number">0</span>;</div><div class="line">&#125;</div></pre></td></tr></table></figure>
+<h1 id="Part-B"><a href="#Part-B" class="headerlink" title="Part-B"></a>Part-B</h1><p>这部分想拿满分真的挺难的，写了几个晚上才写完。。。花了大量时间思考和理解解题思路，感觉死了好多脑细胞MMP</p>
+<p>首先我们根据缓存参数我们可以确定</p>
+<ul>
+<li>缓存包含<code>32</code>个组，每组一行（<code>E=1</code>）</li>
+<li>缓存块大小为<code>32</code>字节，即一个缓存块能存放<code>8</code>个<code>int</code>变量</li>
+</ul>
+<h2 id="32-x-32"><a href="#32-x-32" class="headerlink" title="32 x 32"></a>32 x 32</h2><p>这里如果直接进行转置肯定是不行的，因为在<code>32 x 32</code>矩阵中，每行占用4个缓存块，所以8行刚好能完全储存在缓存中，但是我们的矩阵有32行，整个缓存大小不足以储存整个矩阵，所以必然存在冲突不命中</p>
+<p><img src="https://note.youdao.com/yws/public/resource/45c03e20609703d6e2a5107363774cc1/xmlnote/1EB9C92CF3A84E05BFF97070630BD14F/2619" alt=""></p>
+<p>图中的数字代表缓存块标号，我们如果直接按行转置的话，第1个块的写不命中率为1（第一个块被写到<code>B[0-7][0]</code>） ，当我们写第2个块到B的时候，由于写冲突（第二个块需要写到<code>B[8-15][0]</code>，但是<code>B[8-15][0]</code>与之前的<code>B[0-7][0]</code>被映射到同一个缓存组）导致我们需要替换掉之前的缓存，这样就导致我们所有的写入操作都未命中，单单写<code>miss</code>次数至少为<code>32 x 32</code>次所以远远不满足题目要求的<code>miss &lt; 300</code></p>
+<p><img src="https://note.youdao.com/yws/public/resource/45c03e20609703d6e2a5107363774cc1/xmlnote/2754234AABDC40C4A938A50694FAC116/2623" alt=""></p>
+<p>参考实验指导书中的矩阵分块思想，我们这里可以将该矩阵分成<code>8 x 8</code>的16个小矩阵，这样每次读8个值就能充分利用缓存块，同时写的时候也可以充分利用缓存减少<code>miss</code>次数，图中相同颜色的区域会被映射到相同组，这里我们需要分两种情况分析</p>
+<ul>
+<li><p><code>8 x 8</code>小矩阵不包含对角线元素</p>
+<p>不包含对角线元素在转置的时候读写不会冲突，因为他们在缓存中不会映射同一组，所以每个小矩阵的读和写的<code>miss</code>次数都为<code>8</code>次（强制不明中）</p>
+</li>
+<li><p><code>8 x 8</code>小矩阵包含对角线元素</p>
+<p>包含对角线元素需要考虑读写冲突，因为包含对角线的小矩阵转置时的位置不会变化，也就是<code>原地转置</code>，所以在处理完第一行之后，缓存中存放的是<code>B</code>矩阵对应的行的内容；但是当继续处理<code>A</code>中第二行的时候，会将已缓存的<code>B</code>矩阵的第二行替换掉，等到写<code>B</code>矩阵的时候就会多一次<code>miss</code>，所以这里读<code>miss</code>的次数为<code>8</code>，写<code>miss</code>的次数为<code>8 + 7</code></p>
+</li>
+</ul>
+<p>很明显包含对角线的矩阵有<code>4</code>个，一共有<code>16</code>个矩阵，所以可以计算出理论<code>miss</code>次数为<code>12 * (8 + 8) + 4 * (8 + 8 + 7) = 284</code> ，实际测试的<code>miss</code>值为<code>287</code>和我们计算的差不多</p>
+<p>具体实现代码</p>
+<figure class="highlight c"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div><div class="line">11</div><div class="line">12</div><div class="line">13</div><div class="line">14</div><div class="line">15</div><div class="line">16</div><div class="line">17</div><div class="line">18</div><div class="line">19</div><div class="line">20</div><div class="line">21</div><div class="line">22</div><div class="line">23</div><div class="line">24</div><div class="line">25</div><div class="line">26</div><div class="line">27</div></pre></td><td class="code"><pre><div class="line"><span class="keyword">int</span> t0, t1, t2, t3, t4, t5, t6, t7;</div><div class="line"><span class="keyword">for</span> (<span class="keyword">int</span> i = <span class="number">0</span>; i &lt; N; i += <span class="number">8</span>)</div><div class="line">&#123;</div><div class="line">  <span class="keyword">for</span> (<span class="keyword">int</span> j = <span class="number">0</span>; j &lt; M; j += <span class="number">8</span>)</div><div class="line">  &#123;</div><div class="line">    <span class="keyword">for</span> (<span class="keyword">int</span> k = i; k &lt; i + <span class="number">8</span>; k++)</div><div class="line">    &#123;</div><div class="line">      t0 = A[k][j];</div><div class="line">      t1 = A[k][j + <span class="number">1</span>];</div><div class="line">      t2 = A[k][j + <span class="number">2</span>];</div><div class="line">      t3 = A[k][j + <span class="number">3</span>];</div><div class="line">      t4 = A[k][j + <span class="number">4</span>];</div><div class="line">      t5 = A[k][j + <span class="number">5</span>];</div><div class="line">      t6 = A[k][j + <span class="number">6</span>];</div><div class="line">      t7 = A[k][j + <span class="number">7</span>];</div><div class="line"></div><div class="line">      B[j][k] = t0;</div><div class="line">      B[j + <span class="number">1</span>][k] = t1;</div><div class="line">      B[j + <span class="number">2</span>][k] = t2;</div><div class="line">      B[j + <span class="number">3</span>][k] = t3;</div><div class="line">      B[j + <span class="number">4</span>][k] = t4;</div><div class="line">      B[j + <span class="number">5</span>][k] = t5;</div><div class="line">      B[j + <span class="number">6</span>][k] = t6;</div><div class="line">      B[j + <span class="number">7</span>][k] = t7;</div><div class="line">    &#125;</div><div class="line">  &#125;</div><div class="line">&#125;</div></pre></td></tr></table></figure>
+<h2 id="64-x-64"><a href="#64-x-64" class="headerlink" title="64 x 64"></a>64 x 64</h2><p>这个是真的难想，我反正想不出来，最后参考了网上的解法然后自己理解+实现也花了很久。。。</p>
+<p><img src="https://note.youdao.com/yws/public/resource/45c03e20609703d6e2a5107363774cc1/xmlnote/2D09CF002B6B4F5F9C466A791C447484/2626" alt=""></p>
+<h3 id="第一次实验"><a href="#第一次实验" class="headerlink" title="第一次实验"></a>第一次实验</h3><p>首先我们肯定是想分成<code>8 x 8</code>的小矩阵，但是这里不行，因为行字节数变大了导致列的冲突步长变小了，这个<code>64 x 64</code>的矩阵中每行需要占用8个缓存块，缓存最大只能存4行；如果我们继续按<code>8 x 8</code>分块，那每次写下面四行都会把上面缓存过的替换掉，导致冲突<code>miss</code>，粗略估算一下写<code>miss</code>的次数为<code>64 * 64</code>，崩了。。。</p>
+<h3 id="第二次实验"><a href="#第二次实验" class="headerlink" title="第二次实验"></a>第二次实验</h3><p>那既然<code>8 x 8</code>不行，我们就分成<code>4 x 4</code>的小矩阵，好，这样分确实解决了写冲突问题，但是这样我们无法充分利用缓存，因为每个缓存块可以放8个元素，但是我们只使用4个，这里我们同样分析一下<code>miss</code>次数，这里需要注意的是我们不能直接按<code>4 x 4</code>的块进行分析，因为我们的缓存块可以存储8个元素，所以我们按<code>4 x 8</code>的块分析</p>
+<ul>
+<li><p>包含对角线的块</p>
+<p>我们可以发现包含对角线的块中，对角线可能在左边的<code>4 x 4</code>中，也可能在右边；这样剩下的那个<code>4 x 4</code>的块由于位置特殊（位于对角线块边上）在转置写入<code>B</code>矩阵时会存在冲突不命中，因为这个块会被写到当前块上面或者下面的<code>4 x 8</code>的矩阵块中，从而被映射到相同的缓存组。所以包含对角线的<code>4 x 8</code>中的两个块是等效的，读<code>miss</code>次数为<code>4 + 4</code> ；写<code>miss</code>次数为<code>4 + 3 + 4 + 3</code></p>
+</li>
+<li><p>不包含对角线的块</p>
+<p>这种情况分析起来比较简单，主要注意的地方是当处理第二个<code>4 x 4</code>矩阵块时，由于不在对角线上所以没有冲突，并且我们缓存块可以一次读8个元素，所以第二个<code>4 x 4</code>的矩阵块的读<code>miss</code>次数为0，所以最终读<code>miss</code>次数为<code>4</code> ；写<code>miss</code>次数为<code>4 + 4</code></p>
+</li>
+</ul>
+<p>最终<code>miss</code>次数为<code>16 * (4 + 4 + 4 + 3 + 4 + 3) + 112 * (4 + 4 + 4) = 1696</code> ，实际测试的<code>miss</code>次数为<code>1699</code>，与理论计算的次数差不多，但是我们写实验肯定是冲着满分去的，所以需要找到一种更优的解法</p>
+<h3 id="最终方案"><a href="#最终方案" class="headerlink" title="最终方案"></a>最终方案</h3><p>这里需要充分利用一次读入的8个元素，同时需要将元素暂时存放在<code>B</code>矩阵中，最后做调整，这里我们仍然是分成<code>8 x 8</code>的块，但是要分两种情况考虑，左图为矩阵<code>A</code>，右图为矩阵<code>B</code></p>
+<ul>
+<li><p>包含对角线的块</p>
+<p><img src="https://note.youdao.com/yws/public/resource/45c03e20609703d6e2a5107363774cc1/xmlnote/746C67BF8A1C44748106AA221D52142A/2633" alt=""></p>
+<ol>
+<li>对于前4行，我们按行读取8个元素存入变量中，前4个元素正常转置，后面4个原地转置后存入<code>B</code>矩阵中</li>
+<li>对于后4行，我们按行读取8个元素存入变量中，前4个元素原地转置存入<code>B</code>矩阵中，后面4个正常转置</li>
+<li>前面两步做完后我们就得到了上面的右图也就是当前<code>B</code>矩阵的情况，然后观察发现我们最后只需要交换左下方和右上方的矩阵块就可以把位置调整正确，这里需要注意我们第一步操作了后面4行，所以这里为了充分利用缓存我们需要先读左下方矩阵块一行，然后读右上方一行，然后将左下方的行写到右上，再将右上行写到左下；如此往复我们就完成了一个对角线矩阵块的转置</li>
+</ol>
+</li>
+<li><p>不包含对角线的块</p>
+<p><img src="https://note.youdao.com/yws/public/resource/45c03e20609703d6e2a5107363774cc1/xmlnote/D887A11304D1483894547532A1816681/2650" alt=""></p>
+<ol>
+<li>对于前4行，我们按行读取8个元素存入变量中，前4个元素正常转置，后面4个原地转置后存入<code>B</code>矩阵中</li>
+<li>右图表示当前矩阵<code>B</code>的情况，对于后4行，我们可以利用非对角线块读写不冲突的性质来优化，具体做法是：对于<code>A</code>中后4行的左半部分，中按列读取4个元素<code>t0 t1 t2 t3</code>，从<code>B</code>的右上角按行读取4个元素<code>t4 t5 t6 t7</code>，然后将<code>t0 t1 t2 t3</code>写入<code>B</code>右上角的行，将<code>t4 t5 t6 t7</code>写入<code>B</code>左下角的行。这时<code>A</code>矩阵的右下部分和<code>B</code>矩阵中的右下部分已经完全载入缓存（列不同，不会发生冲突），这个时候我们处理右下角的块时缓存命中率为<code>100%</code></li>
+</ol>
+</li>
+</ul>
+<p>根据上面的步骤我们来分析一下<code>miss</code>次数，同样分两种情况</p>
+<ul>
+<li><p>对角线块</p>
+<p>上半部分：读 4 写 4 + 3</p>
+<p>下半部分：读 4 写 4 + 3</p>
+<p>调整操作：读 1 写 1 一共4次</p>
+</li>
+<li><p>非对角线块</p>
+<p>上半部分：读 4 写 4</p>
+<p>下半部分：读 4 写 4</p>
+</li>
+</ul>
+<p>所以理论<code>miss</code>次数为<code>56 * (4 + 4 + 4 + 4) + 8 * (4 + 4 + 3 + 4 + 4 + 3 + 8) = 1136</code>，实际测的次数为<code>1139</code>次，和理论相差无几</p>
+<p>具体实现代码</p>
+<figure class="highlight c"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div><div class="line">11</div><div class="line">12</div><div class="line">13</div><div class="line">14</div><div class="line">15</div><div class="line">16</div><div class="line">17</div><div class="line">18</div><div class="line">19</div><div class="line">20</div><div class="line">21</div><div class="line">22</div><div class="line">23</div><div class="line">24</div><div class="line">25</div><div class="line">26</div><div class="line">27</div><div class="line">28</div><div class="line">29</div><div class="line">30</div><div class="line">31</div><div class="line">32</div><div class="line">33</div><div class="line">34</div><div class="line">35</div><div class="line">36</div><div class="line">37</div><div class="line">38</div><div class="line">39</div><div class="line">40</div><div class="line">41</div><div class="line">42</div><div class="line">43</div><div class="line">44</div><div class="line">45</div><div class="line">46</div><div class="line">47</div><div class="line">48</div><div class="line">49</div><div class="line">50</div><div class="line">51</div><div class="line">52</div><div class="line">53</div><div class="line">54</div><div class="line">55</div><div class="line">56</div><div class="line">57</div><div class="line">58</div><div class="line">59</div><div class="line">60</div><div class="line">61</div><div class="line">62</div><div class="line">63</div><div class="line">64</div><div class="line">65</div><div class="line">66</div><div class="line">67</div><div class="line">68</div><div class="line">69</div><div class="line">70</div><div class="line">71</div><div class="line">72</div><div class="line">73</div><div class="line">74</div><div class="line">75</div><div class="line">76</div><div class="line">77</div><div class="line">78</div><div class="line">79</div><div class="line">80</div><div class="line">81</div><div class="line">82</div><div class="line">83</div><div class="line">84</div><div class="line">85</div><div class="line">86</div></pre></td><td class="code"><pre><div class="line"><span class="keyword">int</span> t0, t1, t2, t3, t4, t5, t6, t7;</div><div class="line"><span class="keyword">for</span> (<span class="keyword">int</span> i = <span class="number">0</span>; i &lt; N; i += <span class="number">8</span>) &#123;</div><div class="line">    <span class="keyword">for</span> (<span class="keyword">int</span> j = <span class="number">0</span>; j &lt; M; j += <span class="number">8</span>) &#123;</div><div class="line">        <span class="keyword">for</span> (<span class="keyword">int</span> k = i; k &lt; i + <span class="number">4</span>; k++) &#123;</div><div class="line">            t0 = A[k][j + <span class="number">0</span>];</div><div class="line">            t1 = A[k][j + <span class="number">1</span>];</div><div class="line">            t2 = A[k][j + <span class="number">2</span>];</div><div class="line">            t3 = A[k][j + <span class="number">3</span>];</div><div class="line">            t4 = A[k][j + <span class="number">4</span>];</div><div class="line">            t5 = A[k][j + <span class="number">5</span>];</div><div class="line">            t6 = A[k][j + <span class="number">6</span>];</div><div class="line">            t7 = A[k][j + <span class="number">7</span>];</div><div class="line">            B[j + <span class="number">0</span>][k] = t0;</div><div class="line">            B[j + <span class="number">1</span>][k] = t1;</div><div class="line">            B[j + <span class="number">2</span>][k] = t2;</div><div class="line">            B[j + <span class="number">3</span>][k] = t3;</div><div class="line">            B[j + <span class="number">0</span>][k + <span class="number">4</span>] = t4;</div><div class="line">            B[j + <span class="number">1</span>][k + <span class="number">4</span>] = t5;</div><div class="line">            B[j + <span class="number">2</span>][k + <span class="number">4</span>] = t6;</div><div class="line">            B[j + <span class="number">3</span>][k + <span class="number">4</span>] = t7; </div><div class="line">        &#125;</div><div class="line">        <span class="keyword">if</span> (i == j) &#123;</div><div class="line">            <span class="keyword">for</span> (<span class="keyword">int</span> k = i + <span class="number">4</span>; k &lt; i + <span class="number">8</span>; k++) &#123;</div><div class="line">                t0 = A[k][j + <span class="number">0</span>];</div><div class="line">                t1 = A[k][j + <span class="number">1</span>];</div><div class="line">                t2 = A[k][j + <span class="number">2</span>];</div><div class="line">                t3 = A[k][j + <span class="number">3</span>];</div><div class="line">                t4 = A[k][j + <span class="number">4</span>];</div><div class="line">                t5 = A[k][j + <span class="number">5</span>];</div><div class="line">                t6 = A[k][j + <span class="number">6</span>];</div><div class="line">                t7 = A[k][j + <span class="number">7</span>];</div><div class="line">                B[j + <span class="number">4</span>][k] = t4;</div><div class="line">                B[j + <span class="number">5</span>][k] = t5;</div><div class="line">                B[j + <span class="number">6</span>][k] = t6;</div><div class="line">                B[j + <span class="number">7</span>][k] = t7;</div><div class="line">                B[j + <span class="number">4</span>][k - <span class="number">4</span>] = t0;</div><div class="line">                B[j + <span class="number">5</span>][k - <span class="number">4</span>] = t1;</div><div class="line">                B[j + <span class="number">6</span>][k - <span class="number">4</span>] = t2;</div><div class="line">                B[j + <span class="number">7</span>][k - <span class="number">4</span>] = t3; </div><div class="line">            &#125;</div><div class="line">            <span class="keyword">for</span> (<span class="keyword">int</span> k = i + <span class="number">4</span>; k &lt; i + <span class="number">8</span>; k++) &#123;</div><div class="line">                t0 = B[k][j + <span class="number">0</span>];</div><div class="line">                t1 = B[k][j + <span class="number">1</span>];</div><div class="line">                t2 = B[k][j + <span class="number">2</span>];</div><div class="line">                t3 = B[k][j + <span class="number">3</span>];</div><div class="line">                t4 = B[k - <span class="number">4</span>][j + <span class="number">4</span>];</div><div class="line">                t5 = B[k - <span class="number">4</span>][j + <span class="number">5</span>];</div><div class="line">                t6 = B[k - <span class="number">4</span>][j + <span class="number">6</span>];</div><div class="line">                t7 = B[k - <span class="number">4</span>][j + <span class="number">7</span>];</div><div class="line">                B[k - <span class="number">4</span>][j + <span class="number">4</span>] = t0;</div><div class="line">                B[k - <span class="number">4</span>][j + <span class="number">5</span>] = t1;</div><div class="line">                B[k - <span class="number">4</span>][j + <span class="number">6</span>] = t2;</div><div class="line">                B[k - <span class="number">4</span>][j + <span class="number">7</span>] = t3;</div><div class="line">                B[k][j + <span class="number">0</span>] = t4;</div><div class="line">                B[k][j + <span class="number">1</span>] = t5;</div><div class="line">                B[k][j + <span class="number">2</span>] = t6;</div><div class="line">                B[k][j + <span class="number">3</span>] = t7;</div><div class="line">            &#125;</div><div class="line">        &#125; <span class="keyword">else</span> &#123;</div><div class="line">            <span class="keyword">for</span> (<span class="keyword">int</span> k = j; k &lt; j + <span class="number">4</span>; k++) &#123;</div><div class="line">                t0 = A[i + <span class="number">4</span>][k];</div><div class="line">                t1 = A[i + <span class="number">5</span>][k];</div><div class="line">                t2 = A[i + <span class="number">6</span>][k];</div><div class="line">                t3 = A[i + <span class="number">7</span>][k];</div><div class="line">                t4 = B[k][i + <span class="number">4</span>];</div><div class="line">                t5 = B[k][i + <span class="number">5</span>];</div><div class="line">                t6 = B[k][i + <span class="number">6</span>];</div><div class="line">                t7 = B[k][i + <span class="number">7</span>];</div><div class="line">                B[k][i + <span class="number">4</span>] = t0;</div><div class="line">                B[k][i + <span class="number">5</span>] = t1;</div><div class="line">                B[k][i + <span class="number">6</span>] = t2;</div><div class="line">                B[k][i + <span class="number">7</span>] = t3;</div><div class="line">                B[k + <span class="number">4</span>][i + <span class="number">0</span>] = t4;</div><div class="line">                B[k + <span class="number">4</span>][i + <span class="number">1</span>] = t5;</div><div class="line">                B[k + <span class="number">4</span>][i + <span class="number">2</span>] = t6;</div><div class="line">                B[k + <span class="number">4</span>][i + <span class="number">3</span>] = t7;</div><div class="line">            &#125;</div><div class="line">            <span class="keyword">for</span> (<span class="keyword">int</span> k = j + <span class="number">4</span>; k &lt; j + <span class="number">8</span>; k++) &#123;</div><div class="line">                B[k][i + <span class="number">4</span>] = A[i + <span class="number">4</span>][k];</div><div class="line">                B[k][i + <span class="number">5</span>] = A[i + <span class="number">5</span>][k];</div><div class="line">                B[k][i + <span class="number">6</span>] = A[i + <span class="number">6</span>][k];</div><div class="line">                B[k][i + <span class="number">7</span>] = A[i + <span class="number">7</span>][k];                      </div><div class="line">            &#125;</div><div class="line">        &#125;</div><div class="line">    &#125;</div><div class="line">&#125;</div></pre></td></tr></table></figure>
+<h2 id="61-x-67"><a href="#61-x-67" class="headerlink" title="61 x 67"></a>61 x 67</h2><p>这个由于是不规则的，所以可以直接用不同的分块大小测试，不像前面两个想拿满分一定要做到最优解。这里有个问题就是按列访问比按行访问<code>miss</code>次数少很多，我测试的按列访问并且按<code>18 x 18</code>分块后的<code>miss</code>次数是<code>1815</code></p>
+<p>具体实现代码</p>
+<figure class="highlight c"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div></pre></td><td class="code"><pre><div class="line"><span class="keyword">for</span> (<span class="keyword">int</span> i = <span class="number">0</span>; i &lt; N; i += <span class="number">18</span>)</div><div class="line">  <span class="keyword">for</span> (<span class="keyword">int</span> j = <span class="number">0</span>; j &lt; M; j += <span class="number">18</span>)</div><div class="line">    <span class="keyword">for</span> (<span class="keyword">int</span> dy = j; dy &lt; j + <span class="number">18</span> &amp;&amp; dy &lt; M; dy++)</div><div class="line">      <span class="keyword">for</span> (<span class="keyword">int</span> dx = i; dx &lt; i + <span class="number">18</span> &amp;&amp; dx &lt; N; dx++)</div><div class="line">        B[dy][dx] = A[dx][dy];</div></pre></td></tr></table></figure>
+<h1 id="总结"><a href="#总结" class="headerlink" title="总结"></a>总结</h1><p>这个实验花了我好多个晚上，不过写完之后对高速缓存和缓存命中率这两个概念有了比较深刻的理解</p>
+<ul>
+<li>需要注意缓存冲突导致的大量不命中</li>
+<li>需要充分利用缓存块中的数据，保持良好的空间局部性</li>
+<li>需要尽量使用已经加载到缓存中的数据，保持良好的时间局部性</li>
+</ul>
+<h1 id="参考资料"><a href="#参考资料" class="headerlink" title="参考资料"></a>参考资料</h1><p><a href="http://wmdcstdio.com/2017/11/05/csapp-cache-lab-part-b/" target="_blank" rel="external">CSAPP Cache Lab Part B</a></p>
+<p><a href="http://blog.duskdragon.com/2017/09/25/%E6%B7%B1%E5%85%A5%E7%90%86%E8%A7%A3%E8%AE%A1%E7%AE%97%E6%9C%BA%E7%B3%BB%E7%BB%9FCacheLab-PartB%E5%AE%9E%E9%AA%8C%E6%8A%A5%E5%91%8A/" target="_blank" rel="external">深入理解计算机系统CacheLab-PartB实验报告</a></p>
+
+      
+    </div>
+    
+    
+    
+
+    
+
+    
+
+    
+
+    <footer class="post-footer">
+      
+        <div class="post-tags">
+          
+            <a href="/tags/CSAPP/" rel="tag"># CSAPP</a>
+          
+            <a href="/tags/Cache/" rel="tag"># Cache</a>
+          
+        </div>
+      
+
+      
+      
+      
+
+      
+        <div class="post-nav">
+          <div class="post-nav-next post-nav-item">
+            
+              <a href="/2017/11/12/CSAPP-CPU体系结构/" rel="next" title="CSAPP-CPU体系结构">
+                <i class="fa fa-chevron-left"></i> CSAPP-CPU体系结构
+              </a>
+            
+          </div>
+
+          <span class="post-nav-divider"></span>
+
+          <div class="post-nav-prev post-nav-item">
+            
+              <a href="/2017/11/21/CSAPP-存储器层次结构/" rel="prev" title="CSAPP-存储器层次结构">
+                CSAPP-存储器层次结构 <i class="fa fa-chevron-right"></i>
+              </a>
+            
+          </div>
+        </div>
+      
+
+      
+      
+    </footer>
+  </div>
+  
+  
+  
+  </article>
+
+
+
+    <div class="post-spread">
+      
+    </div>
+  </div>
+
+
+          </div>
+          
+
+
+          
+  <div class="comments" id="comments">
+    
+  </div>
+
+
+        </div>
+        
+          
+  
+  <div class="sidebar-toggle">
+    <div class="sidebar-toggle-line-wrap">
+      <span class="sidebar-toggle-line sidebar-toggle-line-first"></span>
+      <span class="sidebar-toggle-line sidebar-toggle-line-middle"></span>
+      <span class="sidebar-toggle-line sidebar-toggle-line-last"></span>
+    </div>
+  </div>
+
+  <aside id="sidebar" class="sidebar">
+    
+    <div class="sidebar-inner">
+
+      
+
+      
+        <ul class="sidebar-nav motion-element">
+          <li class="sidebar-nav-toc sidebar-nav-active" data-target="post-toc-wrap" >
+            文章目录
+          </li>
+          <li class="sidebar-nav-overview" data-target="site-overview">
+            站点概览
+          </li>
+        </ul>
+      
+
+      <section class="site-overview sidebar-panel">
+        <div class="site-author motion-element" itemprop="author" itemscope itemtype="http://schema.org/Person">
+          
+            <p class="site-author-name" itemprop="name">dawning7670</p>
+            <p class="site-description motion-element" itemprop="description"></p>
+        </div>
+
+        <nav class="site-state motion-element">
+
+          
+            <div class="site-state-item site-state-posts">
+            
+              <a href="/archives/">
+            
+                <span class="site-state-item-count">13</span>
+                <span class="site-state-item-name">日志</span>
+              </a>
+            </div>
+          
+
+          
+
+          
+            
+            
+            <div class="site-state-item site-state-tags">
+              <a href="/tags/index.html">
+                <span class="site-state-item-count">23</span>
+                <span class="site-state-item-name">标签</span>
+              </a>
+            </div>
+          
+
+        </nav>
+
+        
+
+        <div class="links-of-author motion-element">
+          
+        </div>
+
+        
+        
+
+        
+        
+
+        
+
+
+      </section>
+
+      
+      <!--noindex-->
+        <section class="post-toc-wrap motion-element sidebar-panel sidebar-panel-active">
+          <div class="post-toc">
+
+            
+              
+            
+
+            
+              <div class="post-toc-content"><ol class="nav"><li class="nav-item nav-level-1"><a class="nav-link" href="#实验简介"><span class="nav-number">1.</span> <span class="nav-text">实验简介</span></a></li><li class="nav-item nav-level-1"><a class="nav-link" href="#Part-A"><span class="nav-number">2.</span> <span class="nav-text">Part-A</span></a></li><li class="nav-item nav-level-1"><a class="nav-link" href="#Part-B"><span class="nav-number">3.</span> <span class="nav-text">Part-B</span></a><ol class="nav-child"><li class="nav-item nav-level-2"><a class="nav-link" href="#32-x-32"><span class="nav-number">3.1.</span> <span class="nav-text">32 x 32</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#64-x-64"><span class="nav-number">3.2.</span> <span class="nav-text">64 x 64</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#第一次实验"><span class="nav-number">3.2.1.</span> <span class="nav-text">第一次实验</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#第二次实验"><span class="nav-number">3.2.2.</span> <span class="nav-text">第二次实验</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#最终方案"><span class="nav-number">3.2.3.</span> <span class="nav-text">最终方案</span></a></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link" href="#61-x-67"><span class="nav-number">3.3.</span> <span class="nav-text">61 x 67</span></a></li></ol></li><li class="nav-item nav-level-1"><a class="nav-link" href="#总结"><span class="nav-number">4.</span> <span class="nav-text">总结</span></a></li><li class="nav-item nav-level-1"><a class="nav-link" href="#参考资料"><span class="nav-number">5.</span> <span class="nav-text">参考资料</span></a></li></ol></div>
+            
+
+          </div>
+        </section>
+      <!--/noindex-->
+      
+
+      
+
+    </div>
+  </aside>
+
+
+        
+      </div>
+    </main>
+
+    <footer id="footer" class="footer">
+      <div class="footer-inner">
+        <div class="copyright" >
+  
+  &copy; 
+  <span itemprop="copyrightYear">2017</span>
+  <span class="with-love">
+    <i class="fa fa-tint"></i>
+  </span>
+  <span class="author" itemprop="copyrightHolder">dawning7670</span>
+
+  
+</div>
+
+
+
+        
+
+
+
+
+
+
+
+        
+      </div>
+    </footer>
+
+    
+      <div class="back-to-top">
+        <i class="fa fa-arrow-up"></i>
+        
+      </div>
+    
+
+  </div>
+
+  
+
+<script type="text/javascript">
+  if (Object.prototype.toString.call(window.Promise) !== '[object Function]') {
+    window.Promise = null;
+  }
+</script>
+
+
+
+
+
+
+
+
+
+  
+
+
+
+
+
+
+
+
+
+
+
+
+  
+  <script type="text/javascript" src="/lib/jquery/index.js?v=2.1.3"></script>
+
+  
+  <script type="text/javascript" src="/lib/fastclick/lib/fastclick.min.js?v=1.0.6"></script>
+
+  
+  <script type="text/javascript" src="/lib/jquery_lazyload/jquery.lazyload.js?v=1.9.7"></script>
+
+  
+  <script type="text/javascript" src="/lib/velocity/velocity.min.js?v=1.2.1"></script>
+
+  
+  <script type="text/javascript" src="/lib/velocity/velocity.ui.min.js?v=1.2.1"></script>
+
+  
+  <script type="text/javascript" src="/lib/fancybox/source/jquery.fancybox.pack.js?v=2.1.5"></script>
+
+
+  
+
+
+  <script type="text/javascript" src="/js/src/utils.js?v=5.1.2"></script>
+
+  <script type="text/javascript" src="/js/src/motion.js?v=5.1.2"></script>
+
+
+
+  
+  
+
+
+  <script type="text/javascript" src="/js/src/affix.js?v=5.1.2"></script>
+
+  <script type="text/javascript" src="/js/src/schemes/pisces.js?v=5.1.2"></script>
+
+
+
+  <script type="text/javascript" src="/js/src/scrollspy.js?v=5.1.2"></script>
+<script type="text/javascript" src="/js/src/post-details.js?v=5.1.2"></script>
+
+
+  
+  <script type="text/javascript" src="/js/src/scrollspy.js?v=5.1.2"></script>
+<script type="text/javascript" src="/js/src/post-details.js?v=5.1.2"></script>
+
+
+
+  
+
+
+  <script type="text/javascript" src="/js/src/bootstrap.js?v=5.1.2"></script>
+
+
+
+  
+
+
+  
+
+
+
+
+	
+
+
+
+
+
+  
+
+
+
+
+
+  
+
+
+
+
+
+
+
+
+  
+
+
+
+
+
+  
+
+  
+
+  
+
+  
+  
+    <script type="text/x-mathjax-config">
+      MathJax.Hub.Config({
+        tex2jax: {
+          inlineMath: [ ['$','$'], ["\\(","\\)"]  ],
+          processEscapes: true,
+          skipTags: ['script', 'noscript', 'style', 'textarea', 'pre', 'code']
+        }
+      });
+    </script>
+
+    <script type="text/x-mathjax-config">
+      MathJax.Hub.Queue(function() {
+        var all = MathJax.Hub.getAllJax(), i;
+        for (i=0; i < all.length; i += 1) {
+          all[i].SourceElement().parentNode.className += ' has-jax';
+        }
+      });
+    </script>
+    <script type="text/javascript" src="//cdn.bootcss.com/mathjax/2.7.1/latest.js?config=TeX-AMS-MML_HTMLorMML"></script><!-- hexo-inject:begin --><!-- hexo-inject:end -->
+  
+
+
+  
+
+  
+
+</body>
+</html>
