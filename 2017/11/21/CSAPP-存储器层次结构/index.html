@@ -109,16 +109,16 @@
 <meta property="og:site_name" content="dawning&#39;s blog~">
 <meta property="og:description" content="随机访问存储器 SRAM 存储在双稳态单元中，抗干扰能力强，一般用于高速缓存  DRAM 依赖电容存储，抗干扰能力弱，需要重写刷新来维持存储状态，一般用于内存  磁盘 机械存储结构，主要包括：扇区、磁道、盘片、主轴和磁头； 数据读取依赖主轴移动磁头在盘片上找到对应的磁道上的扇区； 顺序访问速度快，随机访问速度慢  固态硬盘 使用电路结构（闪存翻译层）代替机械结构做地址映射； 顺序和随机读都非常快，">
 <meta property="og:locale" content="zh-Hans">
-<meta property="og:image" content="https://note.youdao.com/yws/public/resource/45c03e20609703d6e2a5107363774cc1/xmlnote/1B684C96662C40C19815E24706B26535/2660">
-<meta property="og:image" content="https://note.youdao.com/yws/public/resource/45c03e20609703d6e2a5107363774cc1/xmlnote/3BA89188FA9F4C4D9B4F7FA751E6B414/2722">
-<meta property="og:image" content="https://note.youdao.com/yws/public/resource/45c03e20609703d6e2a5107363774cc1/xmlnote/0EEA25A98D2E4FCBA246AA1A3E7CE293/2728">
-<meta property="og:image" content="https://note.youdao.com/yws/public/resource/45c03e20609703d6e2a5107363774cc1/xmlnote/2D665472E6554CC4A14E2061380B7066/2724">
-<meta property="og:image" content="https://note.youdao.com/yws/public/resource/45c03e20609703d6e2a5107363774cc1/xmlnote/9184349C6F6E43F0B32DB15B1E88DD17/2726">
-<meta property="og:updated_time" content="2017-11-21T15:36:57.101Z">
+<meta property="og:image" content="http://ozt8gvhxs.bkt.clouddn.com/cache1.png">
+<meta property="og:image" content="http://ozt8gvhxs.bkt.clouddn.com/cache3.png">
+<meta property="og:image" content="http://ozt8gvhxs.bkt.clouddn.com/cache5.png">
+<meta property="og:image" content="http://ozt8gvhxs.bkt.clouddn.com/cache2.png">
+<meta property="og:image" content="http://ozt8gvhxs.bkt.clouddn.com/cache4.png">
+<meta property="og:updated_time" content="2017-11-22T14:09:13.914Z">
 <meta name="twitter:card" content="summary">
 <meta name="twitter:title" content="CSAPP-存储器层次结构">
 <meta name="twitter:description" content="随机访问存储器 SRAM 存储在双稳态单元中，抗干扰能力强，一般用于高速缓存  DRAM 依赖电容存储，抗干扰能力弱，需要重写刷新来维持存储状态，一般用于内存  磁盘 机械存储结构，主要包括：扇区、磁道、盘片、主轴和磁头； 数据读取依赖主轴移动磁头在盘片上找到对应的磁道上的扇区； 顺序访问速度快，随机访问速度慢  固态硬盘 使用电路结构（闪存翻译层）代替机械结构做地址映射； 顺序和随机读都非常快，">
-<meta name="twitter:image" content="https://note.youdao.com/yws/public/resource/45c03e20609703d6e2a5107363774cc1/xmlnote/1B684C96662C40C19815E24706B26535/2660">
+<meta name="twitter:image" content="http://ozt8gvhxs.bkt.clouddn.com/cache1.png">
 
 
 
@@ -355,7 +355,7 @@
 <p>顺序和随机读都非常快，写性能则一般（可能需要擦除和移动块）</p>
 </li>
 </ul>
-<h1 id="存储器层次结构"><a href="#存储器层次结构" class="headerlink" title="存储器层次结构"></a>存储器层次结构</h1><p><img src="https://note.youdao.com/yws/public/resource/45c03e20609703d6e2a5107363774cc1/xmlnote/1B684C96662C40C19815E24706B26535/2660" alt=""></p>
+<h1 id="存储器层次结构"><a href="#存储器层次结构" class="headerlink" title="存储器层次结构"></a>存储器层次结构</h1><p><img src="http://ozt8gvhxs.bkt.clouddn.com/cache1.png" alt=""></p>
 <h1 id="程序局部性原理"><a href="#程序局部性原理" class="headerlink" title="程序局部性原理"></a>程序局部性原理</h1><p>从操作系统的存储器层次结构，到现在后端开发中应对高并发使用的缓存系统，都是因为程序的局部性</p>
 <p>程序的局部性原理分两类</p>
 <ul>
@@ -382,22 +382,22 @@
 </ul>
 </li>
 </ul>
-<h2 id="直接映射高速缓存"><a href="#直接映射高速缓存" class="headerlink" title="直接映射高速缓存"></a>直接映射高速缓存</h2><p><img src="https://note.youdao.com/yws/public/resource/45c03e20609703d6e2a5107363774cc1/xmlnote/3BA89188FA9F4C4D9B4F7FA751E6B414/2722" alt=""></p>
+<h2 id="直接映射高速缓存"><a href="#直接映射高速缓存" class="headerlink" title="直接映射高速缓存"></a>直接映射高速缓存</h2><p><img src="http://ozt8gvhxs.bkt.clouddn.com/cache3.png" alt=""></p>
 <p>当<code>E=1</code>时我们称之为<code>直接映射高速缓存</code>，因为此时每个组就一行，也就是一个块，这种情况都不需要替换策略，因为每个组中只有一行，具体的缓存查询过程如下</p>
 <ol>
 <li>根据一个地址我们可以得到<code>组索引</code>和<code>标记</code></li>
 <li>利用<code>组索引</code>去缓存中定位到组，再判断有效位和<code>标记</code>是否相同，如果都相同则命中；否则加载数据到该缓存组中</li>
 </ol>
 <p>这里需要注意的是<code>组索引</code>的位置是在中间而不是在最前面，这样设计是有一定道理的，因为程序的局部性原理，如果<code>组索引</code>放到最高位上，会导致遍历数组时出现严重的冲突不命中，下面有个图来说明这个原理</p>
-<p><img src="https://note.youdao.com/yws/public/resource/45c03e20609703d6e2a5107363774cc1/xmlnote/0EEA25A98D2E4FCBA246AA1A3E7CE293/2728" alt=""></p>
-<h2 id="组相联高速缓存"><a href="#组相联高速缓存" class="headerlink" title="组相联高速缓存"></a>组相联高速缓存</h2><p><img src="https://note.youdao.com/yws/public/resource/45c03e20609703d6e2a5107363774cc1/xmlnote/2D665472E6554CC4A14E2061380B7066/2724" alt=""></p>
+<p><img src="http://ozt8gvhxs.bkt.clouddn.com/cache5.png" alt=""></p>
+<h2 id="组相联高速缓存"><a href="#组相联高速缓存" class="headerlink" title="组相联高速缓存"></a>组相联高速缓存</h2><p><img src="http://ozt8gvhxs.bkt.clouddn.com/cache2.png" alt=""></p>
 <p>当<code>1&lt;E&lt;S</code>时称之为<code>组相联高速缓存</code>，因为此时每个组中大于1行而小于<code>S</code>行，具体查询步骤如下</p>
 <ol>
 <li>根据一个地址我们可以得到<code>组索引</code>和<code>标记</code></li>
 <li>利用<code>组索引</code>去缓存中定位到组，再遍历组中的所有行判断有效位和<code>标记</code>是否相同，如果都相同则命中；否则加载数据到一个无效的行中；如果不存在无效的行，则需要执行特定的替换策略（例如：LRU）来将数据加载到缓存中</li>
 </ol>
-<h2 id="全相连高速缓存"><a href="#全相连高速缓存" class="headerlink" title="全相连高速缓存"></a>全相连高速缓存</h2><p><img src="https://note.youdao.com/yws/public/resource/45c03e20609703d6e2a5107363774cc1/xmlnote/9184349C6F6E43F0B32DB15B1E88DD17/2726" alt=""></p>
-<p>当<code>E=S</code>时称之为<code>全相连告诉缓存</code>，这时所有行都在一个组中，具体的查询步骤和组相连类似，只是不需要定位组索引，因为就一个组</p>
+<h2 id="全相连高速缓存"><a href="#全相连高速缓存" class="headerlink" title="全相连高速缓存"></a>全相连高速缓存</h2><p><img src="http://ozt8gvhxs.bkt.clouddn.com/cache4.png" alt=""></p>
+<p>当<code>E=S</code>时称之为<code>全相连高速缓存</code>，这时所有行都在一个组中，具体的查询步骤和组相连类似，只是不需要定位组索引，因为就一个组</p>
 <h1 id="总结"><a href="#总结" class="headerlink" title="总结"></a>总结</h1><p>存储器层次结构告诉我们编写代码的时候尽可能对缓存友好，特别是编写一些高性能的数学计算库一定需要考虑缓存命中率，对于极度依赖性能的程序而言缓存不命中所带来的性能损失是巨大的</p>
 <p>然后在实际的开发过程中，我感觉有很多东西的原理是从操作系统中借鉴的，例如：使用缓存提高查询性能（时间局部性原理）、MySQL存储结构中的页（分块映射思想）等</p>
 

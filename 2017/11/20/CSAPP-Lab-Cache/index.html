@@ -109,16 +109,16 @@
 <meta property="og:site_name" content="dawning&#39;s blog~">
 <meta property="og:description" content="实验简介该实验由A、B两个部分组成  PartA：编写一个缓存算法模拟器，根据s E b三个参数计算出缓存命中、缓存未命中和缓存替换的次数，其中缓存替换算法使用LRU PartB：在给定的高速缓存参数s=5, E=1, b=5的条件下，优化一个矩阵转置函数，使该函数的缓存命中率满足 32 x 32： miss &amp;lt; 300 64 x 64：miss &amp;lt; 1300 61 x 67：miss">
 <meta property="og:locale" content="zh-Hans">
-<meta property="og:image" content="https://note.youdao.com/yws/public/resource/45c03e20609703d6e2a5107363774cc1/xmlnote/1EB9C92CF3A84E05BFF97070630BD14F/2619">
-<meta property="og:image" content="https://note.youdao.com/yws/public/resource/45c03e20609703d6e2a5107363774cc1/xmlnote/2754234AABDC40C4A938A50694FAC116/2623">
-<meta property="og:image" content="https://note.youdao.com/yws/public/resource/45c03e20609703d6e2a5107363774cc1/xmlnote/2D09CF002B6B4F5F9C466A791C447484/2626">
-<meta property="og:image" content="https://note.youdao.com/yws/public/resource/45c03e20609703d6e2a5107363774cc1/xmlnote/746C67BF8A1C44748106AA221D52142A/2633">
-<meta property="og:image" content="https://note.youdao.com/yws/public/resource/45c03e20609703d6e2a5107363774cc1/xmlnote/D887A11304D1483894547532A1816681/2650">
-<meta property="og:updated_time" content="2017-11-21T15:36:08.276Z">
+<meta property="og:image" content="http://ozt8gvhxs.bkt.clouddn.com/cache-lab-part-a.png">
+<meta property="og:image" content="http://ozt8gvhxs.bkt.clouddn.com/cachelab-part-b.png">
+<meta property="og:image" content="http://ozt8gvhxs.bkt.clouddn.com/cachelab-part-b%20%282%29.png">
+<meta property="og:image" content="http://ozt8gvhxs.bkt.clouddn.com/cache-lab1.png">
+<meta property="og:image" content="http://ozt8gvhxs.bkt.clouddn.com/cache-lab-2.png">
+<meta property="og:updated_time" content="2017-11-22T14:06:47.333Z">
 <meta name="twitter:card" content="summary">
 <meta name="twitter:title" content="CSAPP-Lab-Cache">
 <meta name="twitter:description" content="实验简介该实验由A、B两个部分组成  PartA：编写一个缓存算法模拟器，根据s E b三个参数计算出缓存命中、缓存未命中和缓存替换的次数，其中缓存替换算法使用LRU PartB：在给定的高速缓存参数s=5, E=1, b=5的条件下，优化一个矩阵转置函数，使该函数的缓存命中率满足 32 x 32： miss &amp;lt; 300 64 x 64：miss &amp;lt; 1300 61 x 67：miss">
-<meta name="twitter:image" content="https://note.youdao.com/yws/public/resource/45c03e20609703d6e2a5107363774cc1/xmlnote/1EB9C92CF3A84E05BFF97070630BD14F/2619">
+<meta name="twitter:image" content="http://ozt8gvhxs.bkt.clouddn.com/cache-lab-part-a.png">
 
 
 
@@ -371,9 +371,9 @@
 <li>缓存块大小为<code>32</code>字节，即一个缓存块能存放<code>8</code>个<code>int</code>变量</li>
 </ul>
 <h2 id="32-x-32"><a href="#32-x-32" class="headerlink" title="32 x 32"></a>32 x 32</h2><p>这里如果直接进行转置肯定是不行的，因为在<code>32 x 32</code>矩阵中，每行占用4个缓存块，所以8行刚好能完全储存在缓存中，但是我们的矩阵有32行，整个缓存大小不足以储存整个矩阵，所以必然存在冲突不命中</p>
-<p><img src="https://note.youdao.com/yws/public/resource/45c03e20609703d6e2a5107363774cc1/xmlnote/1EB9C92CF3A84E05BFF97070630BD14F/2619" alt=""></p>
+<p><img src="http://ozt8gvhxs.bkt.clouddn.com/cache-lab-part-a.png" alt=""></p>
 <p>图中的数字代表缓存块标号，我们如果直接按行转置的话，第1个块的写不命中率为1（第一个块被写到<code>B[0-7][0]</code>） ，当我们写第2个块到B的时候，由于写冲突（第二个块需要写到<code>B[8-15][0]</code>，但是<code>B[8-15][0]</code>与之前的<code>B[0-7][0]</code>被映射到同一个缓存组）导致我们需要替换掉之前的缓存，这样就导致我们所有的写入操作都未命中，单单写<code>miss</code>次数至少为<code>32 x 32</code>次所以远远不满足题目要求的<code>miss &lt; 300</code></p>
-<p><img src="https://note.youdao.com/yws/public/resource/45c03e20609703d6e2a5107363774cc1/xmlnote/2754234AABDC40C4A938A50694FAC116/2623" alt=""></p>
+<p><img src="http://ozt8gvhxs.bkt.clouddn.com/cachelab-part-b.png" alt=""></p>
 <p>参考实验指导书中的矩阵分块思想，我们这里可以将该矩阵分成<code>8 x 8</code>的16个小矩阵，这样每次读8个值就能充分利用缓存块，同时写的时候也可以充分利用缓存减少<code>miss</code>次数，图中相同颜色的区域会被映射到相同组，这里我们需要分两种情况分析</p>
 <ul>
 <li><p><code>8 x 8</code>小矩阵不包含对角线元素</p>
@@ -387,7 +387,7 @@
 <p>具体实现代码</p>
 <figure class="highlight c"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div><div class="line">11</div><div class="line">12</div><div class="line">13</div><div class="line">14</div><div class="line">15</div><div class="line">16</div><div class="line">17</div><div class="line">18</div><div class="line">19</div><div class="line">20</div><div class="line">21</div><div class="line">22</div><div class="line">23</div><div class="line">24</div><div class="line">25</div><div class="line">26</div><div class="line">27</div></pre></td><td class="code"><pre><div class="line"><span class="keyword">int</span> t0, t1, t2, t3, t4, t5, t6, t7;</div><div class="line"><span class="keyword">for</span> (<span class="keyword">int</span> i = <span class="number">0</span>; i &lt; N; i += <span class="number">8</span>)</div><div class="line">&#123;</div><div class="line">  <span class="keyword">for</span> (<span class="keyword">int</span> j = <span class="number">0</span>; j &lt; M; j += <span class="number">8</span>)</div><div class="line">  &#123;</div><div class="line">    <span class="keyword">for</span> (<span class="keyword">int</span> k = i; k &lt; i + <span class="number">8</span>; k++)</div><div class="line">    &#123;</div><div class="line">      t0 = A[k][j];</div><div class="line">      t1 = A[k][j + <span class="number">1</span>];</div><div class="line">      t2 = A[k][j + <span class="number">2</span>];</div><div class="line">      t3 = A[k][j + <span class="number">3</span>];</div><div class="line">      t4 = A[k][j + <span class="number">4</span>];</div><div class="line">      t5 = A[k][j + <span class="number">5</span>];</div><div class="line">      t6 = A[k][j + <span class="number">6</span>];</div><div class="line">      t7 = A[k][j + <span class="number">7</span>];</div><div class="line"></div><div class="line">      B[j][k] = t0;</div><div class="line">      B[j + <span class="number">1</span>][k] = t1;</div><div class="line">      B[j + <span class="number">2</span>][k] = t2;</div><div class="line">      B[j + <span class="number">3</span>][k] = t3;</div><div class="line">      B[j + <span class="number">4</span>][k] = t4;</div><div class="line">      B[j + <span class="number">5</span>][k] = t5;</div><div class="line">      B[j + <span class="number">6</span>][k] = t6;</div><div class="line">      B[j + <span class="number">7</span>][k] = t7;</div><div class="line">    &#125;</div><div class="line">  &#125;</div><div class="line">&#125;</div></pre></td></tr></table></figure>
 <h2 id="64-x-64"><a href="#64-x-64" class="headerlink" title="64 x 64"></a>64 x 64</h2><p>这个是真的难想，我反正想不出来，最后参考了网上的解法然后自己理解+实现也花了很久。。。</p>
-<p><img src="https://note.youdao.com/yws/public/resource/45c03e20609703d6e2a5107363774cc1/xmlnote/2D09CF002B6B4F5F9C466A791C447484/2626" alt=""></p>
+<p><img src="http://ozt8gvhxs.bkt.clouddn.com/cachelab-part-b%20%282%29.png" alt=""></p>
 <h3 id="第一次实验"><a href="#第一次实验" class="headerlink" title="第一次实验"></a>第一次实验</h3><p>首先我们肯定是想分成<code>8 x 8</code>的小矩阵，但是这里不行，因为行字节数变大了导致列的冲突步长变小了，这个<code>64 x 64</code>的矩阵中每行需要占用8个缓存块，缓存最大只能存4行；如果我们继续按<code>8 x 8</code>分块，那每次写下面四行都会把上面缓存过的替换掉，导致冲突<code>miss</code>，粗略估算一下写<code>miss</code>的次数为<code>64 * 64</code>，崩了。。。</p>
 <h3 id="第二次实验"><a href="#第二次实验" class="headerlink" title="第二次实验"></a>第二次实验</h3><p>那既然<code>8 x 8</code>不行，我们就分成<code>4 x 4</code>的小矩阵，好，这样分确实解决了写冲突问题，但是这样我们无法充分利用缓存，因为每个缓存块可以放8个元素，但是我们只使用4个，这里我们同样分析一下<code>miss</code>次数，这里需要注意的是我们不能直接按<code>4 x 4</code>的块进行分析，因为我们的缓存块可以存储8个元素，所以我们按<code>4 x 8</code>的块分析</p>
 <ul>
@@ -402,7 +402,7 @@
 <h3 id="最终方案"><a href="#最终方案" class="headerlink" title="最终方案"></a>最终方案</h3><p>这里需要充分利用一次读入的8个元素，同时需要将元素暂时存放在<code>B</code>矩阵中，最后做调整，这里我们仍然是分成<code>8 x 8</code>的块，但是要分两种情况考虑，左图为矩阵<code>A</code>，右图为矩阵<code>B</code></p>
 <ul>
 <li><p>包含对角线的块</p>
-<p><img src="https://note.youdao.com/yws/public/resource/45c03e20609703d6e2a5107363774cc1/xmlnote/746C67BF8A1C44748106AA221D52142A/2633" alt=""></p>
+<p><img src="http://ozt8gvhxs.bkt.clouddn.com/cache-lab1.png" alt=""></p>
 <ol>
 <li>对于前4行，我们按行读取8个元素存入变量中，前4个元素正常转置，后面4个原地转置后存入<code>B</code>矩阵中</li>
 <li>对于后4行，我们按行读取8个元素存入变量中，前4个元素原地转置存入<code>B</code>矩阵中，后面4个正常转置</li>
@@ -410,7 +410,7 @@
 </ol>
 </li>
 <li><p>不包含对角线的块</p>
-<p><img src="https://note.youdao.com/yws/public/resource/45c03e20609703d6e2a5107363774cc1/xmlnote/D887A11304D1483894547532A1816681/2650" alt=""></p>
+<p><img src="http://ozt8gvhxs.bkt.clouddn.com/cache-lab-2.png" alt=""></p>
 <ol>
 <li>对于前4行，我们按行读取8个元素存入变量中，前4个元素正常转置，后面4个原地转置后存入<code>B</code>矩阵中</li>
 <li>右图表示当前矩阵<code>B</code>的情况，对于后4行，我们可以利用非对角线块读写不冲突的性质来优化，具体做法是：对于<code>A</code>中后4行的左半部分，中按列读取4个元素<code>t0 t1 t2 t3</code>，从<code>B</code>的右上角按行读取4个元素<code>t4 t5 t6 t7</code>，然后将<code>t0 t1 t2 t3</code>写入<code>B</code>右上角的行，将<code>t4 t5 t6 t7</code>写入<code>B</code>左下角的行。这时<code>A</code>矩阵的右下部分和<code>B</code>矩阵中的右下部分已经完全载入缓存（列不同，不会发生冲突），这个时候我们处理右下角的块时缓存命中率为<code>100%</code></li>
