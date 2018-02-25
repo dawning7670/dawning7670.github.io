@@ -68,7 +68,7 @@
 
 
 
-  <meta name="keywords" content="CSAPP,存储器," />
+  <meta name="keywords" content="CSAPP," />
 
 
 
@@ -80,7 +80,7 @@
 
 
 <meta name="description" content="随机访问存储器 SRAM 存储在双稳态单元中，抗干扰能力强，一般用于高速缓存  DRAM 依赖电容存储，抗干扰能力弱，需要重写刷新来维持存储状态，一般用于内存  磁盘 机械存储结构，主要包括：扇区、磁道、盘片、主轴和磁头； 数据读取依赖主轴移动磁头在盘片上找到对应的磁道上的扇区； 顺序访问速度快，随机访问速度慢  固态硬盘 使用电路结构（闪存翻译层）代替机械结构做地址映射； 顺序和随机读都非常快，">
-<meta name="keywords" content="CSAPP,存储器">
+<meta name="keywords" content="CSAPP">
 <meta property="og:type" content="article">
 <meta property="og:title" content="CSAPP-存储器层次结构">
 <meta property="og:url" content="http://yoursite.com/2017/11/21/CSAPP-存储器层次结构/index.html">
@@ -92,7 +92,7 @@
 <meta property="og:image" content="http://ozt8gvhxs.bkt.clouddn.com/cache5.png">
 <meta property="og:image" content="http://ozt8gvhxs.bkt.clouddn.com/cache2.png">
 <meta property="og:image" content="http://ozt8gvhxs.bkt.clouddn.com/cache4.png">
-<meta property="og:updated_time" content="2017-11-29T13:48:17.536Z">
+<meta property="og:updated_time" content="2018-02-25T09:46:56.751Z">
 <meta name="twitter:card" content="summary">
 <meta name="twitter:title" content="CSAPP-存储器层次结构">
 <meta name="twitter:description" content="随机访问存储器 SRAM 存储在双稳态单元中，抗干扰能力强，一般用于高速缓存  DRAM 依赖电容存储，抗干扰能力弱，需要重写刷新来维持存储状态，一般用于内存  磁盘 机械存储结构，主要包括：扇区、磁道、盘片、主轴和磁头； 数据读取依赖主轴移动磁头在盘片上找到对应的磁道上的扇区； 顺序访问速度快，随机访问速度慢  固态硬盘 使用电路结构（闪存翻译层）代替机械结构做地址映射； 顺序和随机读都非常快，">
@@ -400,6 +400,12 @@
 </ol>
 <h2 id="全相连高速缓存"><a href="#全相连高速缓存" class="headerlink" title="全相连高速缓存"></a>全相连高速缓存</h2><p><img src="http://ozt8gvhxs.bkt.clouddn.com/cache4.png" alt=""></p>
 <p>当<code>E=S</code>时称之为<code>全相连高速缓存</code>，这时所有行都在一个组中，具体的查询步骤和组相连类似，只是不需要定位组索引，因为就一个组</p>
+<h1 id="高速缓存性能参数影响"><a href="#高速缓存性能参数影响" class="headerlink" title="高速缓存性能参数影响"></a>高速缓存性能参数影响</h1><ul>
+<li>高速缓存大小：缓存大小越大命中率高，命中时间长</li>
+<li>块大小：块大小越大空间局部性强，时间局部性弱，不命中处罚明显（传送时间长）</li>
+<li>相联度：相联度越高冲突不命中少，成本高，命中时间长，复杂性高</li>
+<li>写策略：越下层越可能使用写回（减少数据传送次数），越上层可能使用直写</li>
+</ul>
 <h1 id="总结"><a href="#总结" class="headerlink" title="总结"></a>总结</h1><p>存储器层次结构告诉我们编写代码的时候尽可能对缓存友好，特别是编写一些高性能的数学计算库一定需要考虑缓存命中率，对于极度依赖性能的程序而言缓存不命中所带来的性能损失是巨大的</p>
 <p>然后在实际的开发过程中，我感觉有很多东西的原理是从操作系统中借鉴的，例如：使用缓存提高查询性能（时间局部性原理）、MySQL存储结构中的页（分块映射思想）等</p>
 
@@ -420,8 +426,6 @@
         <div class="post-tags">
           
             <a href="/tags/CSAPP/" rel="tag"># CSAPP</a>
-          
-            <a href="/tags/存储器/" rel="tag"># 存储器</a>
           
         </div>
       
@@ -523,7 +527,7 @@
               
                 <a href="/archives/">
               
-                  <span class="site-state-item-count">14</span>
+                  <span class="site-state-item-count">15</span>
                   <span class="site-state-item-name">日志</span>
                 </a>
               </div>
@@ -536,7 +540,7 @@
               
               <div class="site-state-item site-state-tags">
                 <a href="/tags/index.html">
-                  <span class="site-state-item-count">23</span>
+                  <span class="site-state-item-count">22</span>
                   <span class="site-state-item-name">标签</span>
                 </a>
               </div>
@@ -571,7 +575,7 @@
             
 
             
-              <div class="post-toc-content"><ol class="nav"><li class="nav-item nav-level-1"><a class="nav-link" href="#随机访问存储器"><span class="nav-number">1.</span> <span class="nav-text">随机访问存储器</span></a></li><li class="nav-item nav-level-1"><a class="nav-link" href="#存储器层次结构"><span class="nav-number">2.</span> <span class="nav-text">存储器层次结构</span></a></li><li class="nav-item nav-level-1"><a class="nav-link" href="#程序局部性原理"><span class="nav-number">3.</span> <span class="nav-text">程序局部性原理</span></a></li><li class="nav-item nav-level-1"><a class="nav-link" href="#高速缓存"><span class="nav-number">4.</span> <span class="nav-text">高速缓存</span></a><ol class="nav-child"><li class="nav-item nav-level-2"><a class="nav-link" href="#基本概念"><span class="nav-number">4.1.</span> <span class="nav-text">基本概念</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#直接映射高速缓存"><span class="nav-number">4.2.</span> <span class="nav-text">直接映射高速缓存</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#组相联高速缓存"><span class="nav-number">4.3.</span> <span class="nav-text">组相联高速缓存</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#全相连高速缓存"><span class="nav-number">4.4.</span> <span class="nav-text">全相连高速缓存</span></a></li></ol></li><li class="nav-item nav-level-1"><a class="nav-link" href="#总结"><span class="nav-number">5.</span> <span class="nav-text">总结</span></a></li></ol></div>
+              <div class="post-toc-content"><ol class="nav"><li class="nav-item nav-level-1"><a class="nav-link" href="#随机访问存储器"><span class="nav-number">1.</span> <span class="nav-text">随机访问存储器</span></a></li><li class="nav-item nav-level-1"><a class="nav-link" href="#存储器层次结构"><span class="nav-number">2.</span> <span class="nav-text">存储器层次结构</span></a></li><li class="nav-item nav-level-1"><a class="nav-link" href="#程序局部性原理"><span class="nav-number">3.</span> <span class="nav-text">程序局部性原理</span></a></li><li class="nav-item nav-level-1"><a class="nav-link" href="#高速缓存"><span class="nav-number">4.</span> <span class="nav-text">高速缓存</span></a><ol class="nav-child"><li class="nav-item nav-level-2"><a class="nav-link" href="#基本概念"><span class="nav-number">4.1.</span> <span class="nav-text">基本概念</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#直接映射高速缓存"><span class="nav-number">4.2.</span> <span class="nav-text">直接映射高速缓存</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#组相联高速缓存"><span class="nav-number">4.3.</span> <span class="nav-text">组相联高速缓存</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#全相连高速缓存"><span class="nav-number">4.4.</span> <span class="nav-text">全相连高速缓存</span></a></li></ol></li><li class="nav-item nav-level-1"><a class="nav-link" href="#高速缓存性能参数影响"><span class="nav-number">5.</span> <span class="nav-text">高速缓存性能参数影响</span></a></li><li class="nav-item nav-level-1"><a class="nav-link" href="#总结"><span class="nav-number">6.</span> <span class="nav-text">总结</span></a></li></ol></div>
             
 
           </div>
@@ -598,7 +602,7 @@
 
     <footer id="footer" class="footer">
       <div class="footer-inner">
-        <div class="copyright">&copy; <span itemprop="copyrightYear">2017</span>
+        <div class="copyright">&copy; <span itemprop="copyrightYear">2018</span>
   <span class="with-love">
     <i class="fa fa-user"></i>
   </span>
